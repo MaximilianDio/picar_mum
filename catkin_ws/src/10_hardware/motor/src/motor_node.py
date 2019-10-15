@@ -2,7 +2,7 @@
 import Adafruit_PCA9685
 import yaml
 import rospy
-import picar_common
+import picar_common.picar_common as picar_common
 from picar_msgs.msg import CarCmd
 import time
 

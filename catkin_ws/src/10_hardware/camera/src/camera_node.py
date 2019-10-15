@@ -7,7 +7,7 @@ import time
 import numpy as np
 from sensor_msgs.msg import CompressedImage
 from sensor_msgs.msg import CameraInfo
-from picar_common import get_param, get_config_file_path
+from picar_common.picar_common import get_param, get_config_file_path
 from dynamic_reconfigure.server import Server
 from camera.cfg import cam_paramsConfig
 

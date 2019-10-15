@@ -5,7 +5,8 @@
 
     <!-- launch calibrate_intrinsics_node -->
     <group ns="$(arg veh)">
-        <node pkg="intrinsics" type="calibrate_intrinsics_node.py" name="calibrate_intrinsics_node" output="screen">
+        <node pkg="intrinsics" type="calibrate_intrinsics_node.py" name="calibrate_intrinsics_node"
+              required="true" output="screen">
             <param name="size" value="$(arg size)"/>
             <param name="square" value="$(arg square)"/>
         </node>

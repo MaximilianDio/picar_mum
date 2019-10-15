@@ -3,8 +3,8 @@ import numpy as np
 import cv2
 from sensor_msgs.msg import CameraInfo
 from image_geometry import PinholeCameraModel
-import ground_projection
-from picar_common import FisheyeCameraModel
+import ground_projection.ground_projection as ground_projection
+from picar_common.picar_common import FisheyeCameraModel
 
 
 class Chessboard:

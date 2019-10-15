@@ -1,22 +1,20 @@
 #!/usr/bin/env python
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
+
+import os
+import PyQt5.QtWidgets as QtWidgets
+import PyQt5.QtGui as QtGui
+import PyQt5.QtCore as QtCore
 import rospy
 from sensor_msgs.msg import CompressedImage
 from cv_bridge import CvBridge, CvBridgeError
-import cv2
 import numpy as np
 import rospkg
-import os
 import yaml
-import extrinsics
-import picar_common
-from sensor_msgs.msg import CameraInfo
-from image_geometry import PinholeCameraModel
+import extrinsics.extrinsics as extrinsics
+import picar_common.picar_common as picar_common
 
 
-class Node(QWidget):
+class Node(QtWidgets.QWidget):
     def __init__(self):
         super(Node, self).__init__()
         self.bridge = None
@@ -24,7 +22,7 @@ class Node(QWidget):
         camera_info = self.init_ros()
         self.calibrator = extrinsics.Calibrator((7, 4), 0.04, camera_info)
 
-        layout = QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
         self.canvas = Canvas()
         self.side_pane = SidePane()
         self.side_pane.update_image_request.connect(self.update_image)
@@ -35,7 +33,10 @@ class Node(QWidget):
 
         self.update_image()
 
-        policy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        policy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred,
+            QtWidgets.QSizePolicy.Preferred)
+
         policy.setHeightForWidth(True)
         self.setSizePolicy(policy)
 
@@ -53,8 +54,8 @@ class Node(QWidget):
             CompressedImage)
         try:
             cv_image = self.bridge.compressed_imgmsg_to_cv2(message)
-        except CvBridgeError as e:
-            rospy.logwarn("[{}] {}".format(rospy.get_name(), e))
+        except CvBridgeError as error:
+            rospy.logwarn("[{}] {}".format(rospy.get_name(), error))
             return
         success, corners = self.calibrator.get_corners(cv_image)
         image_corners = self.calibrator.draw_corners(np.copy(cv_image),
@@ -67,46 +68,33 @@ class Node(QWidget):
         self.canvas.update_request.emit(cv_image, image_corners)
 
     def calibrate(self):
-        H, R, t, angles = self.calibrator.calibrate(self.canvas.original_image)
-        self.side_pane.update_calibration.emit(H, R, t, angles)
+        (homography,
+         rotation_matrix,
+         translation,
+         angles) = self.calibrator.calibrate(self.canvas.original_image)
 
-    def image_callback(self, msg):
-        try:
-            cv2_img = self.bridge.compressed_imgmsg_to_cv2(msg)
-        except CvBridgeError, e:
-            rospy.logwarn("{}".format(e))
-            return
-
-        self.success = self.calibrator.calculate_extrinsics(cv2_img,
-                                                            (7, 4),
-                                                            0.04)
-        if self.success:
-            self.save_calibration()
-            rospy.signal_shutdown("Successfully completed extrinsic "
-                                  "calibration.")
-
-    def save_calibration(self):
-        # ros namespace is always the same as the vehicle name
-        veh = rospy.get_namespace()
-        veh = veh.strip("/")
-        extrinsics_file_path = os.path.join(rospkg.RosPack().get_path("picar"),
-                                            "config",
-                                            "extrinsics",
-                                            veh + ".yaml")
-        with open(extrinsics_file_path, "w") as f:
-            yaml.dump(self.success, f)
+        self.side_pane.update_calibration.emit(
+            homography,
+            rotation_matrix,
+            translation,
+            angles)
 
 
-class SidePane(QWidget):
-    update_image_request = pyqtSignal()
-    calibrate_request = pyqtSignal()
-    update_calibration = pyqtSignal(np.ndarray, np.ndarray, np.ndarray, np.ndarray)
+class SidePane(QtWidgets.QWidget):
+    update_image_request = QtCore.pyqtSignal()
+    calibrate_request = QtCore.pyqtSignal()
+    update_calibration = QtCore.pyqtSignal(
+        np.ndarray,
+        np.ndarray,
+        np.ndarray,
+        np.ndarray)
+
     def __init__(self):
         super(SidePane, self).__init__()
-        self.update_button = QPushButton("Update Image")
+        self.update_button = QtWidgets.QPushButton("Update Image")
         self.update_button.clicked.connect(self.on_update_button)
 
-        self.calibrate_button = QPushButton("Calibrate")
+        self.calibrate_button = QtWidgets.QPushButton("Calibrate")
         self.calibrate_button.clicked.connect(self.on_calibrate_button)
 
         self.homography_box = MatrixBox("Homography")
@@ -121,26 +109,28 @@ class SidePane(QWidget):
         self.angle_box = MatrixBox("Roll/Pitch/Yaw")
         self.angle_box.set_data(np.full([3, 1], np.inf))
 
-        self.save_button = QPushButton("Save")
+        self.save_button = QtWidgets.QPushButton("Save")
         self.save_button.setDisabled(True)
         self.save_button.clicked.connect(self.on_save_button)
 
         self.update_calibration.connect(self.on_update_calibration)
 
-        layout = QVBoxLayout()
-        layout.setAlignment(Qt.AlignTop)
+        layout = QtWidgets.QVBoxLayout()
+        layout.setAlignment(QtCore.Qt.AlignTop)
         layout.addWidget(self.update_button)
         layout.addWidget(self.calibrate_button)
         layout.addWidget(self.homography_box)
         layout.addWidget(self.rotation_box)
-        hbox = QHBoxLayout()
+        hbox = QtWidgets.QHBoxLayout()
         hbox.addWidget(self.translation_box)
         hbox.addWidget(self.angle_box)
         layout.addLayout(hbox)
         layout.addWidget(self.save_button)
         self.setLayout(layout)
-        self.setSizePolicy(QSizePolicy.Minimum+QSizePolicy.MinimumExpanding,
-                           QSizePolicy.Minimum)
+        self.setSizePolicy(
+            (QtWidgets.QSizePolicy.Minimum
+             +QtWidgets.QSizePolicy.MinimumExpanding),
+            QtWidgets.QSizePolicy.Minimum)
 
     def on_update_button(self):
         self.update_image_request.emit()
@@ -156,7 +146,7 @@ class SidePane(QWidget):
 
         veh_name = "".join([rospy.get_namespace().strip("/"), ".yaml"])
         startup_path = os.path.join(startup_path, veh_name)
-        file_path, _ = QFileDialog.getSaveFileName(
+        file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
             self,
             "Save Calibration Data",
             startup_path,
@@ -165,46 +155,55 @@ class SidePane(QWidget):
         if file_path:
             file_path = file_path.strip(".yaml")
             file_path = "".join([file_path, ".yaml"])
-            H, S, t = self.get_calibration_data()
+
+            (homography,
+             rotation_matrix,
+             translation) = self.get_calibration_data()
+
             with open(file_path, "w") as file_handle:
                 data = dict(
                     H=dict(
-                        rows= H.shape[0],
-                        cols = H.shape[1],
-                        data=H.ravel().tolist(),
+                        rows=homography.shape[0],
+                        cols=homography.shape[1],
+                        data=homography.ravel().tolist(),
                     ),
                     S=dict(
-                        rows=S.shape[0],
-                        cols=S.shape[1],
-                        data=S.ravel().tolist(),
+                        rows=rotation_matrix.shape[0],
+                        cols=rotation_matrix.shape[1],
+                        data=rotation_matrix.ravel().tolist(),
                     ),
                     t=dict(
-                        rows=t.shape[0],
-                        cols=t.shape[1],
-                        data=t.ravel().tolist(),
+                        rows=translation.shape[0],
+                        cols=translation.shape[1],
+                        data=translation.ravel().tolist(),
                     ),
                 )
                 yaml.safe_dump(data, file_handle)
 
     def get_calibration_data(self):
-        H = self.homography_box.get_data()
-        S = self.rotation_box.get_data()
-        t = self.translation_box.get_data()
-        return H, S, t
+        homography = self.homography_box.get_data()
+        rotation_matrix = self.rotation_box.get_data()
+        translation = self.translation_box.get_data()
+        return homography, rotation_matrix, translation
 
+    def on_update_calibration(
+            self,
+            homography,
+            rotation_matrix,
+            translation,
+            angles):
 
-    def on_update_calibration(self, H, R, t, angles):
         self.save_button.setDisabled(False)
-        self.homography_box.set_data(H)
-        self.rotation_box.set_data(R)
-        self.translation_box.set_data(t)
+        self.homography_box.set_data(homography)
+        self.rotation_box.set_data(rotation_matrix)
+        self.translation_box.set_data(translation)
         self.angle_box.set_data(angles)
 
 
-class MatrixBox(QGroupBox):
+class MatrixBox(QtWidgets.QGroupBox):
     def __init__(self, name):
         super(MatrixBox, self).__init__()
-        layout = QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
         self.setTitle(name)
         self.matrix = Matrix((3, 3))
         layout.addWidget(self.matrix)
@@ -217,14 +216,17 @@ class MatrixBox(QGroupBox):
         return self.matrix.get_data()
 
 
-class Matrix(QTableWidget):
+class Matrix(QtWidgets.QTableWidget):
     def __init__(self, (rows, columns)):
         super(Matrix, self).__init__()
         self.setRowCount(rows)
         self.setColumnCount(columns)
-        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.Minimum,
+            QtWidgets.QSizePolicy.Minimum)
+
+        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.data = None
 
 
@@ -235,10 +237,12 @@ class Matrix(QTableWidget):
         self.setColumnCount(columns)
         for row in range(rows):
             for col in range(columns):
-                item = QTableWidgetItem("{:01.3f}"
-                                        "".format(ndarray[row, col]))
+                item = QtWidgets.QTableWidgetItem(
+                    "{:01.3f}"
+                    "".format(ndarray[row, col]))
                 item.setFlags(item.flags()
-                              ^ (Qt.ItemIsEditable+Qt.ItemIsSelectable))
+                              ^ (QtCore.Qt.ItemIsEditable
+                                 +QtCore.Qt.ItemIsSelectable))
                 self.setItem(row, col, item)
         self.resizeColumnsToContents()
         self.setFixedSize(
@@ -249,49 +253,57 @@ class Matrix(QTableWidget):
         return self.data
 
 
-class Canvas(QLabel):
-    update_request = pyqtSignal(np.ndarray, np.ndarray)
+class Canvas(QtWidgets.QLabel):
+    update_request = QtCore.pyqtSignal(np.ndarray, np.ndarray)
     def __init__(self):
         super(Canvas, self).__init__()
-        # self.setFixedSize(QSize(640, 480))
         self.update_request.connect(self.set_image)
         self.setMinimumWidth(320)
         self.setMinimumHeight(240)
         self.original_image = None
         self.pix = None
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Expanding)
 
     def set_image(self, cv_image, image_corners):
         self.original_image = cv_image
         height, width, _ = cv_image.shape
-        # cv_image = cv2.resize(cv_image, (self.width(), self.height()))
         height, width, channels = cv_image.shape
         bytes_per_line = channels * width
-        qt_image = QImage(image_corners.data, width, height,
-                          bytes_per_line, QImage.Format_RGB888)
+        qt_image = QtGui.QImage(
+            image_corners.data,
+            width, height,
+            bytes_per_line,
+            QtGui.QImage.Format_RGB888)
+
         qt_image = qt_image.rgbSwapped()
-        self.pix = QPixmap.fromImage(qt_image)
-        pixmap = QPixmap.fromImage(qt_image).scaled(self.width(),
-                                                    self.height(),
-                                                    Qt.KeepAspectRatio)
+        self.pix = QtGui.QPixmap.fromImage(qt_image)
+        pixmap = QtGui.QPixmap.fromImage(qt_image).scaled(
+            self.width(),
+            self.height(),
+            QtCore.Qt.KeepAspectRatio)
         self.setPixmap(pixmap)
 
     def resizeEvent(self, QResizeEvent):
         if self.original_image is None:
             return
-        self.setPixmap(self.pix.scaled(self.width(), self.height(), Qt.KeepAspectRatio))
+        self.setPixmap(
+            self.pix.scaled(self.width(),
+                            self.height(),
+                            QtCore.Qt.KeepAspectRatio))
 
 
 
 def main():
-    app = QApplication([])
+    app = QtWidgets.QApplication([])
     node = Node()
     icon_path = os.path.join(rospkg.RosPack().get_path("extrinsics"),
                              "images/icon.png")
-    app.setWindowIcon(QIcon(icon_path))
+    app.setWindowIcon(QtGui.QIcon(icon_path))
     node.show()
     app.exec_()
+
 
 if __name__ == "__main__":
     main()

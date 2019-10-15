@@ -3,7 +3,7 @@ import rospy
 import json
 from geometry_msgs.msg import Point32
 from picar_msgs.msg import LanePose
-from lane_pose_estimation import PoseEstimator
+from lane_pose_estimation.lane_pose_estimation import PoseEstimator
 
 
 class PoseEstimatorNode(object):

@@ -1,6 +1,4 @@
 #!/usr/bin/python
-from math import atan2
-import rospy
 
 class PoseEstimator(object):
     def __init__(self):

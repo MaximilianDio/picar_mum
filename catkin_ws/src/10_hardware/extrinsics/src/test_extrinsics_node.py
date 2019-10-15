@@ -3,17 +3,93 @@ import sys
 import os
 import yaml
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QIcon, QPixmap, QImage, QPainter
+from PyQt5.QtGui import QIcon, QPixmap, QImage
 from PyQt5.QtCore import *
 import rospy
 import rospkg
 from sensor_msgs.msg import CompressedImage, CameraInfo
-from image_geometry import PinholeCameraModel
+from geometry_msgs.msg import Point32
 import numpy as np
-import cv2
 import cv_bridge
-import ground_projection
-from picar_common import get_config_file_path, get_param, FisheyeCameraModel
+from image_geometry import PinholeCameraModel
+from picar_common.picar_common import get_config_file_path, get_param, get_camera_info, FisheyeCameraModel
+
+
+def normalize_image_coordinates(pixel_coord, image_width, image_height):
+    """Computes normalized pixel coordinates.
+
+    Args:
+        pixel_coord (list/tuple): Coordinates of the pixel in uv-coordinate
+            frame.
+        image_width (int): Width of the image in pixels.
+        image_height (int): Height of the image in pixels.
+
+    Returns (numpy.ndarray): Numpy array of normalized pixel coordinates.
+
+    """
+    x_normalized = float(pixel_coord[0]) / (image_width - 1)
+    y_normalized = float(pixel_coord[1]) / (image_height - 1)
+    return np.array([x_normalized, y_normalized])
+
+
+class Projector(object):
+    def __init__(self, camera_info, h_matrix, distorted_input=True):
+        self.distorted_input = distorted_input
+        self.camera_info = camera_info
+        self.fisheye = False
+        if camera_info.distortion_model == "fisheye":
+            self.camera = FisheyeCameraModel()
+            self.camera.from_camera_info(camera_info)
+            self.fisheye = True
+        else:
+            self.camera = PinholeCameraModel()
+            self.camera.fromCameraInfo(camera_info)
+        self.h_matrix = h_matrix
+
+    def pixel2ground(self, pixel_coord, distorted_input=None):
+        """Returns the ground projection of a pixel."""
+        # use default value if 'distorted_input' is not set
+        if distorted_input is None:
+            distorted_input = self.distorted_input
+        if distorted_input:
+            pixel_coord = self.rectify_pixel(pixel_coord)
+        pixel_coord = np.array(pixel_coord)
+
+        # normalize coordinates
+        pixel_normalized = normalize_image_coordinates(
+            pixel_coord,
+            self.camera.width,
+            self.camera.height)
+
+        point = self._project_normalized_pixel(pixel_normalized)
+        return point
+
+    def _project_normalized_pixel(self, pixel_normalized):
+        pixel_coord = np.append(pixel_normalized, 1.0)
+        ground_coord = np.dot(self.h_matrix, pixel_coord)
+        # scale the coordinates appropriately
+        ground_coord = ground_coord / ground_coord[2]
+
+        point = Point32()
+        point.x = ground_coord[0]
+        point.y = ground_coord[1]
+        point.z = 0.0
+
+        return point
+
+    def rectify_pixel(self, pixel_coord):
+        """Calculates the rectified undistorted image coordinate of a pixel.
+
+        Args:
+            pixel_coord: Distorted pixel coordinates
+
+        Returns: Undistorted pixel coordinates
+        """
+        if self.fisheye:
+            return self.camera.undistort_point(pixel_coord)
+        else:
+            return self.camera.rectifyPoint(pixel_coord)
+
 
 class App(QWidget):
     def __init__(self):
@@ -31,6 +107,7 @@ class App(QWidget):
         rospy.init_node("test_extrinsics_node")
         name = get_param("~extrinsics_file_name", "default")
         path = get_config_file_path("extrinsics", name)
+        camera_info = get_camera_info()
 
         if path is None:
             rospy.logfatal("No extrinsics found!")
@@ -49,13 +126,9 @@ class App(QWidget):
                       "".format(rospy.get_name()))
 
         if camera_info.D[0] == 0.0:
-            self.projector = ground_projection.GroundProjector(camera_info,
-                                                               H,
-                                                               False)
+            self.projector = Projector(camera_info, H, False)
         else:
-            self.projector = ground_projection.GroundProjector(camera_info,
-                                                               H,
-                                                               True)
+            self.projector = Projector(camera_info, H, True)
 
     def init_ui(self):
         self.setWindowTitle(self.title)
@@ -70,7 +143,7 @@ class ImageWidget(QWidget):
     def __init__(self, projector):
         """
 
-        :type projector: ground_projection.GroundProjector
+        :type projector: Projector
         """
         super(ImageWidget, self).__init__()
         self.projector = projector

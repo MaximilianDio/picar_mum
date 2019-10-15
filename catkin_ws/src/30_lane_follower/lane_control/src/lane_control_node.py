@@ -2,7 +2,7 @@
 import rospy
 import yaml
 from lane_control.controller import Controller, ControllerValues
-from picar_common import get_param, get_config_file_path
+from picar_common.picar_common import get_param, get_config_file_path
 from picar_msgs.msg import LanePose, CarCmd
 from std_msgs.msg import Float64
 

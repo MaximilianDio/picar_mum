@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 import cv2
 import numpy as np
 import yaml
-from intrinsics import Camera
+from .intrinsics import Camera
 import os
 import rospkg
 import rospy

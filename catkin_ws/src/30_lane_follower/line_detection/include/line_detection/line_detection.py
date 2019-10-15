@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 import numpy as np
 import cv2
-# import matplotlib.pyplot as plt
 import yaml
-from operator import itemgetter
-import time
-import rospy
 
 
 class LineGetter(object):

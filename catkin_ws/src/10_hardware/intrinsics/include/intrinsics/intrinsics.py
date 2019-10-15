@@ -2,7 +2,6 @@
 import math
 import cv2
 import numpy as np
-import time
 
 def pairwise_minimum(sequence_1, sequence_2):
     return [min(a,b) for (a, b) in zip(sequence_1, sequence_2)]
