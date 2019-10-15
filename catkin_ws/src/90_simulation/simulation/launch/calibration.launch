@@ -1,0 +1,22 @@
+
+
+<launch>
+
+    <!-- add the world directory to GAZEBO_RESOURCE_PATH so the gazeo finds the world files -->
+    <env name="GAZEBO_RESOURCE_PATH" value="$(optenv GAZEBO_RESOURCE_PATH):$(find simulation)/worlds"/>
+    <env name="GAZEBO_MODEL_PATH" value="$(optenv GAZEBO_MODEL_PATH):$(find simulation)/models"/>
+    <env name="ROS_MASTER_URI" value="http://localhost:11311"/>
+        
+    <arg name="veh" default="simcar"/>    
+    
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="calibration.world"/>
+        <arg name="verbose" value="true"/>
+        <arg name="paused" value="false"/>
+    </include>
+
+    <group ns="$(arg veh)">
+        <include file="$(find picar_description)/launch/simcar_static.launch">
+        </include>
+    </group>
+</launch>

@@ -1,0 +1,6 @@
+p_gain: 100.0
+weight_distance: 1.0
+weight_angle: 0.0
+distance_desired: 0.0
+angle_desired: 0.0
+velocity_desired: 0.3

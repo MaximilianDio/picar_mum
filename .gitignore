@@ -1,0 +1,11 @@
+catkin_ws/build
+catkin_ws/devel
+catkin_ws/src/venv
+*.pyc
+catkin_ws/src/.idea
+*.bag
+venv/
+catkin_ws/src/.kdev4
+catkin_ws/src/src.kdev4
+catkin_ws/src/CMakeLists.txt
+

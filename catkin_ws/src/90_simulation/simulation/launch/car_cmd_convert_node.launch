@@ -1,0 +1,13 @@
+<launch>
+    <arg name="veh" default="simcar"/>
+
+    <node ns="$(arg veh)" pkg="simulation" type="car_cmd_convert_node.py" name="car_cmd_convert_node"/>
+
+    <!-- Subscriptions -->
+    <!-- "~vel_cmd": std_msgs/Float32 -->
+    <!-- "~steering_cmd": std_msgs/Float32 -->
+
+    <!-- Publications -->
+    <!-- "motor_node/car_cmd": picar_msgs/JointCmd -->
+
+</launch>

@@ -1,0 +1,20 @@
+material EmptyGroundPlane/Image
+{
+    technique
+    {
+        pass
+        {
+            ambient 0.5 0.5 0.5 1.0
+            diffuse 1.0 1.0 1.0 1.0
+            specular 0.03 0.03 0.03 1.0
+
+            texture_unit
+            {
+                texture ground_plane.png
+                filtering trilinear
+                scale 10 10
+            }
+        }
+
+    }
+}

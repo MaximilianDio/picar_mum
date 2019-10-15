@@ -1,0 +1,19 @@
+<launch>
+    <arg name="veh"/>
+    <arg name="size"/>
+    <arg name="square"/>
+
+    <!-- launch calibrate_intrinsics_node -->
+    <group ns="$(arg veh)">
+        <node pkg="intrinsics" type="calibrate_intrinsics_node.py" name="calibrate_intrinsics_node" output="screen">
+            <param name="size" value="$(arg size)"/>
+            <param name="square" value="$(arg square)"/>
+        </node>
+    </group>
+
+    <!-- Subscriptions -->
+    <!-- "~image/raw": sensor_msgs/Image -->
+
+    <!-- Publications -->
+
+</launch>

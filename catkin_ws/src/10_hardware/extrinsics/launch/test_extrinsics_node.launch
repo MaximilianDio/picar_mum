@@ -1,0 +1,21 @@
+<launch>
+    <arg name="veh"/>
+    <arg name="extrinsics_file_name" default="$(arg veh)"/>
+
+    <!-- launch test_extrinsics_node -->
+    <group ns="$(arg veh)">
+        <node pkg="extrinsics" type="test_extrinsics_node.py"
+              name="test_extrinsics_node" required="true"
+              output="screen">
+
+            <param name="extrinsics_file_name"
+                   value="$(arg extrinsics_file_name)"/>
+        </node>
+
+    </group>
+
+    <!-- Subscriptions -->
+
+    <!-- Publications -->
+
+</launch>

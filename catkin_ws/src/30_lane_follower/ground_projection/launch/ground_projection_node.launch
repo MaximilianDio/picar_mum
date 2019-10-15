@@ -1,0 +1,44 @@
+<launch>
+    <arg name="veh"/>
+    <arg name="local" default="true"/>
+    <arg name="intrinsics_file_name" default="$(arg veh)"/>
+    <arg name="extrinsics_file_name" default="$(arg veh)"/>
+    <arg name="distorted_input" default="true"/>
+
+    <!-- define the picar machine to run the remote nodes on. "veh" should be the hostname of the car -->
+    <machine
+            name="$(arg veh)"
+            address="$(arg veh).local"
+            user="pi"
+            env-loader="/home/pi/picar_mum/catkin_ws/env.sh"
+    />
+
+    <!-- launch ground projection node -->
+
+    <group if="$(arg local)">
+        <group ns="$(arg veh)">
+            <node pkg="ground_projection" type="ground_projection_node.py" name="ground_projection_node" output="screen">
+                <param name="intrinsics_file_name" value="$(arg intrinsics_file_name)"/>
+                <param name="extrinsics_file_name" value="$(arg extrinsics_file_name)"/>
+                <param name="distorted_input" value="$(arg distorted_input)"/>
+            </node>
+        </group>
+    </group>
+
+    <group unless="$(arg local)">
+        <group ns="$(arg veh)">
+            <node machine="$(arg veh)" pkg="ground_projection" type="ground_projection_node.py" name="ground_projection_node" output="screen">
+                <param name="intrinsics_file_name" value="$(arg intrinsics_file_name)"/>
+                <param name="extrinsics_file_name" value="$(arg extrinsics_file_name)"/>
+                <param name="distorted_input" value="$(arg distorted_input)"/>
+            </node>
+        </group>
+    </group>
+
+    <!-- Subscriptions -->
+    <!-- "~track_position_input": geometry_msgs/Point32 -->
+
+    <!-- Publications -->
+    <!-- "~track_position_output": geometry_msgs/Point32 -->
+
+</launch>

@@ -1,0 +1,15 @@
+<launch>
+    <arg name="veh"/>
+
+    <!-- launch decompress_node -->
+    <group ns="$(arg veh)">
+        <node pkg="camera" type="decompress_node.py" name="decompress_node" output="screen"/>
+    </group>
+
+    <!-- Subscriptions -->
+    <!-- "camera/image/compressed": sensor_msgs/CompressedImage -->
+
+    <!-- Publications -->
+    <!-- "camera/image/raw": sensor_msgs/Image -->
+
+</launch>

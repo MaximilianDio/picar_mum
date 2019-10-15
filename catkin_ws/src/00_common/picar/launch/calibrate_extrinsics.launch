@@ -1,0 +1,35 @@
+<launch>
+    <arg name="veh"/>
+    <arg name="sim" default="false"/>
+
+    <!-- if running on real vehicle -->
+    <group unless="$(arg sim)">
+        <!-- start camera_node -->
+        <include file="$(find camera)/launch/camera_node.launch">
+            <arg name="veh" value="$(arg veh)"/>
+        </include>
+
+        <!-- start calibrate_extrinsics_node -->
+    <remap from="calibrate_extrinsics_node/compressed_image" to="camera_node/image/compressed"/>
+    <include file="$(find extrinsics)/launch/calibrate_extrinsics_node.launch">
+        <arg name="veh" value="$(arg veh)"/>
+    </include>
+    </group>
+
+    <!-- if running on simulated vehicle -->
+    <group if="$(arg sim)">
+        <arg name="intrinsics_file_name" default="simcar"/>
+
+        <include file="$(find simulation)/launch/calibration.launch">
+            <arg name="veh" value="simcar"/>
+        </include>
+
+        <!-- start calibrate_extrinsics_node -->
+    <remap from="calibrate_extrinsics_node/compressed_image" to="camera_node/image/compressed"/>
+    <include file="$(find extrinsics)/launch/calibrate_extrinsics_node.launch">
+        <arg name="veh" value="simcar"/>
+    </include>
+    </group>
+    
+
+</launch>

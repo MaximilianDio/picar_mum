@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+    <model name="simple_track">
+        <static>true</static>
+        <link name="link">
+            <visual name="visual">
+                <cast_shadows>false</cast_shadows>
+                <geometry>
+                    <mesh>
+                        <uri>model://simple_track/meshes/simple_track.dae</uri>
+                        <scale>1 1 1</scale>
+                    </mesh>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+</sdf>

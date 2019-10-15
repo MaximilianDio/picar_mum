@@ -1,0 +1,28 @@
+<launch>
+    <arg name="veh"/>
+    <arg name="intrinsics_file_name" default="default"/>
+    <arg name="extrinsics_file_name" default="default"/>
+    <arg name="intrinsics filename" default="default" doc="Specify a intrinsics calibration parameter file name. ex:picar01"/>
+
+    <!-- define the picar machine to run the remote nodes on. "veh" should be the hostname of the car -->
+    <machine
+            name="$(arg veh)"
+            address="$(arg veh).local"
+            user="pi"
+            env-loader="/home/pi/picar_mum/catkin_ws/env.sh"
+    />
+
+    <!-- launch camera_info_node -->
+    <group ns="$(arg veh)">
+        <node machine="$(arg veh)" pkg="camera" type="camera_info_node.py" name="camera_info_node" output="screen"/>
+        <param name="~intrinsics_file_name" value="$(arg intrinsics_file_name)"/>
+        <param name="~extrinsics_file_name" value="$(arg extrinsics_file_name)"/>
+    </group>
+
+    <!-- Subscriptions -->
+    <!-- "~compressed_image": sensor_msgs/CompressedImage -->
+
+    <!-- Publications -->
+    <!-- "~camera_info": sensor_msgs/CameraInfo -->
+
+</launch>

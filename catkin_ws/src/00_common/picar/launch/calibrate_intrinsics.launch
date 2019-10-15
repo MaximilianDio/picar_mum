@@ -1,0 +1,42 @@
+<launch>
+    <arg name="veh"/>
+    <arg name="size" doc="Size of the inner checkerboard corners. ex: 8x6"/>
+    <arg name="square" doc="Dimension of the checkerboard squares in meters. ex: 0.02"/>
+    <arg name="sim" default="false"/>
+
+    <!-- if running on real vehicle -->
+    <group unless="$(arg sim)">
+        <!-- start camera node -->
+        <include file="$(find camera)/launch/camera_node.launch">
+            <arg name="veh" value="$(arg veh)"/>
+        </include>
+
+        <!-- start decompress node -->
+        <remap from="camera/image/compressed" to="camera_node/image/compressed"/>
+        <include file="$(find camera)/launch/decompress_node.launch">
+            <arg name="veh" value="$(arg veh)"/>
+        </include>
+    </group>
+
+    <!-- if running on simulated vehicle -->
+    <group if="$(arg sim)">
+
+        <!-- start the calibration world launch file -->
+        <include file="$(find simulation)/launch/calibration.launch"/>
+
+        <!-- start the decompress node to publish uncompressed images from camera -->
+        <remap from="camera/image/compressed" to="camera_node/image/compressed"/>
+        <include file="$(find camera)/launch/decompress_node.launch">
+            <arg name="veh" value="$(arg veh)"/>
+        </include>
+
+    </group>
+
+    <!-- start the calibrator node -->
+    <remap from="calibrate_intrinsics_node/image/raw" to="camera/image/raw"/>
+    <include file="$(find intrinsics)/launch/calibrate_intrinsics_node.launch">
+        <arg name="veh" value="$(arg veh)"/>
+        <arg name="size" value="$(arg size)"/>
+        <arg name="square" value="$(arg square)"/>
+    </include>
+</launch>

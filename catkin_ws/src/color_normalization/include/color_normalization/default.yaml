@@ -1,0 +1,6 @@
+gradient_thresh: 50
+bottom_cut_rel_height: 0.6
+# this is the area that is cut away, because only the lower part of the image provides useful information.
+# (no lane above horizion)
+horizon_rel_height: 0.3
+contour_low: 30

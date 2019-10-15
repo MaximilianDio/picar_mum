@@ -1,0 +1,15 @@
+<launch>
+    <!-- the hostname of the car to control -->
+    <arg name="veh"/>
+
+    <!-- launch keyboard control node -->
+    <node ns="$(arg veh)" name="keyboard_control_node" pkg="keyboard_control"
+          type="keyboard_control_node.py" args="$(arg veh)" required="true"
+          output="screen"/>
+
+    <!-- Subscriptions -->
+
+    <!-- Publications -->
+    <!-- "~car_cmd": picar_msgs/CarCmd -->
+
+</launch>

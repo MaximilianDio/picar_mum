@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+    <world name="default">
+        <light name="sun" type="directional">
+            <cast_shadows>1</cast_shadows>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <attenuation>
+                <range>1000</range>
+                <constant>0.9</constant>
+                <linear>0.01</linear>
+                <quadratic>0.001</quadratic>
+            </attenuation>
+            <direction>-0.5 0.5 -1</direction>
+        </light>
+
+
+
+        <gravity>0 0 -9.8</gravity>
+
+        <scene>
+            <ambient>1 1 1 1</ambient>
+            <background>0.2 0.0 0.2 1</background>
+            <shadows>1</shadows>
+            <grid>0</grid>
+        </scene>
+
+        <include>
+            <uri>model://empty_ground_plane</uri>
+            <pose>0 0 -0.001 0 0 0</pose>
+        </include>
+
+
+        <include>
+            <uri>model://calib_plane</uri>
+            <pose>0.3805 0 0 0 0 -1.5708</pose>
+        </include>
+
+    </world>
+</sdf>

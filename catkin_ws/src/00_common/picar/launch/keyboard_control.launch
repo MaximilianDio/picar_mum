@@ -1,0 +1,32 @@
+<launch>
+    <arg name="veh"/>
+    <arg name="sim" default="false"/>
+
+    <!-- if running on real vehicle -->
+    <group unless="$(arg sim)">
+        <!-- start keyboard control -->
+        <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">
+            <arg name="veh" value="$(arg veh)"/>
+        </include>
+
+        <!-- start node controlling the motors -->
+        <include file="$(find motor)/launch/motor_node.launch">
+            <arg name="veh" value="$(arg veh)"/>
+        </include>
+    </group>
+
+    <!-- if running on simulated vehicle -->
+    <group if="$(arg sim)">
+        <!-- start keyboard control -->
+        <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">
+            <arg name="veh" value="simcar"/>
+        </include>
+
+
+        <include file="$(find simulation)/launch/simple_loop_ccw.launch">
+            <arg name="veh" value="simcar"/>
+            <arg name="paused" value="false"/>
+            <arg name="gui" value="true"/>
+        </include>
+    </group>
+</launch>

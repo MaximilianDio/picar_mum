@@ -1,0 +1,37 @@
+<launch>
+    <arg name="veh"/>
+    <arg name="local" default="true" doc="if true, node is started on laptop instead of raspi"/>
+    <arg name="config_file_name" default="$(arg veh)"/>
+
+    <!-- define the picar machine to run the remote nodes on. "veh" should be the hostname of the car -->
+    <machine
+            name="$(arg veh)"
+            address="$(arg veh).local"
+            user="pi"
+            env-loader="/home/pi/picar_mum/catkin_ws/env.sh"
+    />
+
+    <!-- launch line_detection_node -->
+    <group if="$(arg local)">
+        <group ns="$(arg veh)">
+            <node pkg="line_detection" type="line_detection_node.py" name="line_detection_node" output="screen">
+                <param name="config_file_name" value="$(arg config_file_name)"/>
+            </node>
+
+        </group>
+    </group>
+
+    <group unless="$(arg local)">
+        <group ns="$(arg veh)">
+            <node machine="$(arg veh)" pkg="line_detection" type="line_detection_node.py" name="line_detection_node" output="screen"/>
+            <param name="config_file_name" value="$(arg config_file_name)"/>
+        </group>
+    </group>
+
+    <!-- Subscriptions -->
+    <!-- "~input_image/raw": sensor_msgs/Image -->
+
+    <!-- Publications -->
+    <!-- "~track_position": geometry_msgs/Point32 -->
+
+</launch>

@@ -1,0 +1,67 @@
+<?xml version='1.0'?>
+
+<robot name="simcar" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- Camera Properties-->
+    <xacro:property name="cameraSize" value="0.01"/>
+    <xacro:property name="cameraMass" value="0.01"/>
+    <xacro:property name="cameraOffsetX" value="0.05"/>
+    <xacro:property name="cameraOffsetY" value="0.0"/>
+    <xacro:property name="cameraOffsetZ" value="0.28"/>
+    <xacro:property name="cameraPitch" value="0.34"/>
+    <xacro:property name="cameraResWidth" value="640"/>
+    <xacro:property name="cameraResHeight" value="480"/>
+
+    <!-- IMU Properties -->
+    <xacro:property name="imuSize" value="0.01"/>
+    <xacro:property name="imuMass" value="0.01"/>
+    <xacro:property name="imuOffsetX" value="0.14"/>
+    <xacro:property name="imuOffsetY" value="0.0"/>
+    <xacro:property name="imuOffsetZ" value="0.04"/>
+    <xacro:property name="imuPitch" value="0.34"/>
+
+
+    <!-- Constants -->
+    <xacro:property name="PI" value="3.1415926535897931"/>
+
+    <!-- Chassis properties -->
+    <xacro:property name="chassisHeight" value="0.04"/>
+    <xacro:property name="chassisLength" value="0.30"/>
+    <xacro:property name="chassisWidth" value="0.05"/>
+    <xacro:property name="chassisMass" value="3.00"/>
+    <xacro:property name="chassisInertiaX" value="0.03"/>
+    <xacro:property name="chassisInertiaY" value="0.03"/>
+    <xacro:property name="chassisInertiaZ" value="0.03"/>
+    <xacro:property name="chassisOffsetX" value="0.14"/>
+    <xacro:property name="chassisOffsetY" value="0.0"/>
+    <xacro:property name="chassisOffsetZ" value="0.04"/>
+    <xacro:property name="chassisCenter">
+        <origin xyz="${chassisOffsetX} ${chassisOffsetY} ${chassisOffsetZ}" rpy="0 0 0"/>
+    </xacro:property>
+
+    <!-- Wheel properties -->
+    <xacro:property name="wheelWidth" value="0.03"/>
+    <xacro:property name="wheelRadius" value="0.03"/>
+    <xacro:property name="wheelMass" value="0.100"/>
+    <xacro:property name="wheelInertiaX" value="1.0e-3"/>
+    <xacro:property name="wheelInertiaY" value="1.0e-3"/>
+    <xacro:property name="wheelInertiaZ" value="5.0e-3"/>
+    <xacro:property name="wheelBase" value="0.26"/>
+    <xacro:property name="trackGaugeFront" value="0.17"/>
+    <xacro:property name="trackGaugeRear" value="0.18"/>
+    <xacro:property name="wheelKP" value="1.0e6"/>
+    <xacro:property name="wheelKD" value="100.0"/>
+    <xacro:property name="wheelMU" value="1.0"/>
+    <xacro:property name="wheelMinDepth" value="0.00"/>
+
+    <!-- joint limits -->
+    <xacro:property name="steerEffort" value="10"/>
+    <xacro:property name="steerVelocity" value="1"/>
+
+
+    <!-- seems to have no effect! -->
+    <xacro:property name="wheelEffort" value="100"/>
+    <xacro:property name="wheelVelocity" value="100"/>
+    <xacro:property name="wheelDamping" value="0.7"/>
+
+    <xacro:property name="maxSteeringAngle" value="${30.0*PI/180.0}"/>
+</robot>

@@ -1,0 +1,34 @@
+<launch>
+    <arg name="veh"/>
+    <arg name="bagfile"/>
+
+    <!--start color_normalization_node -->
+    <remap from="color_normalization_node/input_image/compressed" to="camera_node/image/compressed"/>
+    <include file="$(find color_normalization)/launch/color_normalization_node.launch">
+        <arg name="veh" value="$(arg veh)"/>
+    </include>
+
+    <!-- start line_detection_node -->
+    <remap from="line_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
+    <include file="$(find line_detection)/launch/line_detection_node.launch">
+        <arg name="veh" value="$(arg veh)"/>
+    </include>
+
+    <!-- start ground_projection_node -->
+    <remap from="ground_projection_node/lines_input" to="line_detection_node/lines_out"/>
+    <remap from="ground_projection_node/contours_input" to="line_detection_node/contours_out"/>
+    <include file="$(find ground_projection)/launch/ground_projection_node.launch">
+        <arg name="veh" value="$(arg veh)"/>
+    </include>
+
+    <!-- start lane_pose_estimation_node -->
+    <remap from="lane_pose_estimation_node/lines" to="ground_projection_node/lines_output"/>
+    <include file="$(find lane_pose_estimation)/launch/lane_pose_estimation_node.launch">
+        <arg name="veh" value="$(arg veh)"/>
+    </include>
+    <!-- start camera images from bagfile -->
+    <node pkg="rosbag" type="play" name="rosbag_camera_playback"
+          args="-l $(arg bagfile)"/>
+
+
+</launch>
