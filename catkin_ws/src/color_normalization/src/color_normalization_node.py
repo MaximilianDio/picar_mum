@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import rospy
-import color_normalization
+import color_normalization.color_normalization as color_normalization
 from sensor_msgs.msg import CompressedImage, Image
 from cv_bridge import CvBridge, CvBridgeError
-from picar_common import get_param, get_config_file_path
+from picar_common.picar_common import get_param, get_config_file_path
 
 
 class NormalizerNode(object):

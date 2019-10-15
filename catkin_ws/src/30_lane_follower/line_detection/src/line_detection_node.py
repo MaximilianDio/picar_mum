@@ -3,8 +3,8 @@ import rospy
 from cv_bridge import CvBridgeError, CvBridge
 from geometry_msgs.msg import Point32
 from sensor_msgs.msg import Image
-import line_detection
-from picar_common import get_param, get_config_file_path
+import line_detection.line_detection as line_detection
+from picar_common.picar_common import get_param, get_config_file_path
 
 
 class LineDetectionNode(object):

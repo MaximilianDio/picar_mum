@@ -53,10 +53,4 @@
         <arg name="local" value="true"/>
     </include>
 
-    <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot" args="/$(arg veh)/lane_pose_estimation_node/pose/d /$(arg veh)/lane_control_node/control_output/omega"/>
-
-
-
-
-
 </launch>
