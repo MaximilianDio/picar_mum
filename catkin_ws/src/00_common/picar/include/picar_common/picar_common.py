@@ -7,6 +7,12 @@ import numpy
 import cv2
 
 
+def set_param(param_name, param_value):
+    rospy.set_param(param_name, param_value)
+    rospy.loginfo("[{}] {} = {}".format(
+        rospy.get_name(),
+        param_name, param_value))
+
 def get_param(param_name, default_val):
     """
     Tries to get a ros parameter. Sets parameter to 'default_val' if no value was set

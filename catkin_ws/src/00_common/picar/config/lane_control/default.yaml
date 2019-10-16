@@ -1,6 +1,6 @@
-p_gain: 100.0
-weight_distance: 1.0
-weight_angle: 0.0
-distance_desired: 0.0
-angle_desired: 0.0
+p_gain: 100000.0 # proportional gain of the controller
+weight_distance: 1.0 # should not be modified unless angle is computed
+weight_angle: 0.0 # has no effect in initial version, since angle is not computed
+distance_desired: 0.0 # use this to follow the lane with an offset
+angle_desired: 0.0 # has no effect in initial version, since angle is not computed
 velocity_desired: 0.3
