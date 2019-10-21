@@ -212,5 +212,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # use rospy.myargv so no arguments added by ros are passed
     main()

@@ -4,7 +4,7 @@
 
     <!-- launch keyboard control node -->
     <node ns="$(arg veh)" name="keyboard_control_node" pkg="keyboard_control"
-          type="keyboard_control_node.py" args="$(arg veh)" required="true"
+          type="keyboard_control_node.py" required="true"
           output="screen"/>
 
     <!-- Subscriptions -->
