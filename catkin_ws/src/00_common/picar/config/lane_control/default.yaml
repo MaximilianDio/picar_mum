@@ -4,3 +4,9 @@ weight_angle: 0.0 # has no effect in initial version, since angle is not compute
 distance_desired: 0.0 # use this to follow the lane with an offset
 angle_desired: 0.0 # has no effect in initial version, since angle is not computed
 velocity_desired: 0.3
+
+# good settings: velocity_desired: 0.7
+#                p_gain: 200
+
+# unstable settings: velocity_desired: 0.8
+#                    with same p_gain
