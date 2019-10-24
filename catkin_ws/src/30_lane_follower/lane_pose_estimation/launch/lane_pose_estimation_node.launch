@@ -1,25 +1,18 @@
 <launch>
-    <arg name="veh"/>
-    <arg name="local" default="true"/>
-
-    <!-- define the picar machine to run the remote nodes on. "veh" should be the hostname of the car -->
-    <machine
-            name="$(arg veh)"
-            address="$(arg veh).local"
-            user="pi"
-            env-loader="/home/pi/picar_mum/catkin_ws/env.sh"
-    />
+    <arg name="ns"/>
+    <arg name="local"/>
+    <arg name="machine"/>
 
     <!-- launch lane_pose_estimation_node -->
     <group if="$(arg local)">
-        <group ns="$(arg veh)">
+        <group ns="$(arg ns)">
             <node pkg="lane_pose_estimation" type="lane_pose_estimation_node.py" name="lane_pose_estimation_node" output="screen"/>
         </group>
     </group>
 
     <group unless="$(arg local)">
-        <group ns="$(arg veh)">
-            <node machine="$(arg veh)" pkg="lane_pose_estimation" type="lane_pose_estimation_node.py" name="lane_pose_estimation_node" output="screen"/>
+        <group ns="$(arg ns)">
+            <node machine="$(arg machine)" pkg="lane_pose_estimation" type="lane_pose_estimation_node.py" name="lane_pose_estimation_node" output="screen"/>
         </group>
     </group>
 

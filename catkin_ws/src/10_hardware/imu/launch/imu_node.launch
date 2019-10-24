@@ -1,18 +1,10 @@
 <launch>
-    <arg name="veh"/>
-
-    <!-- define the picar machine to run the remote nodes on. "veh" should be the hostname of the car -->
-    <machine
-            name="$(arg veh)"
-            address="$(arg veh).local"
-            user="pi"
-            timeout="30"
-            env-loader="/home/pi/picar_mum/catkin_ws/env.sh"
-    />
+    <arg name="ns"/>
+    <arg name="machine"/>
 
     <!-- launch motor node -->
-    <group ns="$(arg veh)">
-        <node machine="$(arg veh)" name="imu_node" pkg="imu" type="imu_node.py" output="screen">
+    <group ns="$(arg ns)">
+        <node machine="$(arg machine)" name="imu_node" pkg="imu" type="imu_node.py" output="screen">
         </node>
     </group>
 

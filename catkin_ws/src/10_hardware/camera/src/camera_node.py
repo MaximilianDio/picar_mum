@@ -11,7 +11,6 @@ from picar_common.picar_common import get_param, get_config_file_path
 from dynamic_reconfigure.server import Server
 from camera.cfg import cam_paramsConfig
 
-
 class FrameSplitter(object):
     def __init__(self, publish_intrinsic_info,
                  camera_info, camera_info_intrinsics):
@@ -74,20 +73,17 @@ class CameraParams:
         self.exposure_mode = 'off'
         # range [0, 100]
         self.brightness = 50
-        self.iso = 1600
         # available modes: 'off' 'auto' 'sunlight' 'cloudy' 'shade' 'tungsten' 'fluorescent' 'incandescent' 'flash'
         # 'horizon'
         self.awb_mode = 'off'
 
-        self.awb_gain_red = 1.0
-        self.awb_gain_blue = 1.0
-        # between 0.0 and 8.0 as tuple (red, blue)
-        self.awb_gains = (self.awb_gain_red, self.awb_gain_blue)
+        self.exposure_compensation = 0
 
 
     def reconfigure_cb(self, config, level):
         self.get_params_from_config(config)
         self.write_params_to_camera()
+        time.sleep(0.5)
         self.get_params_from_camera()
         self.write_params_to_config(config)
         return config
@@ -99,47 +95,30 @@ class CameraParams:
 
         self.brightness = config["brightness"]
 
-        self.iso = config["iso"]
-
         self.awb_mode = config["awb_mode"]
 
-        self.awb_gain_red = config["awb_gain_red"]
-        self.awb_gain_blue = config["awb_gain_blue"]
-        self.awb_gains = (self.awb_gain_red, self.awb_gain_blue)
+        self.exposure_compensation = config["exposure_compensation"]
 
     def write_params_to_camera(self):
         self.camera.shutter_speed = self.shutter_speed
         self.camera.exposure_mode = self.exposure_mode
         self.camera.brightness = self.brightness
-        self.camera.iso = self.iso
         self.camera.awb_mode = self.awb_mode
-        self.camera.awb_gains = self.awb_gains
+        self.camera.exposure_compensation = self.exposure_compensation
 
     def get_params_from_camera(self):
         self.shutter_speed = self.camera.shutter_speed
         self.exposure_mode = self.camera.exposure_mode
         self.brightness = self.camera.brightness
-        self.iso = self.camera.iso
         self.awb_mode = self.camera.awb_mode
-        self.awb_gains = self.camera.awb_gains
-        rospy.logwarn("{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(
-            self.shutter_speed, self.exposure_mode,
-            self.brightness, self.iso, self.awb_mode,
-            self.awb_gains, self.awb_gain_red, self.awb_gain_blue
-        ))
-        self.awb_gains = (float(self.awb_gains[0]), float(self.awb_gains[1]))
-        self.awb_gain_red = self.awb_gains[0]
-        self.awb_gain_blue = self.awb_gains[1]
+        self.exposure_compensation = self.camera.exposure_compensation
 
     def write_params_to_config(self, config):
         config["shutter_speed"] = self.shutter_speed
         config["exposure_mode"] = self.exposure_mode
         config["brightness"] = self.brightness
-        config["iso"] = self.iso
         config["awb_mode"] = self.awb_mode
-        config["awb_gain_red"] = self.awb_gain_red
-        config["awb_gain_blue"] = self.awb_gain_blue
-
+        config["exposure_compensation"] = self.exposure_compensation
 
 def read_config_from_file(file_path):
     with open(file_path, "r") as f:
@@ -189,7 +168,6 @@ def camera_info_scaled(camera_info_intrinsics, image_size):
 
     return camera_info
 
-
 def main():
     rospy.init_node('camera_node', anonymous=False)
     rate = rospy.Rate(2)
@@ -234,20 +212,17 @@ def main():
     with PiCamera(resolution=resolution, framerate=fps, sensor_mode=4) as camera:
         cam_config = CameraParams(camera)
         srv = Server(cam_paramsConfig, cam_config.reconfigure_cb)
-        camera.iso = 400
         if fisheye:
             w = 0.7
             h = 0.7
             x = 0.15
             y = 0.15
             camera.zoom = (x, y, w, h)
-        time.sleep(2)
-        camera.shutter_speed = camera.exposure_speed
-        camera.exposure_mode = 'off'
-        g = camera.awb_gains
-        camera.awb_mode = 'off'
-        camera.awb_gains = g
+
+
         camera.start_recording(output, format='mjpeg', quality=100)
+        rospy.loginfo("drc_strengt {}".format(camera.drc_strength))
+        rospy.loginfo("still_stats {}".format(camera.still_stats))
 
         rospy.loginfo("[{}] Camera started".format(rospy.get_name()))
         while not rospy.is_shutdown():

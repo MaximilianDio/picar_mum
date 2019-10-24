@@ -7,8 +7,12 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   picar_msgs
+  dynamic_reconfigure
+  std_srvs
 )
-
+generate_dynamic_reconfigure_options(
+  cfg/motor.cfg
+)
 catkin_package()
 #catkin_python_setup()
 
