@@ -1,9 +1,9 @@
 <launch>
     <!-- the hostname of the car to control -->
-    <arg name="veh"/>
+    <arg name="ns"/>
 
     <!-- launch keyboard control node -->
-    <node ns="$(arg veh)" name="keyboard_control_node" pkg="keyboard_control"
+    <node ns="$(arg ns)" name="keyboard_control_node" pkg="keyboard_control"
           type="keyboard_control_node.py" required="true"
           output="screen"/>
 

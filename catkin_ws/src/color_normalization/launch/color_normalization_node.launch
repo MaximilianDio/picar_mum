@@ -1,25 +1,26 @@
 <launch>
-    <arg name="veh"/>
-    <arg name="local" default="true" doc="if true, node is started on laptop instead of raspi"/>
+    <arg name="ns"/>
+    <arg name="machine"/>
+    <arg name="local"/>
 
     <!-- define the picar machine to run the remote nodes on. "veh" should be the hostname of the car -->
     <machine
-            name="$(arg veh)"
-            address="$(arg veh).local"
+            name="$(arg machine)"
+            address="$(arg machine).local"
             user="pi"
             env-loader="/home/pi/picar_mum/catkin_ws/env.sh"
     />
 
     <!-- launch color_normalization_node -->
     <group if="$(arg local)">
-        <group ns="$(arg veh)">
+        <group ns="$(arg ns)">
             <node pkg="color_normalization" type="color_normalization_node.py" name="color_normalization_node" output="screen"/>
         </group>
     </group>
 
     <group unless="$(arg local)">
-        <group ns="$(arg veh)">
-            <node machine="$(arg veh)" pkg="color_normalization" type="color_normalization_node.py" name="color_normalization_node" output="screen"/>
+        <group ns="$(arg ns)">
+            <node machine="$(arg machine)" pkg="color_normalization" type="color_normalization_node.py" name="color_normalization_node" output="screen"/>
         </group>
     </group>
 

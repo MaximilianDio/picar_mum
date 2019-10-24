@@ -1,10 +1,10 @@
 <launch>
-    <arg name="veh"/>
+    <arg name="ns"/>
     <arg name="size"/>
     <arg name="square"/>
 
     <!-- launch calibrate_intrinsics_node -->
-    <group ns="$(arg veh)">
+    <group ns="$(arg ns)">
         <node pkg="intrinsics" type="calibrate_intrinsics_node.py" name="calibrate_intrinsics_node"
               required="true" output="screen">
             <param name="size" value="$(arg size)"/>

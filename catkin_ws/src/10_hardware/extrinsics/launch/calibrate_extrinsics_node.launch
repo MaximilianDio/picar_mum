@@ -1,9 +1,9 @@
 <launch>
-    <arg name="veh"/>
+    <arg name="ns"/>
     <arg name="intrinsics_file_name" default="default"/>
 
     <!-- launch calibrate_extrinsics_node -->
-    <group ns="$(arg veh)">
+    <group ns="$(arg ns)">
         <node pkg="extrinsics" type="calibrate_extrinsics_node.py"
               name="calibrate_extrinsics_node" required="true"
               output="screen">

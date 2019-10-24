@@ -1,9 +1,9 @@
 <launch>
-    <arg name="veh"/>
-    <arg name="extrinsics_file_name" default="$(arg veh)"/>
+    <arg name="ns"/>
+    <arg name="extrinsics_file_name" default="$(arg ns)"/>
 
     <!-- launch test_extrinsics_node -->
-    <group ns="$(arg veh)">
+    <group ns="$(arg ns)">
         <node pkg="extrinsics" type="test_extrinsics_node.py"
               name="test_extrinsics_node" required="true"
               output="screen">

@@ -1,18 +1,27 @@
 <launch>
-    <arg name="veh"/>
+    <arg name="ns"/>
     <arg name="sim" default="false"/>
+    <arg name="machine" default="$(arg ns)"/>
+
+    <machine
+            name="$(arg machine)"
+            address="$(arg machine).local"
+            user="pi"
+            env-loader="/home/pi/picar_mum/catkin_ws/env.sh"
+    />
 
     <!-- if running on real vehicle -->
     <group unless="$(arg sim)">
         <!-- start camera_node -->
         <include file="$(find camera)/launch/camera_node.launch">
-            <arg name="veh" value="$(arg veh)"/>
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
         </include>
 
-        <!-- start calibrate_extrinsics_node -->
+    <!-- start calibrate_extrinsics_node -->
     <remap from="calibrate_extrinsics_node/compressed_image" to="camera_node/image/compressed"/>
     <include file="$(find extrinsics)/launch/calibrate_extrinsics_node.launch">
-        <arg name="veh" value="$(arg veh)"/>
+        <arg name="ns" value="$(arg ns)"/>
     </include>
     </group>
 
@@ -21,13 +30,13 @@
         <arg name="intrinsics_file_name" default="simcar"/>
 
         <include file="$(find simulation)/launch/calibration.launch">
-            <arg name="veh" value="simcar"/>
+            <arg name="ns" value="simcar"/>
         </include>
 
         <!-- start calibrate_extrinsics_node -->
     <remap from="calibrate_extrinsics_node/compressed_image" to="camera_node/image/compressed"/>
     <include file="$(find extrinsics)/launch/calibrate_extrinsics_node.launch">
-        <arg name="veh" value="simcar"/>
+        <arg name="ns" value="simcar"/>
     </include>
     </group>
     

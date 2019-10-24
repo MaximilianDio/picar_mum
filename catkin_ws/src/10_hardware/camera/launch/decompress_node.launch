@@ -1,9 +1,16 @@
 <launch>
-    <arg name="veh"/>
+    <arg name="ns"/>
+    <arg name="local"/>
+    <arg name="machine"/>
 
     <!-- launch decompress_node -->
-    <group ns="$(arg veh)">
-        <node pkg="camera" type="decompress_node.py" name="decompress_node" output="screen"/>
+    <group ns="$(arg ns)">
+        <group if="$(arg local)">
+            <node pkg="camera" type="decompress_node.py" name="decompress_node" output="screen"/>
+        </group>
+        <group unless="$(arg local)">
+            <node machine="$(arg machine)" pkg="camera" type="decompress_node.py" name="decompress_node" output="screen"/>
+        </group>
     </group>
 
     <!-- Subscriptions -->

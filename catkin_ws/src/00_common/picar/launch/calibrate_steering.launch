@@ -1,0 +1,19 @@
+<launch>
+    <arg name="ns"/>
+    <arg name="machine" default="$(arg ns)"/>
+
+    <machine
+            name="$(arg machine)"
+            address="$(arg machine).local"
+            user="pi"
+            env-loader="/home/pi/picar_mum/catkin_ws/env.sh"
+    />
+
+    <!-- start node controlling the motors -->
+    <include file="$(find motor)/launch/motor_node.launch">
+        <arg name="ns" value="$(arg ns)"/>
+        <arg name="machine" value="$(arg machine)"/>
+    </include>
+    
+    <node pkg="rqt_gui" type="rqt_gui" name="rqt_gui" args="-s reconfigure"/>
+</launch>

@@ -38,15 +38,10 @@ class LineGetter(object):
 
         img_rgb = img_rgb[slice_y1:slice_y2]
 
-        cv2.imshow("raw", img_rgb)
-        cv2.waitKey(1)
-
         # convert color to hsv, so it is easier to mask certain colors
         img_hsv = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2HSV)
 
         mask_red = self._mask_red(img_hsv)
-
-        cv2.imshow("mask", mask_red)
 
         contour_list_red = cv2.findContours(mask_red, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[1]
 
