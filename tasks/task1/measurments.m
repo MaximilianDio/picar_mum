@@ -1,13 +1,12 @@
 %% measurments
 %% constants
 
-g = 9.81; %N/m^2
+g = 9.81; %m/s^2
 %% mass
 
 massCar = [1902.84; 1902.33 ; 1902.34]*10^-3; %kg Gesamtmasse Auto ohne Akku
     
 massAkku = [ 420.35; 420.33 ; 420.34]*10^-3; %kg Gesmatmasse Akku
-
 
 mges = mean(massCar)+mean(massAkku); %kg Gesmatmasse
 %% CoM
@@ -26,24 +25,34 @@ Lv = L-Lh;
 
 %% y-direction
 
-Fy = [9.1; 9.5; 9.4; 9.4; 9.4]; %N %kraft ohne Batterie
+% Kraft ohne Akku
+Fy = [9.1; 9.5; 9.4; 9.4; 9.4]; %N 
 
-b = 0.16; % m Breite Felge-Felge
+% Breite Felge-Felge
+b = 0.16; % m 
 
-bF = 0.065+b/2; %m Angriffspunkt von rechter Felge
+% Abstand Angriffspunkt von rechter Felge
+bF = 0.065+b/2; %m 
 
-bAkku = 0.033+b/2; %m Schwerpunkt Akku von rechter Felge
+% Abstand Schwerpunkt Akku von rechter Felge
+bAkku = 0.033+b/2; %m 
 
-brCar = mean(Fy)*bF/((mean(massCar))*g); %m Schwerpunkt Auto ohne Akku von rechter Felge
+% Abstand Schwerpunkt Auto ohne Akku zu rechter Felge
+brCar = mean(Fy)*bF/((mean(massCar))*g); %m
 
-br = (mean(massAkku)*bAkku+mean(massCar)*brCar)/mges; %m Schwerpunkt Auto mit Akku von rechter Felge
+% Abstand Schwerpunkt Auto mit Akku zu rechter Felge
+br = (mean(massAkku)*bAkku+mean(massCar)*brCar)/mges; %m
 
 %% z-direction
 
+% Kraft
 Fz = 3.7; %N
+
+% Höhe Kraftangriffspunkt 
 hF = 0.298-0.032; %m
 
-h = hF*Fz/(mges*g); %m Schwerpunkt gesamtmasse Auto mit Akku
+% Schwerpunkt gesamtmasse Auto mit Akku
+h = hF*Fz/(mges*g); %m 
 
 %% Massentr?gheit
 
