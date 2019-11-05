@@ -51,5 +51,5 @@ function deltaTime = get_deltaTime(filename)
     deltaTime = time_ch2 - time_ch1;
 
 
-    %plot(time02(1:end-1),[speed02_ch1(1:end-1) , speed02_ch2(1:end-1)] )
+    plot(time(1:end-1),[speed_ch1(1:end-1) , speed_ch2(1:end-1)] )
 end
