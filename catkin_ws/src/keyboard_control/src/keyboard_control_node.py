@@ -173,8 +173,8 @@ class KeyboardController(object):
             car_cmd.angle = -self.angle # angle will be clamped by the car itself
 
         """ prints angle and data for debugging """
-        print("angle = " + str(car_cmd.angle))
-        print("velocity = " + str(car_cmd.velocity))
+        #print("angle = " + str(car_cmd.angle))
+        #print("velocity = " + str(car_cmd.velocity))
 
         self.publisher.publish(car_cmd)
 
