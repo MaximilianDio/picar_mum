@@ -1,7 +1,11 @@
 %% measurments
+close all
+clear
+clc
+
 %% constants
 
-g = 9.81; %N/m^2
+g = 9.81; %m/s^2
 %% mass
 
 massCar = [1902.84; 1902.33 ; 1902.34]*10^-3; %kg Gesamtmasse Auto ohne Akku
