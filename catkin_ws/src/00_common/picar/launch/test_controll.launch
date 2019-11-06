@@ -1,4 +1,4 @@
-<!-- Launchscript for tests in process by paul-->
+<!-- Launchscript for tests in process by paul ss-->
 <launch>
     <arg name="ns"/>
     <arg name="sim" default="false"/>
