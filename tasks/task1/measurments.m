@@ -16,7 +16,7 @@ mges = mean(massCar)+mean(massAkku); %kg Gesmatmasse
 Fx = [ 8.2 ; 8.2; 8.2]; %N 
 
 
-L = 0.295; %m %Gesmatl?nge 
+L = 0.26; %m %Gesmatl?nge 
 Lx = 0.0755; %m L?nge von Vorderachse zu Kraftangriffspunkt 
 LF = L+Lx; %m Angriffspunkt Kraft F
 
