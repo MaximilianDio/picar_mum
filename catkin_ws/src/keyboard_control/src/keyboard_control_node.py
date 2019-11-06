@@ -78,6 +78,9 @@ class KeyboardController(object):
         """Main logic loop. Should be called periodically in a loop"""
         running = True
         while running:
+
+
+
             self.screen.blit(self.buttons, (0, 0))
 
             keys = [False] * 14
@@ -172,6 +175,8 @@ class KeyboardController(object):
         if keys[self.K_RIGHT]:
             car_cmd.angle = -self.angle # angle will be clamped by the car itself
 
+
+
         """ prints angle and data for debugging """
         #print("angle = " + str(car_cmd.angle))
         #print("velocity = " + str(car_cmd.velocity))
@@ -187,7 +192,8 @@ class KeyboardController(object):
         if keys[self.K_0]:
             self.velocity = 1.0
         if keys[self.K_1]:
-            self.velocity = 0.1
+            self.angle = input("set angle: ")
+            #self.velocity = 0.1
         if keys[self.K_2]:
             self.velocity = 0.2
         if keys[self.K_3]:
