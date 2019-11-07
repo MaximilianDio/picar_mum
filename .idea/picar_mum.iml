@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/catkin_ws/src/00_common/picar/include" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/catkin_ws/src/00_common/picar" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/catkin_ws/src/10_hardware/extrinsics" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/catkin_ws/src/10_hardware/imu" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/catkin_ws/src/30_lane_follower/ground_projection" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/catkin_ws/src/30_lane_follower/lane_control" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/catkin_ws/src/30_lane_follower/lane_pose_estimation" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/catkin_ws/src/30_lane_follower/line_detection" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/catkin_ws/src/color_normalization" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/catkin_ws/src/10_hardware/intrinsics" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/catkin_ws/src/10_hardware/livestream" isTestSource="false" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
