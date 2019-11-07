@@ -48,13 +48,22 @@ br = (mean(massAkku)*bAkku+mean(massCar)*brCar)/mges; %m
 % Kraft
 Fz = 3.7; %N
 
-% Höhe Kraftangriffspunkt 
+% HÃ¶he Kraftangriffspunkt 
 hF = 0.298-0.032; %m
 
 % Schwerpunkt gesamtmasse Auto mit Akku
 h = hF*Fz/(mges*g); %m 
 
-%% Massentr?gheit
+%%Schwerpunkt berechnung 2 
+
+%x
+
+%y
+
+%z
+
+
+%% Massentraegheit
 
 % Aufbau:
 
