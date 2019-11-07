@@ -2,7 +2,7 @@
 <package format="2">
   <name>imu</name>
   <version>0.0.0</version>
-  <description>This package publishes IMU data</description>
+  <description>This package publishes the Image data</description>
 
   <maintainer email="thies.lennart.alff@tuhh.de">Thies Lennart Alff</maintainer>
 
