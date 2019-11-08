@@ -66,16 +66,9 @@ y_com2=(W_r/mges-1/2)* b
 
 %% z_com2
 W_f2=1.525
-z_com2=(W_f2*wheelbase-mges*xcom2)/mges*tan(45*pi/180)
+w_r2=6.4/g
+z_com2=W_f
 
-
-%% Delta CoM
-
-%delta X
-
-%delta Y
-
-%Delta z 
 %% Massentraegheit
 
 % Aufbau:
