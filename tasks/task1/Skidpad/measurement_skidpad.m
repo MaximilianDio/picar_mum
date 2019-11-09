@@ -49,7 +49,8 @@ x=lowpass(accel_x,fpass,fs);
 y=lowpass(accel_y,fpass,fs);
 
 %computation of lateral acceleration
-lateral=sqrt(x.^2+y.^2);
+%lateral=sqrt(x.^2+y.^2);
+lateral=y
 
 %Double Check of fft of lateral
 L=length(lateral);
@@ -62,7 +63,7 @@ P1(2:end-1) = 2*P1(2:end-1);
 %spectrogram(P1);
 
 %select data for mean compution
-threshold=0.5;
+threshold=0.006
 index=find(abs(lateral)>=threshold);
 
 upperbound=round(length(index)*1/4);
