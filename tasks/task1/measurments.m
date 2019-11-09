@@ -115,7 +115,7 @@ I_Aufbau = (masseAufbau*g*LAufbauSchwerpunkt)/((2*pi/T_Aufbau)^2);
 
 % Messung fuer Schingbuehne und Auto
 % Gesamtschwerpunkt im Schwingbuehnen KOS
-z_ges = (masseAufbau * zAufbau + mges * 0.135)/(masseAufbau + mges); % 13.5cm wurden grob gemessen
+z_ges = (masseAufbau * zAufbau + mges * (0.135 + 0.0032))/(masseAufbau + mges); % 13.5cm wurden grob gemessen
 
 % Abstand Gesamtschwerpunkt zur Drehachse
 L_CoM_ges = LAufbau - z_ges;
@@ -124,7 +124,7 @@ L_CoM_ges = LAufbau - z_ges;
 T_ges = 1.372;
 
 % Abstand von der Drehachse zum Schwerpunkt des Autos
-L_CoM_Auto = LAufbau - 0.135;
+L_CoM_Auto = LAufbau - (0.135 + 0.0032);
 
 I_Auto = ((masseAufbau + mges)*g*L_CoM_ges)/((2*pi/T_ges)^2) - I_Aufbau - mges*L_CoM_Auto^2; %kg m^2
 
