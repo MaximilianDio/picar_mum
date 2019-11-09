@@ -22,7 +22,8 @@ fpass=double(8); %cutoff lowpass
     
     [accel_data(n),accel_std(n)] = get_accels(accel_x,accel_y,fpass,fs)
    end
-  
+
+
 %compute angles
 angles_unreal=[16.5;17.75;18.5];
    for n=1:length(angles_unreal)
