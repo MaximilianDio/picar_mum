@@ -36,6 +36,8 @@ legend("measured Data","quadratic fitting curve");
 
 xlabel("angles Input in Deg");
 ylabel("angles Output in Deg")
+%%
+vel=G_speed(0.9)
 
 %% quadratic interpolation
 function y = G_speed(x)
