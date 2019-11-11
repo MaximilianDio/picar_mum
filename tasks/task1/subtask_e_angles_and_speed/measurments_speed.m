@@ -7,7 +7,7 @@ clc
 % speed corresponds to value given in ROS
 
 %distanz zwischen Lichtschranken = 1m
-deltaL = 1; %mhttps://help.github.com/en/github/setting-up-and-managing-your-github-user-account/inviting-collaborators-to-a-personal-repository
+deltaL = 1; %
 
 filenames = ["tek0000ALL.csv";
              "tek0001ALL.csv";
@@ -38,6 +38,7 @@ legend("measured Data","quadratic fitting curve");
 % ylabel("angles Output in Deg")
 xlabel('Speed input')
 ylabel('Velocity of Picar04 [m/s]')
+
 %% quadratic interpolation
 function y = G_speed(x)
 
