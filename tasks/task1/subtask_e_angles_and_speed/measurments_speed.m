@@ -7,17 +7,17 @@ clc
 % speed corresponds to value given in ROS
 
 %distanz zwischen Lichtschranken = 1m
-deltaL = 1; %m
+deltaL = 1; %mhttps://help.github.com/en/github/setting-up-and-managing-your-github-user-account/inviting-collaborators-to-a-personal-repository
 
-filenames = ["tek0000All.csv";
-             "tek0001All.csv";
-             "tek0002All.csv";
-             "tek0003All.csv";
-             "tek0004All.csv";
-             "tek0005All.csv";
-             "tek0006All.csv";
-             "tek0007All.csv";
-             "tek0008All.csv"];
+filenames = ["tek0000ALL.csv";
+             "tek0001ALL.csv";
+             "tek0002ALL.csv";
+             "tek0003ALL.csv";
+             "tek0004ALL.csv";
+             "tek0005ALL.csv";
+             "tek0006ALL.csv";
+             "tek0007ALL.csv";
+             "tek0008ALL.csv"];
          
 NUM_ELEM = length(filenames);
 speedOut = zeros(NUM_ELEM,1); 
@@ -33,10 +33,11 @@ plot(speedIn,speedOut)
 hold on;
 plot(speedIn,G_speed(speedIn))
 legend("measured Data","quadratic fitting curve");
-
-xlabel("angles Input in Deg");
-ylabel("angles Output in Deg")
-
+% 
+% xlabel("angles Input in Deg");
+% ylabel("angles Output in Deg")
+xlabel('Speed input')
+ylabel('Velocity of Picar04 [m/s]')
 %% quadratic interpolation
 function y = G_speed(x)
 
@@ -73,5 +74,5 @@ function deltaTime = get_deltaTime(filename)
 
     deltaTime = time_ch2 - time_ch1;
     
-%     plot(time(1:end-1),[speed_ch1(1:end-1) , speed_ch2(1:end-1)] )
+    plot(time(1:end-1),[speed_ch1(1:end-1) , speed_ch2(1:end-1)] )
 end
