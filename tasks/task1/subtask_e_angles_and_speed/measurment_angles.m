@@ -6,14 +6,15 @@ clc
 anglesIn = 0:5:30;
 anglesOut = [0;5;9;13;18;23;26];
 
-plot(anglesIn,anglesOut);
+plot(anglesIn,anglesOut,'LineWidth', 1.5,'Marker','x');
 hold on;
-plot(anglesIn,G_angles(anglesIn));
-legend("measured Data","linear fitting curve");
-
-xlabel("angles Input in Deg");
-ylabel("angles Output in Deg")
-
+plot(anglesIn,G_angles(anglesIn),'LineWidth', 1.5);
+legend("Daten","Lineare Interpolation",'Location','southeast','FontSize',12);
+grid on
+xlabel("Eingangs Winkel [?]");
+ylabel("Ausgangs Winkel [?]")
+set(gca,'FontSize',12)
+set(gcf, 'Position', [100, 100, 650, 400]);
 
 % angeDesiredIn = fsolve(@G_angles,15);
 
