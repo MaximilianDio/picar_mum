@@ -19,9 +19,10 @@ f=fs*(0:(L/2))/L
 accel_lat=sqrt(accel_x.^2+accel_y.^2)
 spectrogram(accel_y,256,250,256,fs,'yaxis')
 caxis([-80 -8])
+set(gca,'FontSize',12)
+set(gcf, 'Position', [100, 100, 650, 400]);
 ylabel('Frequenz [Hz]');
 xlabel('Zeit [s]');
-set(gca,'FontSize',11)
 ylabel(colorbar,'Energie/Frequenz [dB/Hz]','FontSize', 11)
 %% 
 figure(1)

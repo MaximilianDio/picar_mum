@@ -40,9 +40,10 @@ accel=0:0.01:0.4;
 plot(accel_data,angle_data,'LineWidth', 1.5, 'Marker','x')
 hold on;
 plot(accel',Q_accels(accel),'LineWidth', 1.5)
-set(gca,'FontSize',11)
+set(gca,'FontSize',12)
+set(gcf, 'Position', [100, 100, 650, 400]);
 grid on
-legend("Daten","Quadratische Interpolation",'Location','southeast','FontSize',11);
+legend("Daten","Quadratische Interpolation",'Location','southeast','FontSize',12);
 
 xlabel("Querbeschleunigung [m/s^2]");
 ylabel("Lenkradwinkel [?]")

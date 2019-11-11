@@ -29,13 +29,16 @@ end
 
 speedIn = 0.2:0.1:1;
 
-plot(speedIn,speedOut)
+plot(speedIn,speedOut,'LineWidth', 1.5,'Marker','x');
 hold on;
-plot(speedIn,G_speed(speedIn))
-legend("measured Data","quadratic fitting curve");
+plot(speedIn,G_speed(speedIn),'LineWidth', 1.5)
+grid on
+set(gca,'FontSize',12)
+set(gcf, 'Position', [100, 100, 650, 400]);
+legend("Daten","Quatratische Interpolation",'Location','southeast','FontSize',12);
 
-xlabel("angles Input in Deg");
-ylabel("angles Output in Deg")
+xlabel("Eingangs Geschwindigkeit");
+ylabel("Ausgangs Geschwindigkeit [m/s]")
 %%
 vel=G_speed(0.9)
 
