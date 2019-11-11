@@ -13,7 +13,7 @@ angle_data=length(filenames);
 accel_std=length(filenames);
 
 % fudge factor
-fpass=double(8); %cutoff lowpass
+fpass=double(1.5); %cutoff lowpass
 
 %compute accels
 
