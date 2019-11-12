@@ -54,9 +54,9 @@ end
 % Define estimation problem for fmincon
 
 % Initial Guess
-x0 = 80 * 1e3 .* ones(2,1);
-A = [-ones(2); ones(2)];
-b = [100 100 1e5 1e5].';
+x0 = 80 .* ones(2,1);
+A = [-eye(2); eye(2)];
+b = [-5 -5 1e6 1e6].';
 
 x = fmincon(@(X)EstimationError(X, velocity_data, angle_data, dpsi_meas), x0, A, b);
 
@@ -66,7 +66,7 @@ EstimationError(x, velocity_data, angle_data, dpsi_meas)
 function J = EstimationError(x, Vel, Angle, yaw_meas)
     J = 0;
     for i = 1:3
-        J = J + norm(yaw_meas(i) - dpsi_Function(x(1), x(2), Vel(i), Angle(i)))^2;
+        J = J + norm(yaw_meas(i) - dpsi_Function(x(1), x(2), Vel(i), Angle(i))* pi/180)^2;
     end
 end
 
