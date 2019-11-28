@@ -7,17 +7,17 @@ clc
 % speed corresponds to value given in ROS
 
 %distanz zwischen Lichtschranken = 1m
-deltaL = 1; %m
+deltaL = 1; %
 
-filenames = ["tek0000All.csv";
-             "tek0001All.csv";
-             "tek0002All.csv";
-             "tek0003All.csv";
-             "tek0004All.csv";
-             "tek0005All.csv";
-             "tek0006All.csv";
-             "tek0007All.csv";
-             "tek0008All.csv"];
+filenames = ["tek0000ALL.csv";
+             "tek0001ALL.csv";
+             "tek0002ALL.csv";
+             "tek0003ALL.csv";
+             "tek0004ALL.csv";
+             "tek0005ALL.csv";
+             "tek0006ALL.csv";
+             "tek0007ALL.csv";
+             "tek0008ALL.csv"];
          
 NUM_ELEM = length(filenames);
 speedOut = zeros(NUM_ELEM,1); 
@@ -29,13 +29,19 @@ end
 
 speedIn = 0.2:0.1:1;
 
-plot(speedIn,speedOut)
+plot(speedIn,speedOut,'LineWidth', 1.5,'Marker','x');
 hold on;
-plot(speedIn,G_speed(speedIn))
-legend("measured Data","quadratic fitting curve");
+plot(speedIn,G_speed(speedIn),'LineWidth', 1.5)
+grid on
+set(gca,'FontSize',12)
+set(gcf, 'Position', [100, 100, 650, 400]);
+legend("Daten","Quatratische Interpolation",'Location','southeast','FontSize',12);
+dim = [.15 .5 .3 .3];
+str = 'y = -0.76149x^2 + 2.6308x - 0.3301';
+annotation('textbox',dim,'String',str,'FitBoxToText','on','Color',[0.8500, 0.3250, 0.0980],'FontSize',12);
+xlabel("Eingangs Geschwindigkeit");
+ylabel("Ausgangs Geschwindigkeit [m/s]")
 
-xlabel("angles Input in Deg");
-ylabel("angles Output in Deg")
 
 %% quadratic interpolation
 function y = G_speed(x)
@@ -73,5 +79,5 @@ function deltaTime = get_deltaTime(filename)
 
     deltaTime = time_ch2 - time_ch1;
     
-%     plot(time(1:end-1),[speed_ch1(1:end-1) , speed_ch2(1:end-1)] )
+    plot(time(1:end-1),[speed_ch1(1:end-1) , speed_ch2(1:end-1)] )
 end

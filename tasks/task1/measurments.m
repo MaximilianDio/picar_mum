@@ -1,7 +1,12 @@
 %% measurments
 %% constants
-
+%global const.
 g = 9.81; %m/s^2
+
+% Car parameters
+wheelbase=0.26; %m radstand des picars
+width=0.19; %m breite des picars
+
 %% mass
 
 massCar = [1902.84; 1902.33 ; 1902.34]*10^-3; %kg Gesamtmasse Auto ohne Akku
@@ -55,27 +60,32 @@ hF = 0.298-0.032; %m
 h = hF*Fz/(mges*g); %m 
 
 %% CoM 2
+%Berechnete Werte beziehen sich auf Inertialsystem in Hinterachse des Picars
+%Dabei zeigt die x achse nach vorne, die y achse nach links und die z nach
+%oben
+%%  x-direction
+W_f =mean([1056.87; 1054.65 ; 1056.85])*10^-3; %kg front load
+x_com2=(W_f/mges-1/2)* wheelbase + wheelbase/2; %Lage Massenschwerpunkt Komponente x
 
-%% x_com2
-W_f =mean([1056.87; 1054.65 ; 1056.85]); %kg front load
-x_com2=(-W_f/mges+1/2)* wheelbase
+%%  y-direction
+W_l =mean([1220.16; 1198.05 ; 1183.27])*10^-3; %kg load on left side
+y_com2=(W_l/mges-1/2)* width; %Lage Massenschwerpunkt Komponente y
 
-%% y_com2
-W_r =mean([1220.16; 1198.05 ; 1183.27]); %kg front load
-y_com2=(W_r/mges-1/2)* b
+%%  z-direction
+W_r=mean([1525; 1507.19])*10^-3;
+z_com2=(W_r*wheelbase-mges*(wheelbase-x_com2))/mges*tan(45*pi/180); %Lage Massenschwerpunkt Komponente z
 
-%% z_com2
-W_f2=1.525
-z_com2=(W_f2*wheelbase-mges*xcom2)/mges*tan(45*pi/180)
-
-
-%% Delta CoM
+%% Compare CoM's
 
 %delta X
 
 %delta Y
+y_com=(b/2-br)
+deltay=(b/2-br)-y_com2
 
-%Delta z 
+%delta Z
+z_com=h
+deltaz=h-z_com2
 %% Massentraegheit
 
 % Aufbau:
@@ -105,7 +115,7 @@ I_Aufbau = (masseAufbau*g*LAufbauSchwerpunkt)/((2*pi/T_Aufbau)^2);
 
 % Messung fuer Schingbuehne und Auto
 % Gesamtschwerpunkt im Schwingbuehnen KOS
-z_ges = (masseAufbau * zAufbau + mges * 0.135)/(masseAufbau + mges); % 13.5cm wurden grob gemessen
+z_ges = (masseAufbau * zAufbau + mges * (0.135 + 0.0032))/(masseAufbau + mges); % 13.5cm wurden grob gemessen
 
 % Abstand Gesamtschwerpunkt zur Drehachse
 L_CoM_ges = LAufbau - z_ges;
@@ -114,7 +124,7 @@ L_CoM_ges = LAufbau - z_ges;
 T_ges = 1.372;
 
 % Abstand von der Drehachse zum Schwerpunkt des Autos
-L_CoM_Auto = LAufbau - 0.135;
+L_CoM_Auto = LAufbau - (0.135 + 0.0032);
 
 I_Auto = ((masseAufbau + mges)*g*L_CoM_ges)/((2*pi/T_ges)^2) - I_Aufbau - mges*L_CoM_Auto^2; %kg m^2
 
