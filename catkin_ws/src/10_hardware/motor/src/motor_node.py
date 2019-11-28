@@ -36,7 +36,7 @@ class MotorController(object):
                                   "Shutting down!")
             return
 
-        # init motor parameters
+        # init motor picar
         self.params = MotorParams(config_file_path)
 
         # create a timeout variable which is set to false, if a message was received.

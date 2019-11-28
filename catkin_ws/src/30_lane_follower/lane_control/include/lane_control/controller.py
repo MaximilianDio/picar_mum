@@ -71,7 +71,7 @@ class Controller(object):
                           p_gain=None,
                           weight_distance=None,
                           weight_angle=None):
-        """Updates the controller parameters.
+        """Updates the controller picar.
 
         Args:
             p_gain (float): The proportional gain of the controller.

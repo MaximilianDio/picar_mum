@@ -112,7 +112,7 @@ class LaneControlNode(object):
         return 1
 
     def update_controller(self):
-        """Updates the controller object's parameters"""
+        """Updates the controller object's picar"""
         self.controller.update_parameters(
             self._params["p_gain"],
             self._params["weight_distance"],
