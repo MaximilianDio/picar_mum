@@ -33,7 +33,7 @@ class KeyboardController(object):
         vehicle_name = rospy.get_namespace().strip("/")
 
         self.velocity = 0.3
-        self.angle = 16.5  # absolute value
+        self.angle = 100.0  # absolute value
 
         self.screen = pygame.display.set_mode(
             (KeyboardController.SCREEN_SIZE, KeyboardController.SCREEN_SIZE)
@@ -174,6 +174,7 @@ class KeyboardController(object):
             car_cmd.angle = self.angle # angle will be clamped by the car itself
         if keys[self.K_RIGHT]:
             car_cmd.angle = -self.angle # angle will be clamped by the car itself
+
 
 
         """ prints angle and data for debugging """
