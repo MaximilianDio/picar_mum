@@ -2,9 +2,9 @@
 <package format="2">
   <name>leader_detection</name>
   <version>0.0.0</version>
-  <description>The leader_detection package</description>
+  <description>This package consists of nodes processing images to filter and detect a leader vehicle</description>
 
-  <maintainer email="maximilian@todo.todo">maximilian</maintainer>
+  <maintainer email="maximilian.dio@tuhh.de">Maximilian Dio</maintainer>
 
   <license>TODO</license>
 
@@ -26,7 +26,5 @@
   <exec_depend>picar_msgs</exec_depend>
 
   <export>
-    <!-- Other tools can request additional information be placed here -->
-
   </export>
 </package>

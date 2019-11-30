@@ -11,13 +11,12 @@
             <node pkg="leader_detection" type="leader_detection_node.py" name="leader_detection_node" output="screen">
                 <param name="config_file_name" value="$(arg config_file_name)"/>
             </node>
-
         </group>
     </group>
 
     <group unless="$(arg local)">
         <group ns="$(arg ns)">
-            <node machine="$(arg machine)" pkg="leader_detection" type="leader_detection_node.py" name="leader_detection_nodee" output="screen"/>
+            <node machine="$(arg machine)" pkg="leader_detection" type="leader_detection_node.py" name="leader_detection_node" output="screen"/>
             <param name="config_file_name" value="$(arg config_file_name)"/>
         </group>
     </group>

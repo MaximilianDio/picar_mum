@@ -44,6 +44,7 @@
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
     </include>
 
+    <!--  launch  DETECTION nodes (line and leader) -->
 
     <!-- launch line_detection_node -->
     <remap from="line_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
@@ -53,6 +54,16 @@
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
     </include>
 
+    <!-- EDIT: 30.11.19 (MAX) - leader_detection -->
+    <!-- launch leader_detection_node -->
+    <remap from="leader_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
+    <include file="$(find leader_detection)/launch/leader_detection_node.launch">
+        <arg name="ns" value="$(arg ns)"/>
+        <arg name="machine" value="$(arg machine)"/>
+        <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
+    </include>
+
+    
     <!-- start ground_projection_node -->
     <remap from="ground_projection_node/track_position_input" to="line_detection_node/track_position"/>
     <group if="$(arg sim)">
