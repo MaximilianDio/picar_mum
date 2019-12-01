@@ -56,7 +56,6 @@ class LaneControlNode(object):
             SetValue,
             self.set_velocity_desired)
 
-
     def init_publishers(self):
         """Initialize ROS publishers and stores them in a dictionary
 
@@ -90,7 +89,7 @@ class LaneControlNode(object):
             data = yaml.safe_load(file_handle)
         self._params = data
         for param_name in self._params:
-            set_param("~"+param_name, self._params[param_name])
+            set_param("~" + param_name, self._params[param_name])
 
     def set_p_gain(self, request):
         """Sets the p_gain parameter of the controller."""

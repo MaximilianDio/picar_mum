@@ -1,0 +1,17 @@
+########## explanation for crop_ratios ##########
+# crop_radio_middle_x = Dx/width
+# crop_ratio_top_y = Dy/height
+#
+# |<--              width                  -->|
+#              | <-- DX  -->|
+# ---------------------------------------------  ^
+# |            |            |    ^            |
+# |            |            |    Dy           |
+# |            |            |                 |  height
+# |            |____________|    v            |
+# |                                           |
+# |                                           |
+# |                                           |  v
+# ---------------------------------------------
+crop_ratio_middle_x: 0.3
+crop_ratio_top_y: 0.65
