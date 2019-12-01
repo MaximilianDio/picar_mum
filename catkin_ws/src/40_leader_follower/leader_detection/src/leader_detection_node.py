@@ -31,23 +31,17 @@ class LeaderDetectionNode(object):
         # --------------------------------------------------------------------------------------------------------------
 
         # subscribe to image and publish position of leader
-        self.sub_img = rospy.Subscriber("~input_image/raw",
-                                        Image,
-                                        self.rcv_img_cb)
+        self.sub_img = rospy.Subscriber("~input_image/raw", Image, self.rcv_img_cb)
 
         # --------------------------------------------------------------------------------------------------------------
         # ------------------------------------------------ PUBLISHER ---------------------------------------------------
         # --------------------------------------------------------------------------------------------------------------
 
         # relative position of leader to car
-        self.pub_position = rospy.Publisher("~leader_position",
-                                            Point32,
-                                            queue_size=1)
+        self.pub_position = rospy.Publisher("~leader_position", Point32, queue_size=1)
 
         # relative z-orientation of leader to car
-        self.pub_orientation = rospy.Publisher("~leader_orientation",
-                                               Float32,
-                                               queue_size=1)
+        self.pub_orientation = rospy.Publisher("~leader_orientation", Float32, queue_size=1)
 
         # ros Image has to be bridged to openCV
         self.bridge = CvBridge()
