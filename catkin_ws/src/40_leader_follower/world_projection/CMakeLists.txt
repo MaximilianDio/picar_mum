@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(ground_projection)
+project(world_projection)
 
 
 find_package(catkin REQUIRED COMPONENTS
