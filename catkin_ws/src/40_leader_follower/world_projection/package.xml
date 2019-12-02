@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ground_projection</name>
+  <name>world_projection</name>
   <version>0.0.0</version>
-  <description>This package provides functionality to project image points to ground and vice versa</description>
+  <description>This package provides functionality to project image points to world and vice versa</description>
 
   <maintainer email="thies.lennart.alff@tuhh.de">Thies Lennart Alff</maintainer>
 

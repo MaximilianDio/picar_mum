@@ -22,16 +22,16 @@ def normalize_image_coordinates(pixel_coord, image_width, image_height):
     return np.array([x_normalized, y_normalized])
 
 
-class GroundProjector(object):
+class WorldProjector(object):
     def __init__(self, camera_info, h_matrix, distorted_input=True):
         """
-        The GroundProjector can rectify pixels or the whole image and the
-        ground coordinates of a pixel by using the homography matrix H
+        The WorldProjector can rectify pixels or the whole image and the
+        World coordinates of a pixel by using the homography matrix H
 
         Args:
             camera_info:
             h_matrix: Homography matrix, that maps normalized undistorted pixel
-                coordinates into the ground plane.
+                coordinates into the world plane.
             distorted_input: Should only be False if simulation without
                 simulated camera distortion is used.
         """
@@ -47,20 +47,20 @@ class GroundProjector(object):
             self.camera.fromCameraInfo(camera_info)
         self.h_matrix = h_matrix
 
-    def pixel2ground(self, pixel_coord, distorted_input=None):
-        """Returns the ground projection of a pixel.
+    def pixel2world(self, pixel_coord, distorted_input=None):
+        """Returns the world projection of a pixel.
 
         For distorted input the undistorted coordinates of the pixel will be
         calculcated. Afterwards the pixel will get noramlized and projected to
-        the ground plane by applying the homography matrix.
+        the world plane by applying the homography matrix.
 
         Args:
             pixel_coord (tuple/list/numpy.ndarray): Pixel coordinates of the
-                point that will be projected into the ground plane.
+                point that will be projected into the world plane.
             distorted_input (bool): Can be set to override the default value
                 defined when creating the instance.
 
-        Returns: Coordinates of the pixel projected into the ground plane
+        Returns: Coordinates of the pixel projected into the world plane
             expressed in the vehicles coordinate system.
 
         """
@@ -82,7 +82,7 @@ class GroundProjector(object):
         return point
 
     def _project_normalized_pixel(self, pixel_normalized):
-        """ TODO: WRITE CODE TO COMPUTE THE PIXEL'S CORRESPONDING GROUND PLANE POINT
+        """ TODO: WRITE CODE TO COMPUTE THE PIXEL'S CORRESPONDING World PLANE POINT
 
         Args:
             pixel_normalized: Normalized pixel coordinate
@@ -94,7 +94,7 @@ class GroundProjector(object):
         point = Point32()
 
         # YOUR CALCULATION NEEDS TO BE DONE HERE. REPLACE THE ASSIGNMENT
-        # OF THE POINT'S COORDINATES BY REASONABLE ASSIGNMENTS OF YOUR GROUND
+        # OF THE POINT'S COORDINATES BY REASONABLE ASSIGNMENTS OF YOUR World
         # PROJECTION.
         point.x = 0.0
         point.y = 0.0

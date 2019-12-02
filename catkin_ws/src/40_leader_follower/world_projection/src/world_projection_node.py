@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 import rospy
-import ground_projection.ground_projection as ground_projection
+import world_projection.world_projection as world_projection
 import yaml
 import numpy as np
 from geometry_msgs.msg import Point32
 from picar_common.picar_common import get_param, get_config_file_path, get_camera_info
 
 
-class GroundProjectionNode(object):
+class WorldProjectionNode(object):
     def __init__(self):
-        rospy.init_node("ground_projection_node")
+        rospy.init_node("world_projection_node")
         # distorted_input is set to False only in simulation mode
         distorted_input = get_param("~distorted_input", "False")
 
@@ -24,8 +24,8 @@ class GroundProjectionNode(object):
             data = yaml.safe_load(file_handle)
             h_matrix = np.array(data["H"]["data"]).reshape(3, 3)
 
-        # create instance of the GroundProjector
-        self.projector = ground_projection.GroundProjector(
+        # create instance of the WorldProjector
+        self.projector = world_projection.WorldProjector(
             camera_info,
             h_matrix,
             distorted_input)
@@ -45,12 +45,12 @@ class GroundProjectionNode(object):
 
     def track_position_callback(self, msg):
 
-        # calculate ground coordinates
-        point = self.projector.pixel2ground((msg.x, msg.y))
+        # calculate World coordinates
+        point = self.projector.pixel2world((msg.x, msg.y))
 
         self.pub_track_position.publish(point)
 
 
 if __name__ == "__main__":
-    GroundProjectionNode()
+    WorldProjectionNode()
     rospy.spin()
