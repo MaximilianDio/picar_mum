@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 import rospy
 import yaml
-from lane_control.controller import Controller, ControllerValues
+from leader_control.controller import Controller, ControllerValues
 from picar_common.picar_common import get_param, get_config_file_path, set_param
-from picar_msgs.msg import LanePose, CarCmd
+from picar_msgs.msg import LeaderPose, CarCmd
 from std_msgs.msg import Float64
 from picar_msgs.srv import SetValue
 
 
-class LaneControlNode(object):
-    """Lane controller ROS node."""
+class LeaderControlNode(object):
+    """Leader controller ROS node."""
 
     def __init__(self):
         self._params = {}
@@ -37,7 +37,7 @@ class LaneControlNode(object):
         self.init_services()
 
         self.sub_pose = rospy.Subscriber("~pose_input",
-                                         LanePose,
+                                         LeaderPose,
                                          self.pose_cb,
                                          queue_size=1)
 
@@ -122,7 +122,7 @@ class LaneControlNode(object):
         """Handles incoming pose messages to send angle/velocity commands to the vehicle.
 
         Args:
-            message (LanePose):
+            message (LeaderPose):
         """
         desired_values = ControllerValues(self._params["distance_desired"],
                                           self._params["angle_desired"],
@@ -176,9 +176,9 @@ class LaneControlNode(object):
 
 
 def main():
-    """Starts the lane control node"""
-    rospy.init_node("lane_control_node")
-    LaneControlNode()
+    """Starts the leader control node"""
+    rospy.init_node("leader_control_node")
+    LeaderControlNode()
     rospy.spin()
 
 

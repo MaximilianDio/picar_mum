@@ -1,0 +1,5 @@
+# pixel coordinate with frame origin in upper left corner
+geometry_msgs/Point pixel_coord
+---
+# ground plane coordinate with frame origin in the center of the vehicle
+geometry_msgs/Point ground_coord
