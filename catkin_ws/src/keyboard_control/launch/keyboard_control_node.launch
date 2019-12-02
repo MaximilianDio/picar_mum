@@ -10,6 +10,6 @@
     <!-- Subscriptions -->
 
     <!-- Publications -->
-    <!-- "~car_cmd": picar_msgs/CarCmd -->
+    <!-- "motor_node/car_cmd": picar_msgs/CarCmd -->
 
 </launch>

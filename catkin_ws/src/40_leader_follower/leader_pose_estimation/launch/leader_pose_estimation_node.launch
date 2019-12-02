@@ -1,0 +1,28 @@
+<launch>
+    <arg name="ns"/>
+    <arg name="local"/>
+    <arg name="machine"/>
+
+    <!-- launch lane_pose_estimation_node -->
+    <group if="$(arg local)">
+        <group ns="$(arg ns)">
+            <node pkg="leader_pose_estimation" type="leader_pose_estimation_node.py" name="leader_pose_estimation_node" output="screen"/>
+        </group>
+    </group>
+
+    <group unless="$(arg local)">
+        <group ns="$(arg ns)">
+            <node machine="$(arg machine)" pkg="leader_pose_estimation" type="leader_pose_estimation_node.py" name="leader_pose_estimation_node" output="screen"/>
+        </group>
+    </group>
+
+
+    <!-- Subscriptions -->
+    <!-- "~leader_blue_ball_position": geometry_msgs/Point32 -->
+    <!-- "~leader_green_ball_position": geometry_msgs/Point32 -->
+
+    <!-- Publications -->
+    <!-- "~leader_relative_position": geometry_msgs/Point32 -->
+    <!-- "~leader_relative_orientation": std_msgs/Float32 -->
+
+</launch>

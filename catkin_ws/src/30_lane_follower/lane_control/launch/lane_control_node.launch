@@ -18,6 +18,9 @@
     <!-- "~pose_input": picar_msgs/LanePose -->
 
     <!-- Publications -->
+    <!-- "~distance_error": std_msgs/Float64 -->
+    <!-- "~angle_error": std_msgs/Float64 -->
+    <!-- "~combined_error": std_msgs/Float64 -->
     <!-- "~car_cmd": picar_msgs/CarCmd -->
 
 </launch>
