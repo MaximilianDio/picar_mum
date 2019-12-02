@@ -4,7 +4,6 @@ import yaml
 from cv_bridge import CvBridgeError, CvBridge
 from geometry_msgs.msg import Point32
 from sensor_msgs.msg import Image
-from std_msgs.msg import Float32
 from picar_msgs.srv import SetValue
 import leader_detection as leader_detection
 from picar_common.picar_common import get_param, get_config_file_path, set_param
@@ -53,43 +52,49 @@ class LeaderDetectionNode(object):
 
     def init_services(self):
         """ initialization of ROS services to configure parameters of leader detection during runtime"""
-        self.services["set_123_TEST"] = rospy.Service("~set_123_TEST", SetValue, self.set_123_TEST)
+        # TODO: add services to change parameters online
+        pass
+        # self.services["set_123_TEST"] = rospy.Service("~set_123_TEST", SetValue, self.set_123_TEST)
 
-    def set_123_TEST(self, request):
-        """ this is a test service callback function"""
-        print request.value
-        return 1
+    # def set_123_TEST(self, request):
+    #     """ this is a test service callback function"""
+    #     print request.value
+    #     return 1
 
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
-        # relative position of leader to car
-        self.publishers["leader_position"] = rospy.Publisher("~leader_position", Point32, queue_size=1)
+        # relative position of leaders blue ball to picar
+        self.publishers["leader_blue_ball_position"] = rospy.Publisher("~leader_blue_ball_position", Point32,
+                                                                       queue_size=1)
 
-        # relative z-orientation of leader to car
-        self.publishers["leader_orientation"] = rospy.Publisher("~leader_orientation", Float32, queue_size=1)
+        # relative position of leaders green ball to picar
+        self.publishers["leader_green_ball_position"] = rospy.Publisher("~leader_green_ball_position", Point32,
+                                                                        queue_size=1)
 
     def rcv_img_cb(self, image_data):
         """
-            receive image callback: process image and publish position and orientation
+            receive image callback: process image and publish positions of blue and green ball
             :param image_data: form camera
             """
         img_bgr = self.bridge.imgmsg_to_cv2(image_data)
 
-        position, orientation = self.leader_detector.process_image(img_bgr)
+        positions = self.leader_detector.process_image(img_bgr)
 
-        if position is None or orientation is None:
+        if positions is None:
             return
 
         # format output msgs
-        msg_out_pos = Point32()
-        msg_out_pos.x = position[0]
-        msg_out_pos.y = position[1]
+        msg_out_blue_ball_pos = Point32()
+        msg_out_blue_ball_pos.x = positions[0]
+        msg_out_blue_ball_pos.y = positions[1]
 
-        msg_out_orientation = orientation
+        msg_out_green_ball_pos = Point32()
+        msg_out_green_ball_pos.x = positions[2]
+        msg_out_green_ball_pos.y = positions[3]
 
         # publish position and orientation of leader
-        self.publishers["leader_position"].publish(msg_out_pos)
-        self.publishers["leader_orientation"].publish(msg_out_orientation)
+        self.publishers["leader_blue_ball_position"].publish(msg_out_blue_ball_pos)
+        self.publishers["leader_green_ball_position"].publish(msg_out_green_ball_pos)
 
 
 if __name__ == "__main__":

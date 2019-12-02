@@ -26,6 +26,7 @@
     <!-- "~input_image/raw": sensor_msgs/Image -->
 
     <!-- Publications -->
-    <!-- "~track_position": geometry_msgs/Point32 -->
+    <!-- "~leader_blue_ball_position": geometry_msgs/Point32 -->
+    <!-- "~leader_green_ball_position": geometry_msgs/Point32 -->
 
 </launch>

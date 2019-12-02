@@ -1,0 +1,45 @@
+<launch>
+    <arg name="ns"/>
+    <arg name="local"/>
+    <arg name="machine"/>
+    <arg name="distorted_input"/>
+
+    <arg name="intrinsics_file_name" default="$(arg ns)"/>
+    <arg name="extrinsics_file_name" default="$(arg ns)"/>
+
+
+    <!-- launch world projection node -->
+
+
+    <group if="$(arg local)">
+        <group ns="$(arg ns)">
+            <node pkg="world_projection" type="world_projection_node.py" name="world_projection_node" output="screen">
+                <param name="intrinsics_file_name" value="$(arg intrinsics_file_name)"/>
+                <param name="extrinsics_file_name" value="$(arg extrinsics_file_name)"/>
+                <param name="distorted_input" value="$(arg distorted_input)"/>
+            </node>
+        </group>
+    </group>
+
+    <group unless="$(arg local)">
+        <group ns="$(arg ns)">
+            <node machine="$(arg machine)" pkg="world_projection" type="world_projection_node.py" name="world_projection_node" output="screen">
+                <param name="intrinsics_file_name" value="$(arg intrinsics_file_name)"/>
+                <param name="extrinsics_file_name" value="$(arg extrinsics_file_name)"/>
+                <param name="distorted_input" value="$(arg distorted_input)"/>
+            </node>
+        </group>
+    </group>
+
+
+
+    <!-- Subscriptions -->
+    <!-- "~leader_blue_ball_position_input": geometry_msgs/Point32 -->
+    <!-- "~leader_green_ball_position_input": geometry_msgs/Point32 -->
+
+    <!-- Publications -->
+    <!-- "~leader_blue_ball_position_output": geometry_msgs/Point32 -->
+    <!-- "~leader_green_ball_position_output": geometry_msgs/Point32 -->
+
+
+</launch>
