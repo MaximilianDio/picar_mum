@@ -1087,9 +1087,9 @@ namespace gazebo
         // set starting location of the box
         // std::vector<std::vector<double>> fields;
         // fields = getCSV("track_simple_loop1.csv");
-        int startValue_ = 650;
-        double frequenz_ = 20;
-        double vel_ = 1.0;
+        int startValue_ = 500;
+        double frequenz_ = 10;
+        double vel_ = 0.6;
         double aveDist_ =  vel_ / frequenz_ / 0.02; 
 
         double deltaX_ =0;
