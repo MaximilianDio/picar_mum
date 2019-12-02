@@ -6,6 +6,7 @@ from geometry_msgs.msg import Point32
 from picar_common.picar_common import get_param, get_config_file_path, get_camera_info
 
 
+
 class GroundProjectionNode(object):
     def __init__(self):
         self.pos_blue_ball = None
@@ -49,4 +50,5 @@ class GroundProjectionNode(object):
 if __name__ == "__main__":
     rospy.init_node("world_projection_node")
     GroundProjectionNode()
+
     rospy.spin()

@@ -5,24 +5,25 @@
     <env name="GAZEBO_MODEL_PATH" value="$(optenv GAZEBO_MODEL_PATH):$(find simulation)/models"/>
 
     <arg name="ns" default="simcar"/>
-    <arg name="paused"/>
     <arg name="verbose" default="false"/>
+    <arg name="paused"/>
     <arg name="gui"/>
-    
+
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="simple_loop.world"/>
+        <arg name="world_name" value="simple_loop_new.world"/>
         <arg name="verbose" value="$(arg verbose)"/>
         <arg name="paused" value="$(arg paused)"/>
         <arg name="gui" value="$(arg gui)"/>
     </include>
 
 
-    <!--
-    <node name="picar_spawn" pkg="gazebo_ros" type="spawn_model"
+    <!--<node name="picar_spawn" pkg="gazebo_ros" type="spawn_model"
           args="-sdf -database picar -model PiCar -x 0 -y -0.115"/>-->
 
     <group ns="$(arg ns)">
-        <include file="$(find picar_description)/launch/simcar.launch"></include>
+        <include file="$(find picar_description)/launch/simcar.launch">
+            <arg name="yaw" value="3.14"/>
+        </include>
 
     </group>
 </launch>

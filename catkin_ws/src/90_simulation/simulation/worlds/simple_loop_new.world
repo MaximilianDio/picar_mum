@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+    <world name="default">
+        <light name="sun" type="directional">
+            <pose>0 0 30 0.5 0 0 0</pose>
+            <cast_shadows>1</cast_shadows>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <attenuation>
+                <range>100</range>
+            </attenuation>
+            <direction>-0.5 0.5 -1</direction>
+        </light>
+        
+        <physics name='default_physics' default='0' type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+
+
+        <gravity>0 0 -9.8</gravity>
+
+        <scene>
+            <ambient>1 1 1 1</ambient>
+            <background>0.2 0.0 0.2 1</background>
+            <shadows>1</shadows>
+            <grid>0</grid>
+        </scene>
+
+        <include>
+            <uri>model://empty_ground_plane</uri>
+            <pose>0 0 -0.001 0 0 0</pose>
+        </include>
+
+
+        <!-- create the map -->
+        <include>
+            <uri>model://simple_track</uri>
+        </include>
+
+        <model name="box">
+            <pose>0 0 0.5 0 0 0</pose>
+            <link name="link">
+                <collision name="collision">
+                <geometry>
+                    <box>
+                    <size>1 1 1</size>
+                    </box>
+                </geometry>
+                </collision>
+
+                <visual name="visual">
+                <geometry>
+                    <box>
+                    <size>1 1 1</size>
+                    </box>
+                </geometry>
+                 <material>
+                    <ambient>0 0 1 1</ambient>
+                    <diffuse>0 0 1 0.8</diffuse>
+                    <specular>0.1 0.1 0.1 1</specular>
+                    <emissive>0 0 0 0</emissive>
+                </material>
+                </visual>
+            </link>
+
+      <plugin name="push_animate" filename="libanimated_box.so"/>
+    </model> 
+
+
+    </world>
+</sdf>
