@@ -1081,19 +1081,14 @@ namespace gazebo
       this->model = _parent;
 
         // create the animation
-        gazebo::common::PoseAnimationPtr anim(
-              // name the animation "test",
-              // make it last 10 seconds,
-              // and set it on a repeat loop
-              new gazebo::common::PoseAnimation("test", 10.0, true));
-
+       
         gazebo::common::PoseKeyFrame *key;
 
         // set starting location of the box
         // std::vector<std::vector<double>> fields;
         // fields = getCSV("track_simple_loop1.csv");
-        int startValue_ = 600;
-        double frequenz_ = 10;
+        int startValue_ = 650;
+        double frequenz_ = 20;
         double vel_ = 1.0;
         double aveDist_ =  vel_ / frequenz_ / 0.02; 
 
@@ -1104,6 +1099,12 @@ namespace gazebo
         int nextIdx_ = 0;
         bool openLoop = true;
         int i = 0;
+
+       gazebo::common::PoseAnimationPtr anim(
+              // name the animation "test",
+              // make it last 10 seconds,
+              // and set it on a repeat loop
+              new gazebo::common::PoseAnimation("test", 0.02*1038/ vel_, true));
 
         while(openLoop){
           curIdx_ = startValue_ - aveDist_ * i;
@@ -1147,6 +1148,10 @@ namespace gazebo
           key->Rotation(ignition::math::Quaterniond(0, 0,angle_ ));
           i++;
           
+          gzmsg << "CurIdex_:" << curIdx_<< "\n";
+          gzmsg << "NextIdex_:"<< nextIdx_ << "\n";
+          gzmsg << "Time :" << i/ frequenz_<< "\n";
+          gzmsg << "Vector:"<< ignition::math::Vector3d(fields[curIdx_][0],fields[curIdx_][1],fields[curIdx_][2])<< "\n\n";
         }    
         // set final location equal to starting location
         
