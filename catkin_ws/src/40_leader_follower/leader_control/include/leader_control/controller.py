@@ -89,8 +89,8 @@ class Controller(object):
         # compute velocity error
         error_velocity = actual_values.velocity - desired_values.velocity
 
-        # compute displacement error in x direction
-        error_x = actual_values.x
+        # compute displacement error in y direction
+        error_y = actual_values.distance_y
 
         # compute velocity error in x
         error_dx = actual_values.dx
