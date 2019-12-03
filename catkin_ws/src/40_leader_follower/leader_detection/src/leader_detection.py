@@ -3,6 +3,10 @@ import numpy as np
 import cv2
 
 
+def nothing(x):
+    pass
+
+
 class LeaderGetter(object):
     def __init__(self, params):
 
@@ -12,20 +16,73 @@ class LeaderGetter(object):
         self.dp = 2
         self.minDist = 10
         self.param1 = 50
-        self.param2 = 30
+        self.param2 = 20
         self.MIN_CIRCLE_RADIUS = 1
-        self.MAX_CIRCLE_RADIUS = 100
+        self.MAX_CIRCLE_RADIUS = 30
 
         #  TODO find proper values
-        self.lower_blue1 = np.array([110, 130, 20])
+        self.lower_blue1 = np.array([100, 215, 0])
         self.upper_blue1 = np.array([130, 255, 255])
         self.lower_blue2 = np.array([0, 20, 0])
         self.upper_blue2 = np.array([20, 255, 20])
 
-        self.lower_green1 = np.array([50, 130, 20])
+        self.lower_green1 = np.array([35, 230, 20])
         self.upper_green1 = np.array([70, 255, 255])
         self.lower_green2 = np.array([0, 0, 20])
         self.upper_green2 = np.array([20, 20, 255])
+
+
+
+        self.create_trackbar()
+
+        self.update_trackbars()
+
+    def create_trackbar(self):
+        self.TRACKBAR_NAMES = ['H_blue_l', 'S_blue_l', 'V_blue_l',
+                               'H_blue_h', 'S_blue_h', 'V_blue_h',
+                               'H_green_l', 'S_green_l', 'V_green_l',
+                               'H_green_h', 'S_green_h', 'V_green_h']
+
+        self.HSV_values = [100, 215, 0,
+                           130, 255, 255,
+                           35, 230, 20,
+                           70, 255, 255]
+
+        self.WIDTH = 300  # px
+        self.HEIGHT = 600  # px
+        self.trackbar_window = np.zeros((self.WIDTH, self.HEIGHT, 3), np.uint8)
+        self.window_name = "trackbars"
+        cv2.namedWindow(self.window_name)
+        for name, value in zip(self.TRACKBAR_NAMES, self.HSV_values):
+            print name
+            cv2.createTrackbar(name, self.window_name, value, 255, nothing)
+
+    def update_trackbars(self):
+        cv2.imshow(self.window_name, self.trackbar_window)
+        cv2.waitKey(1)
+
+    def update_trackbar_pos(self):
+
+        # TODO make it more modular
+
+        # get current position of slider
+        # HSV blue 1
+        self.lower_blue1[0] = cv2.getTrackbarPos("H_blue_l", self.window_name)
+        self.lower_blue1[1] = cv2.getTrackbarPos("S_blue_l", self.window_name)
+        self.lower_blue1[2] = cv2.getTrackbarPos("V_blue_l", self.window_name)
+        # HSV blue 2
+        self.lower_blue2[0] = cv2.getTrackbarPos("H_blue_h", self.window_name)
+        self.lower_blue2[1] = cv2.getTrackbarPos("S_blue_h", self.window_name)
+        self.lower_blue2[2] = cv2.getTrackbarPos("V_blue_h", self.window_name)
+        # HSV green 1
+        self.lower_green1[0] = cv2.getTrackbarPos("H_green_l", self.window_name)
+        self.lower_green1[1] = cv2.getTrackbarPos("S_green_l", self.window_name)
+        self.lower_green1[2] = cv2.getTrackbarPos("V_green_l", self.window_name)
+        # HSV green 2
+        self.lower_green2[0] = cv2.getTrackbarPos("H_green_h", self.window_name)
+        self.lower_green2[1] = cv2.getTrackbarPos("S_green_h", self.window_name)
+        self.lower_green2[2] = cv2.getTrackbarPos("V_green_h", self.window_name)
+
 
     def update_params(self, params):
         # TODO make it more modular!
@@ -42,6 +99,8 @@ class LeaderGetter(object):
             :param img_rgb: image of picar
             :returns position (px) of both tracking balls [x_blue y_blue x_green y_green]
             """
+        #update trackbar postions
+        self.update_trackbar_pos()
 
         # crop image
         img_rgb, x_offset = self.__crop_image(img_rgb)
@@ -54,6 +113,9 @@ class LeaderGetter(object):
         # mask images
         mask_blue = self._mask(img_hsv, "blue")
         mask_green = self._mask(img_hsv, "green")
+
+        mask_blue = cv2.GaussianBlur(mask_blue, (3, 3), cv2.BORDER_DEFAULT)
+        mask_green = cv2.GaussianBlur(mask_green, (3, 3), cv2.BORDER_DEFAULT)
 
         return self.__get_circle_pos(img_rgb, mask_blue, mask_green, x_offset)
 
@@ -70,13 +132,15 @@ class LeaderGetter(object):
         return mask
 
     # FIXME balls at which are farther away from the center will appear as ellipses -will not be detected correctly
-    def __get_circle_pos(self, img_rgb, mask_blue, mask_green,x_offset):
+    def __get_circle_pos(self, img_rgb, mask_blue, mask_green, x_offset):
         '''
         :param img_rgb:
         :param mask_blue:
         :param mask_green:
         :return: x_blue, y_blue, x_green, y_green, image_with_detection
         '''
+        cv2.imshow("mask_blue", mask_blue)
+        cv2.imshow("mask_green", mask_green)
 
         output = img_rgb.copy()
 
@@ -115,7 +179,7 @@ class LeaderGetter(object):
                 x_green = x
                 y_green = y
 
-            return (x_blue+x_offset, y_blue, x_green+x_offset, y_green), output
+            return (x_blue + x_offset, y_blue, x_green + x_offset, y_green), output
         else:
             return (1, 2, 3, 4), output
 

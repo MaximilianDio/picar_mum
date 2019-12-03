@@ -2,7 +2,7 @@ import cv2
 import leader_detection
 
 if __name__ == "__main__":
-    img = cv2.imread("Bild4.png")
+    img = cv2.imread("Bild3.png")
 
     ld = leader_detection.LeaderGetter(None)
     (x_blue, y_blue, x_green, y_green), output = ld.process_image(img)
