@@ -45,11 +45,26 @@ class LeaderControlNode(object):
 
     def init_services(self):
         """Initialize ROS services to configure the controller during runtime"""
-        #Todo set services
-        self.services["set_p_gain"] = rospy.Service(
-            "~set_p_gain",
+
+        self.services["set_k_pvel"] = rospy.Service(
+            "~set_k_pvel",
             SetValue,
-            self.set_p_gain)
+            self.set_k_pvel)
+
+        self.services["set_k_psteer"] = rospy.Service(
+            "~set_k_psteer",
+            SetValue,
+            self.set_k_psteer)
+
+        self.services["set_k_dvel"] = rospy.Service(
+            "~set_k_dvel",
+            SetValue,
+            self.set_k_dvel)
+
+        self.services["set_k_dsteer"] = rospy.Service(
+            "~set_k_dsteer",
+            SetValue,
+            self.set_k_dsteer)
 
         self.services["set_distance_desired"] = rospy.Service(
             "~set_distance_desired",
@@ -65,18 +80,24 @@ class LeaderControlNode(object):
         """Initialize ROS publishers and stores them in a dictionary
 
         """
-        #TODO Set Publisher
-        self.publishers["distance_error"] = rospy.Publisher(
-            "~distance_error",
-            Float64,
-            queue_size=1)
-        self.publishers["angle_error"] = rospy.Publisher(
-            "~angle_error",
+
+        self.publishers["error_distance"] = rospy.Publisher(
+            "~error_distance",
             Float64,
             queue_size=1)
 
-        self.publishers["combined_error"] = rospy.Publisher(
-            "~combined_error",
+        self.publishers["error_velocity"] = rospy.Publisher(
+            "~error_velocity",
+            Float64,
+            queue_size=1)
+
+        self.publishers["error_x"] = rospy.Publisher(
+            "~error_x",
+            Float64,
+            queue_size=1)
+
+        self.publishers["error_dx"] = rospy.Publisher(
+            "~error_dx",
             Float64,
             queue_size=1)
 
@@ -97,10 +118,31 @@ class LeaderControlNode(object):
         for param_name in self._params:
             set_param("~" + param_name, self._params[param_name])
 
-    def set_p_gain(self, request):
-        """Sets the p_gain parameter of the controller."""
-        self._params["p_gain"] = request.value
-        set_param("~p_gain", request.value)
+    def set_k_pvel(self, request):
+        """Sets the k_pvel_gain parameter of the controller."""
+        self._params["k_pvel"] = request.value
+        set_param("~k_pvel", request.value)
+        self.update_controller()
+        return 1
+
+    def set_k_psteer(self, request):
+        """Sets the k_psteer_gain parameter of the controller."""
+        self._params["k_psteer"] = request.value
+        set_param("~k_psteer", request.value)
+        self.update_controller()
+        return 1
+
+    def set_k_dvel(self, request):
+        """Sets the k_dvel_gain parameter of the controller."""
+        self._params["k_dvel"] = request.value
+        set_param("~k_dvel", request.value)
+        self.update_controller()
+        return 1
+
+    def set_k_dsteer(self, request):
+        """Sets the k_dsteer_gain  parameter of the controller."""
+        self._params["k_dsteer"] = request.value
+        set_param("~k_dsteer", request.value)
         self.update_controller()
         return 1
 
@@ -131,8 +173,8 @@ class LeaderControlNode(object):
         Args:
             message (LeaderPose):
         """
+        #todo change
         desired_values = ControllerValues(self._params["distance_desired"],
-                                          self._params["angle_desired"],
                                           self._params["velocity_desired"])
 
         actual_values = ControllerValues(message.d,
@@ -166,20 +208,26 @@ class LeaderControlNode(object):
         """ Publishes error messages.
 
         Args:
-            errors (iterable): Contains distance, angle and combined error.
+            errors (iterable): Contains distance, velocity, x and dx
         """
-        distance_error = Float64()
-        distance_error.data = errors[0]
 
-        angle_error = Float64()
-        angle_error.data = errors[1]
+        error_distance = Float64()
+        error_distance.data = errors[0]
 
-        combined_error = Float64()
-        combined_error.data = errors[2]
+        error_velocity = Float64
+        error_velocity.data = errors[1]
 
-        self.publishers["distance_error"].publish(distance_error)
-        self.publishers["angle_error"].publish(angle_error)
-        self.publishers["combined_error"].publish(combined_error)
+        error_x = Float64
+        error_x.data = errors[2]
+
+        error_dx = Float64
+        error_dx.data = errors[3]
+
+        self.publishers["error_distance"].publish(error_distance)
+        self.publishers["error_velocity"].publish(error_velocity)
+
+        self.publishers["error_x"].publish(error_x)
+        self.publishers["error_dx"].publish(error_dx)
 
 
 def main():
