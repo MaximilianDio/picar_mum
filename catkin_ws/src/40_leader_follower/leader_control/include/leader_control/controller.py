@@ -29,13 +29,19 @@ class Controller(object):
         Args:
             k_pvel (float): The proportional gain of the controller.
             
-            k_psteer (float):
+            k_psteer (float): Proportional Gain steering
             
-            k_dvel (float):
+            k_dvel (float): D gain
             
-            k_dsteer (float):
+            k_dsteer (float): D gain
             
         """
+        self.LastValues = dict(
+            last_dist_x = 0,
+            last_dist_y = 0,
+            last_phi = 0,
+            last_dist = 0,
+        )
 
         self.K_p = dict(
             vel=k_pvel,
@@ -70,25 +76,24 @@ class Controller(object):
         # compute velocity error
         error_velocity = actual_values.velocity - desired_values.velocity
 
-        # compute angle error
-        error_angle = actual_values.angle - desired_values.angle
+        # compute displacement error in x direction
+        error_x = actual_values.x - desired_values.x
 
-        # compute angle error
-        error_angularvelocity = actual_values.angularvelocity - desired_values.angularvelocity
+        # compute velocity error in x
+        error_dx = actual_values.dx - desired_values.dx
 
-        # calculate proportional output
-        steering_angle_output = self.K_p["distance"] * error_combined
 
         ##################################################################################################
-        ## hier aufgehoert
-        #TODO  pd controller implementieren
+        # Control Design (Simple PI Controller)
 
-        # calculate proportional output
-        steering_angle_output = self.p_gain * error_combined
+        # Control Input Velocity
+        velocity_output = - self.K_p["vel"] * error_distance - self.K_d["vel"] * error_velocity
 
-        # do not control velocity. just set it to desired value
-        velocity_output = desired_values.velocity
-        errors = (error_distance, error_angle, error_combined)
+        # Control Input Steering Angle
+        steering_angle_output = - self.K_p["steer"] * error_x - self.K_d["steer"] * error_dx
+
+
+        errors = (error_distance, error_velocity, error_x, error_dx)
         return steering_angle_output, velocity_output, errors
 
         ##################################################################################################
