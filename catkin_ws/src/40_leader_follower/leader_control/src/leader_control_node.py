@@ -5,7 +5,7 @@ import yaml
 from geometry_msgs.msg import Point32
 from leader_control.controller import Controller, ControllerValues, ControllerValuesDesired
 from picar_common.picar_common import get_param, get_config_file_path, set_param
-from picar_msgs.msg import LeaderPose, CarCmd
+from picar_msgs.msg import CarCmd
 from std_msgs.msg import Float64
 from picar_msgs.srv import SetValue
 
@@ -234,8 +234,8 @@ class LeaderControlNode(object):
         self.publishers["error_distance"].publish(error_distance)
         self.publishers["error_velocity"].publish(error_velocity)
 
-        self.publishers["error_x"].publish(error_y)
-        self.publishers["error_dx"].publish(error_dy)
+        self.publishers["error_y"].publish(error_y)
+        self.publishers["error_dy"].publish(error_dy)
 
 
 def main():

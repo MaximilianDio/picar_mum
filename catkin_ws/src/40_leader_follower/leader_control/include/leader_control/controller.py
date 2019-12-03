@@ -99,13 +99,14 @@ class Controller(object):
         # Control Design (Simple PI Controller)
 
         # Control Input Velocity
-        velocity_output = picar.get_velocity(self.K_p["vel"] * error_distance + self.K_d["vel"] * error_velocity)
+        velocity_output = picar.get_velocity(self.K_p["vel"] * error_distance + self.K_d["vel"] * error_velocity) #input meters per seconds output 0-1
 
         # Control Input Steering Angle
-        steering_angle_output = picar.get_angle(self.K_p["steer"] * error_y + self.K_d["steer"] * error_dy)
+        steering_angle_output = picar.get_angle(self.K_p["steer"] * error_y + self.K_d["steer"] * error_dy) #input degree -output virtual degree
 
 
         errors = (error_distance, error_velocity, error_y, error_dy)
+
         return steering_angle_output, velocity_output, errors
 
 
@@ -114,10 +115,13 @@ class Controller(object):
         """Updates the controller picar.
 
         Args:
-            :param k_dvel:
-            :param k_pvel:
-            :param k_dsteer:
-            :param k_psteer:
+             k_pvel (float): The proportional gain of the controller.
+
+            k_psteer (float): Proportional Gain steering
+
+            k_dvel (float): D gain
+
+            k_dsteer (float): D gain
 
         """
 
