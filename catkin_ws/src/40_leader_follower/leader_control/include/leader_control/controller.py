@@ -28,6 +28,8 @@ class ControllerValues(object):
             distance_y (float): Vehicle's distance to the center line of the track in y.
             phi (float): Vehicle's angle relative to the center line of the track.
         """
+
+        #TODO if integrator time is needed
         self.distance_x = distance_x
         self.distance_y = distance_y
         self.distance = np.sqrt(distance_x * distance_x + distance_y * distance_y)  # Additional Distance
@@ -41,20 +43,14 @@ class Controller(object):
 
         Args:
             k_pvel (float): The proportional gain of the controller.
-            
+
             k_psteer (float): Proportional Gain steering
-            
+
             k_dvel (float): D gain
-            
+
             k_dsteer (float): D gain
-            
+
         """
-        self.LastValues = dict(
-            last_dist_x = 0,
-            last_dist_y = 0,
-            last_phi = 0,
-            last_dist = 0,
-        )
 
         self.K_p = dict(
             vel=k_pvel,
@@ -66,7 +62,7 @@ class Controller(object):
             steer=k_dsteer,
         )
 
-    def get_control_output(self, desired_values, actual_values):
+    def get_control_output(self, desired_values, actual_values, last_values):
         """Calculates steering angle and velocity output based on desired and  actual values.
 
         Args:
@@ -83,17 +79,21 @@ class Controller(object):
             errors (tuple): Contains distance, angle and combined error.
 
         """
+
+        #space for integration
+        last_values=last_values
+
         # compute distance error
         error_distance = actual_values.distance - desired_values.distance
 
         # compute velocity error
-        error_velocity = actual_values.velocity - desired_values.velocity
+        error_velocity = 0 #actual_values.velocity - desired_values.velocity
 
         # compute displacement error in y direction
         error_y = actual_values.distance_y
 
         # compute velocity error in x
-        error_dx = actual_values.dx
+        error_dy = 0 # actual_values.dy
 
 
         # Control Design (Simple PI Controller)
@@ -102,10 +102,10 @@ class Controller(object):
         velocity_output = picar.get_velocity(self.K_p["vel"] * error_distance + self.K_d["vel"] * error_velocity)
 
         # Control Input Steering Angle
-        steering_angle_output = picar.get_angle(self.K_p["steer"] * error_x + self.K_d["steer"] * error_dx)
+        steering_angle_output = picar.get_angle(self.K_p["steer"] * error_y + self.K_d["steer"] * error_dy)
 
 
-        errors = (error_distance, error_velocity, error_x, error_dx)
+        errors = (error_distance, error_velocity, error_y, error_dy)
         return steering_angle_output, velocity_output, errors
 
 
