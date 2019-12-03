@@ -50,10 +50,12 @@ class LeaderControlNode(object):
             "~set_p_gain",
             SetValue,
             self.set_p_gain)
+
         self.services["set_distance_desired"] = rospy.Service(
             "~set_distance_desired",
             SetValue,
             self.set_distance_desired)
+
         self.services["set_velocity_desired"] = rospy.Service(
             "~set_velocity_desired",
             SetValue,
