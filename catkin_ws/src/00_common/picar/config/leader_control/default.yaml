@@ -1,7 +1,7 @@
 
-distance_desired: 0.0 # use this to follow the lane with an offset
+distance_desired: 0.3 # use this to follow the lane with an offset
 angle_desired: 0.0 # has no effect in initial version, since angle is not computed
-velocity_desired: 0.7
+velocity_desired: 0
 
 k_pvel:  #
 k_psteer: #
