@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 import rospy
-import yaml
-import numpy as np
 from geometry_msgs.msg import Point32
 from std_msgs.msg import Float32
 from picar_common.picar_common import get_param, get_config_file_path, get_camera_info

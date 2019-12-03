@@ -123,7 +123,7 @@
         </include>
     </group>
 
-    <!-- start lane_pose_estimation_node -->
+    <!-- start leader_pose_estimation_node -->
     <remap from="leader_pose_estimation_node/leader_blue_ball_position" to="world_projection_node/leader_blue_ball_position_output"/>
     <remap from="leader_pose_estimation_node/leader_green_ball_position" to="world_projection_node/leader_green_ball_position_output"/>
     <include file="$(find leader_pose_estimation)/launch/leader_pose_estimation_node.launch">
@@ -131,4 +131,14 @@
         <arg name="machine" value="$(arg machine)"/>
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
     </include>
+
+ <!-- start leader control_node
+    <remap from="leader_control_node/leader_relative_pos_input" to="leader_pose_estimation_node/leader_relative_pos"/>
+    <remap from="leader_control_node/car_cmd" to="motor_node/car_cmd" />
+    <include file="$(find leader_control)/launch/leader_control_node.launch">
+        <arg name="ns" value="$(arg ns)"/>
+        <arg name="machine" value="$(arg machine)"/>
+        <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
+    </include>
+-->
 </launch>

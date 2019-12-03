@@ -23,6 +23,5 @@
 
     <!-- Publications -->
     <!-- "~leader_relative_position": geometry_msgs/Point32 -->
-    <!-- "~leader_relative_orientation": std_msgs/Float32 -->
 
 </launch>

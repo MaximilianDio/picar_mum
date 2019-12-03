@@ -15,9 +15,13 @@
     </group>
 
     <!-- Subscriptions -->
-    <!-- "~pose_input": picar_msgs/LanePose -->
+    <!-- "~leader_relative_pos_input": geometry_msgs/Point32 -->
 
     <!-- Publications -->
+    <!-- "~error_distance": std_msgs/Float64 -->
+    <!-- "~error_velocity": std_msgs/Float64 -->
+    <!-- "~error_x": std_msgs/Float64 -->
+    <!-- "~error_dx": std_msgs/Float64 -->
     <!-- "~car_cmd": picar_msgs/CarCmd -->
 
 </launch>
