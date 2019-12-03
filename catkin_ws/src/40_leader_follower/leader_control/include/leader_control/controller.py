@@ -1,7 +1,10 @@
 # Imports
 import numpy as np
+import picar as picar
 
 #class declaration
+
+l=picar.Picar.get_angle(parameter x)
 
 class ControllerValues(object):
     """Object that holds desired/actual values for the controller."""
@@ -83,7 +86,6 @@ class Controller(object):
         error_dx = actual_values.dx - desired_values.dx
 
 
-        ##################################################################################################
         # Control Design (Simple PI Controller)
 
         # Control Input Velocity
@@ -96,7 +98,6 @@ class Controller(object):
         errors = (error_distance, error_velocity, error_x, error_dx)
         return steering_angle_output, velocity_output, errors
 
-        ##################################################################################################
 
     def update_parameters(self, k_pvel=None, k_psteer=None,
                           k_dvel=None, k_dsteer=None):
