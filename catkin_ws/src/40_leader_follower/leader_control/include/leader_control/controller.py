@@ -4,6 +4,19 @@ import picar as picar
 
 #class declaration
 
+class ControllerValuesDesired(object):
+    """Object that holds desired/actual values for the controller."""
+
+    def __init__(self, distance, velocity):
+        """
+
+        Args:
+            distance_ (float): Vehicle's distance to the center line of the track in x.
+            veloctiy (float): Vehicle's veloctiy.
+        """
+        self.distance = distance
+        self.velocity = velocity
+
 class ControllerValues(object):
     """Object that holds desired/actual values for the controller."""
 

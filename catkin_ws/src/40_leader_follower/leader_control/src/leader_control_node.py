@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 import rospy
 import yaml
-from leader_control.controller import Controller, ControllerValues
+
+from geometry_msgs.msg import Point32
+from leader_control.controller import Controller, ControllerValues, ControllerValuesDesired
 from picar_common.picar_common import get_param, get_config_file_path, set_param
 from picar_msgs.msg import LeaderPose, CarCmd
 from std_msgs.msg import Float64
@@ -38,10 +40,11 @@ class LeaderControlNode(object):
         self.init_services()
 
 #TODO set subscriber
-        self.sub_pose = rospy.Subscriber("~pose_input",
-                                         LeaderPose,
+        self.sub_pose = rospy.Subscriber("~leader_relative_pos_input",
+                                         Point32,
                                          self.pose_cb,
                                          queue_size=1)
+    #### Main code ends
 
     def init_services(self):
         """Initialize ROS services to configure the controller during runtime"""
@@ -173,13 +176,11 @@ class LeaderControlNode(object):
         Args:
             message (LeaderPose):
         """
-        #todo change
-        desired_values = ControllerValues(self._params["distance_desired"],
+        desired_values = ControllerValuesDesired(self._params["distance_desired"],
                                           self._params["velocity_desired"])
 
-        actual_values = ControllerValues(message.d,
-                                         message.phi,
-                                         self._params["velocity_desired"])
+        actual_values = ControllerValues(message.x,
+                                         message.y)
         (steering_angle,
          velocity,
          errors) = self.controller.get_control_output(desired_values,
