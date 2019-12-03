@@ -39,31 +39,47 @@ class LeaderGetter(object):
 
     def process_image(self, img_rgb):
         """
-            :param image matrix of piCar
+            :param img_rgb: image of picar
             :returns position (px) of both tracking balls [x_blue y_blue x_green y_green]
             """
 
         # crop image
-        img_rgb = self.__crop_image(img_rgb)
+        img_rgb, x_offset = self.__crop_image(img_rgb)
 
         # convert color to hsv, so it is easier to mask certain colors
         img_hsv = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2HSV)
 
         img_hsv = cv2.GaussianBlur(img_hsv, (5, 5), cv2.BORDER_DEFAULT)
 
-        cv2.imshow('rgb', img_rgb)
-
         # mask images
         mask_blue = self._mask(img_hsv, "blue")
         mask_green = self._mask(img_hsv, "green")
 
-        cv2.imshow('green', mask_green)
-        cv2.imshow('blue', mask_blue)
+        return self.__get_circle_pos(img_rgb, mask_blue, mask_green, x_offset)
 
-        cv2.imshow('green_blur', mask_green)
-        cv2.imshow('blue_blur', mask_blue)
+    # TODO implement a better masking function
+    def _mask(self, img_hsv, color):
+        if color == "blue":
+            mask = cv2.inRange(img_hsv, self.lower_blue1, self.upper_blue1)
+        elif color == "green":
+            mask = cv2.inRange(img_hsv, self.lower_green1, self.upper_green1)
+        else:
+            print "color " + color + "currently not able to process"
+            return img_hsv
 
-        # TODO find good values
+        return mask
+
+    # FIXME balls at which are farther away from the center will appear as ellipses -will not be detected correctly
+    def __get_circle_pos(self, img_rgb, mask_blue, mask_green,x_offset):
+        '''
+        :param img_rgb:
+        :param mask_blue:
+        :param mask_green:
+        :return: x_blue, y_blue, x_green, y_green, image_with_detection
+        '''
+
+        output = img_rgb.copy()
+
         circles_blue = cv2.HoughCircles(mask_blue, cv2.HOUGH_GRADIENT, self.dp, self.minDist,
                                         param1=self.param1, param2=self.param2, minRadius=self.MIN_CIRCLE_RADIUS,
                                         maxRadius=self.MAX_CIRCLE_RADIUS)
@@ -71,11 +87,9 @@ class LeaderGetter(object):
                                          param1=self.param1, param2=self.param2, minRadius=self.MIN_CIRCLE_RADIUS,
                                          maxRadius=self.MAX_CIRCLE_RADIUS)
 
-        cv2.imshow('green', mask_green)
-        cv2.imshow('blue', mask_blue)
         # ensure at least some circles were found
         if not (circles_blue is None or circles_green is None):
-            output = img_rgb.copy()
+
             # convert the (x, y) coordinates and radius of the circles to integers
             circles_blue = np.round(circles_blue[0, :]).astype("int")
             circles_green = np.round(circles_green[0, :]).astype("int")
@@ -94,11 +108,6 @@ class LeaderGetter(object):
                 cv2.circle(output, (x, y), r, (0, 0, 255), 2)
                 cv2.rectangle(output, (x - 1, y - 1), (x + 1, y + 1), (0, 0, 255), -1)
 
-            # show the output image
-            cv2.imshow("output", output)
-        cv2.waitKey(1)
-
-        if not (circles_blue is None or circles_green is None):
             for (x, y, r) in circles_blue:
                 x_blue = x
                 y_blue = y
@@ -106,22 +115,9 @@ class LeaderGetter(object):
                 x_green = x
                 y_green = y
 
-            return x_blue, y_blue, x_green, y_green
+            return (x_blue+x_offset, y_blue, x_green+x_offset, y_green), output
         else:
-            return -1, -1, -1, -1
-
-    # TODO implement a better masking function
-    def _mask(self, img_hsv, color):
-        if color == "blue":
-            mask = cv2.inRange(img_hsv, self.lower_blue1, self.upper_blue1)
-        elif color == "green":
-            mask = cv2.inRange(img_hsv, self.lower_green1, self.upper_green1)
-        else:
-            print "color " + color + "currently not able to process"
-            return img_hsv
-
-        # TODO image has to be BW
-        return mask
+            return (1, 2, 3, 4), output
 
     def __crop_image(self, img):
         # get dimension of image
@@ -140,4 +136,4 @@ class LeaderGetter(object):
         # crop image
         cropped_img = img[slice_y1:slice_y2, slice_x1:slice_x2]
 
-        return cropped_img
+        return cropped_img, slice_x1

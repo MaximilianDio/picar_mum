@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import yaml
+import cv2
 from cv_bridge import CvBridgeError, CvBridge
 from geometry_msgs.msg import Point32
 from sensor_msgs.msg import Image
@@ -71,6 +72,10 @@ class LeaderDetectionNode(object):
         self.publishers["leader_green_ball_position"] = rospy.Publisher("~leader_green_ball_position", Point32,
                                                                         queue_size=1)
 
+        # # relative position of leaders green ball to picar
+        # self.publishers["leader_detection_image"] = rospy.Publisher("~leader_green_ball_position", Image,
+        #                                                                 queue_size=1)
+
     def rcv_img_cb(self, image_data):
         """
             receive image callback: process image and publish positions of blue and green ball
@@ -78,7 +83,7 @@ class LeaderDetectionNode(object):
             """
         img_bgr = self.bridge.imgmsg_to_cv2(image_data)
 
-        positions = self.leader_detector.process_image(img_bgr)
+        positions, output_img = self.leader_detector.process_image(img_bgr)
 
         if positions is None:
             return
@@ -95,6 +100,11 @@ class LeaderDetectionNode(object):
         # publish position and orientation of leader
         self.publishers["leader_blue_ball_position"].publish(msg_out_blue_ball_pos)
         self.publishers["leader_green_ball_position"].publish(msg_out_green_ball_pos)
+
+        # output image
+        cv2.imshow("leader_detection",output_img)
+        cv2.waitKey(1)
+        # self.publishers["leader_detection_image"].publish(output_img)
 
 
 if __name__ == "__main__":
