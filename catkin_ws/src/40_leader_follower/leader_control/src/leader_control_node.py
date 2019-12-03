@@ -27,15 +27,17 @@ class LeaderControlNode(object):
         # read the controller configuration from config file
         self.setup_params(config_file_path)
 
-        self.controller = Controller(self._params["p_gain"],
-                                     self._params["weight_distance"],
-                                     self._params["weight_angle"])
+        self.controller = Controller(self._params["k_pvel"],
+                                     self._params["k_psteer"],
+                                     self._params["k_dvel"],
+                                     self._params["k_dsteer"])
 
         # register all publishers
         self.init_publishers()
         # create all services
         self.init_services()
 
+#TODO set subscriber
         self.sub_pose = rospy.Subscriber("~pose_input",
                                          LeaderPose,
                                          self.pose_cb,
@@ -43,6 +45,7 @@ class LeaderControlNode(object):
 
     def init_services(self):
         """Initialize ROS services to configure the controller during runtime"""
+        #Todo set services
         self.services["set_p_gain"] = rospy.Service(
             "~set_p_gain",
             SetValue,
@@ -60,6 +63,7 @@ class LeaderControlNode(object):
         """Initialize ROS publishers and stores them in a dictionary
 
         """
+        #TODO Set Publisher
         self.publishers["distance_error"] = rospy.Publisher(
             "~distance_error",
             Float64,
@@ -113,9 +117,10 @@ class LeaderControlNode(object):
     def update_controller(self):
         """Updates the controller object's picar"""
         self.controller.update_parameters(
-            self._params["p_gain"],
-            self._params["weight_distance"],
-            self._params["weight_angle"]
+            self._params["k_pvel"],
+            self._params["k_psteer"],
+            self._params["k_dvel"],
+            self._params["k_dsteer"]
         )
 
     def pose_cb(self, message):
