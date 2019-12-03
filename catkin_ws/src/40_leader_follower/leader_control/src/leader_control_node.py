@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 import rospy
 import yaml
-from leader_control.controller import Controller, ControllerValues
+
+from geometry_msgs.msg import Point32
+from leader_control.controller import Controller, ControllerValues, ControllerValuesDesired
 from picar_common.picar_common import get_param, get_config_file_path, set_param
-from picar_msgs.msg import LeaderPose, CarCmd
+from picar_msgs.msg import CarCmd
 from std_msgs.msg import Float64
 from picar_msgs.srv import SetValue
 
@@ -27,30 +29,53 @@ class LeaderControlNode(object):
         # read the controller configuration from config file
         self.setup_params(config_file_path)
 
-        self.controller = Controller(self._params["p_gain"],
-                                     self._params["weight_distance"],
-                                     self._params["weight_angle"])
+        self.controller = Controller(self._params["k_pvel"],
+                                     self._params["k_psteer"],
+                                     self._params["k_dvel"],
+                                     self._params["k_dsteer"])
 
         # register all publishers
         self.init_publishers()
         # create all services
         self.init_services()
 
-        self.sub_pose = rospy.Subscriber("~pose_input",
-                                         LeaderPose,
+        self.last_values = ControllerValues(0.0,0.0)
+
+#TODO set subscriber
+        self.sub_pose = rospy.Subscriber("~leader_relative_pos_input",
+                                         Point32,
                                          self.pose_cb,
                                          queue_size=1)
+    #### Main code ends
 
     def init_services(self):
         """Initialize ROS services to configure the controller during runtime"""
-        self.services["set_p_gain"] = rospy.Service(
-            "~set_p_gain",
+
+        self.services["set_k_pvel"] = rospy.Service(
+            "~set_k_pvel",
             SetValue,
-            self.set_p_gain)
+            self.set_k_pvel)
+
+        self.services["set_k_psteer"] = rospy.Service(
+            "~set_k_psteer",
+            SetValue,
+            self.set_k_psteer)
+
+        self.services["set_k_dvel"] = rospy.Service(
+            "~set_k_dvel",
+            SetValue,
+            self.set_k_dvel)
+
+        self.services["set_k_dsteer"] = rospy.Service(
+            "~set_k_dsteer",
+            SetValue,
+            self.set_k_dsteer)
+
         self.services["set_distance_desired"] = rospy.Service(
             "~set_distance_desired",
             SetValue,
             self.set_distance_desired)
+
         self.services["set_velocity_desired"] = rospy.Service(
             "~set_velocity_desired",
             SetValue,
@@ -60,17 +85,24 @@ class LeaderControlNode(object):
         """Initialize ROS publishers and stores them in a dictionary
 
         """
-        self.publishers["distance_error"] = rospy.Publisher(
-            "~distance_error",
-            Float64,
-            queue_size=1)
-        self.publishers["angle_error"] = rospy.Publisher(
-            "~angle_error",
+
+        self.publishers["error_distance"] = rospy.Publisher(
+            "~error_distance",
             Float64,
             queue_size=1)
 
-        self.publishers["combined_error"] = rospy.Publisher(
-            "~combined_error",
+        self.publishers["error_velocity"] = rospy.Publisher(
+            "~error_velocity",
+            Float64,
+            queue_size=1)
+
+        self.publishers["error_y"] = rospy.Publisher(
+            "~error_x",
+            Float64,
+            queue_size=1)
+
+        self.publishers["error_dy"] = rospy.Publisher(
+            "~error_dx",
             Float64,
             queue_size=1)
 
@@ -91,10 +123,31 @@ class LeaderControlNode(object):
         for param_name in self._params:
             set_param("~" + param_name, self._params[param_name])
 
-    def set_p_gain(self, request):
-        """Sets the p_gain parameter of the controller."""
-        self._params["p_gain"] = request.value
-        set_param("~p_gain", request.value)
+    def set_k_pvel(self, request):
+        """Sets the k_pvel_gain parameter of the controller."""
+        self._params["k_pvel"] = request.value
+        set_param("~k_pvel", request.value)
+        self.update_controller()
+        return 1
+
+    def set_k_psteer(self, request):
+        """Sets the k_psteer_gain parameter of the controller."""
+        self._params["k_psteer"] = request.value
+        set_param("~k_psteer", request.value)
+        self.update_controller()
+        return 1
+
+    def set_k_dvel(self, request):
+        """Sets the k_dvel_gain parameter of the controller."""
+        self._params["k_dvel"] = request.value
+        set_param("~k_dvel", request.value)
+        self.update_controller()
+        return 1
+
+    def set_k_dsteer(self, request):
+        """Sets the k_dsteer_gain  parameter of the controller."""
+        self._params["k_dsteer"] = request.value
+        set_param("~k_dsteer", request.value)
         self.update_controller()
         return 1
 
@@ -113,9 +166,10 @@ class LeaderControlNode(object):
     def update_controller(self):
         """Updates the controller object's picar"""
         self.controller.update_parameters(
-            self._params["p_gain"],
-            self._params["weight_distance"],
-            self._params["weight_angle"]
+            self._params["k_pvel"],
+            self._params["k_psteer"],
+            self._params["k_dvel"],
+            self._params["k_dsteer"]
         )
 
     def pose_cb(self, message):
@@ -124,19 +178,22 @@ class LeaderControlNode(object):
         Args:
             message (LeaderPose):
         """
-        desired_values = ControllerValues(self._params["distance_desired"],
-                                          self._params["angle_desired"],
+        desired_values = ControllerValuesDesired(self._params["distance_desired"],
                                           self._params["velocity_desired"])
 
-        actual_values = ControllerValues(message.d,
-                                         message.phi,
-                                         self._params["velocity_desired"])
+        actual_values = ControllerValues(message.x,
+                                         message.y)
+
+        last_values = self.last_values
+
         (steering_angle,
          velocity,
          errors) = self.controller.get_control_output(desired_values,
-                                                      actual_values)
+                                                      actual_values,last_values)
 
         self.publish_car_cmd(steering_angle, velocity)
+
+        self.last_values=actual_values
 
         self.publish_errors(errors)
 
@@ -159,20 +216,26 @@ class LeaderControlNode(object):
         """ Publishes error messages.
 
         Args:
-            errors (iterable): Contains distance, angle and combined error.
+            errors (iterable): Contains distance, velocity, x and dx
         """
-        distance_error = Float64()
-        distance_error.data = errors[0]
 
-        angle_error = Float64()
-        angle_error.data = errors[1]
+        error_distance = Float64()
+        error_distance.data = errors[0]
 
-        combined_error = Float64()
-        combined_error.data = errors[2]
+        error_velocity = Float64
+        error_velocity.data = errors[1]
 
-        self.publishers["distance_error"].publish(distance_error)
-        self.publishers["angle_error"].publish(angle_error)
-        self.publishers["combined_error"].publish(combined_error)
+        error_y = Float64
+        error_y.data = errors[2]
+
+        error_dy = Float64
+        error_dy.data = errors[3]
+
+        self.publishers["error_distance"].publish(error_distance)
+        self.publishers["error_velocity"].publish(error_velocity)
+
+        self.publishers["error_y"].publish(error_y)
+        self.publishers["error_dy"].publish(error_dy)
 
 
 def main():

@@ -7,7 +7,7 @@ from std_msgs.msg import Float32
 from picar_common.picar_common import get_param, get_config_file_path, get_camera_info
 
 
-class GroundProjectionNode(object):
+class LeaderPoseEstimation(object):
     def __init__(self):
         self.pos_blue_ball = None
         self.pos_green_ball = None
@@ -21,8 +21,17 @@ class GroundProjectionNode(object):
         # register all publishers
         self.init_publishers()
 
+    def run(self):
+        position = Point32()
+
+        position.x = self.pos_blue_ball.x + 0.5 * (self.pos_green_ball.x - self.pos_blue_ball.x)
+        position.y = self.pos_blue_ball.y + 0.5 * (self.pos_green_ball.y - self.pos_blue_ball.y)
+
+        self.publishers["leader_relative_pos"].publish(position)
+
     def get_position_blue_ball_cb(self, data):
         self.pos_blue_ball = data
+        self.run()
 
     def get_position_green_ball_cb(self, data):
         self.pos_green_ball = data
@@ -41,13 +50,8 @@ class GroundProjectionNode(object):
                                                                               Point32,
                                                                               queue_size=1)
 
-        # relative angle Delta_phi in rad
-        self.publishers["leader_relative_orientation"] = rospy.Publisher("~leader_relative_orientation",
-                                                                               Float32,
-                                                                               queue_size=1)
-
 
 if __name__ == "__main__":
-    rospy.init_node("world_projection_node")
-    GroundProjectionNode()
+    rospy.init_node("leader_pose_estimation_node")
+    LeaderPoseEstimation()
     rospy.spin()

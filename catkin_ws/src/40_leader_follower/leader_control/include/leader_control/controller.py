@@ -1,12 +1,26 @@
 # Imports
 import numpy as np
+import picar as picar
 
 #class declaration
+
+class ControllerValuesDesired(object):
+    """Object that holds desired/actual values for the controller."""
+
+    def __init__(self, distance, velocity):
+        """
+
+        Args:
+            distance_ (float): Vehicle's distance to the center line of the track in x.
+            veloctiy (float): Vehicle's veloctiy.
+        """
+        self.distance = distance
+        self.velocity = velocity
 
 class ControllerValues(object):
     """Object that holds desired/actual values for the controller."""
 
-    def __init__(self, distance_x, distance_y, phi):
+    def __init__(self, distance_x, distance_y):
         """
 
         Args:
@@ -14,9 +28,10 @@ class ControllerValues(object):
             distance_y (float): Vehicle's distance to the center line of the track in y.
             phi (float): Vehicle's angle relative to the center line of the track.
         """
+
+        #TODO if integrator time is needed
         self.distance_x = distance_x
         self.distance_y = distance_y
-        self.phi = phi
         self.distance = np.sqrt(distance_x * distance_x + distance_y * distance_y)  # Additional Distance
 
 
@@ -28,13 +43,13 @@ class Controller(object):
 
         Args:
             k_pvel (float): The proportional gain of the controller.
-            
-            k_psteer (float):
-            
-            k_dvel (float):
-            
-            k_dsteer (float):
-            
+
+            k_psteer (float): Proportional Gain steering
+
+            k_dvel (float): D gain
+
+            k_dsteer (float): D gain
+
         """
 
         self.K_p = dict(
@@ -47,7 +62,7 @@ class Controller(object):
             steer=k_dsteer,
         )
 
-    def get_control_output(self, desired_values, actual_values):
+    def get_control_output(self, desired_values, actual_values, last_values):
         """Calculates steering angle and velocity output based on desired and  actual values.
 
         Args:
@@ -64,44 +79,49 @@ class Controller(object):
             errors (tuple): Contains distance, angle and combined error.
 
         """
+
+        #space for integration
+        last_values=last_values
+
         # compute distance error
         error_distance = actual_values.distance - desired_values.distance
 
         # compute velocity error
-        error_velocity = actual_values.velocity - desired_values.velocity
+        error_velocity = 0 #actual_values.velocity - desired_values.velocity
 
-        # compute angle error
-        error_angle = actual_values.angle - desired_values.angle
+        # compute displacement error in y direction
+        error_y = actual_values.distance_y
 
-        # compute angle error
-        error_angularvelocity = actual_values.angularvelocity - desired_values.angularvelocity
+        # compute velocity error in x
+        error_dy = 0 # actual_values.dy
 
-        # calculate proportional output
-        steering_angle_output = self.K_p["distance"] * error_combined
 
-        ##################################################################################################
-        ## hier aufgehoert
-        #TODO  pd controller implementieren
+        # Control Design (Simple PI Controller)
 
-        # calculate proportional output
-        steering_angle_output = self.p_gain * error_combined
+        # Control Input Velocity
+        velocity_output = picar.get_velocity(self.K_p["vel"] * error_distance + self.K_d["vel"] * error_velocity) #input meters per seconds output 0-1
 
-        # do not control velocity. just set it to desired value
-        velocity_output = desired_values.velocity
-        errors = (error_distance, error_angle, error_combined)
+        # Control Input Steering Angle
+        steering_angle_output = picar.get_angle(self.K_p["steer"] * error_y + self.K_d["steer"] * error_dy) #input degree -output virtual degree
+
+
+        errors = (error_distance, error_velocity, error_y, error_dy)
+
         return steering_angle_output, velocity_output, errors
 
-        ##################################################################################################
 
     def update_parameters(self, k_pvel=None, k_psteer=None,
                           k_dvel=None, k_dsteer=None):
         """Updates the controller picar.
 
         Args:
-            :param k_dvel:
-            :param k_pvel:
-            :param k_dsteer:
-            :param k_psteer:
+             k_pvel (float): The proportional gain of the controller.
+
+            k_psteer (float): Proportional Gain steering
+
+            k_dvel (float): D gain
+
+            k_dsteer (float): D gain
 
         """
 
