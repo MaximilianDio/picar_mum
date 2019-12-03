@@ -22,6 +22,14 @@ class LeaderPoseEstimation(object):
     def run(self):
         position = Point32()
 
+        ### Pauls debug action
+        #todo solve mistake here
+        #tests for console outputs
+        print('pos_blue_ball')
+        print(self.pos_blue_ball)
+        print('pos_blue_ball_x')
+        print(self.pos_blue_ball.x)
+
         position.x = self.pos_blue_ball.x + 0.5 * (self.pos_green_ball.x - self.pos_blue_ball.x)
         position.y = self.pos_blue_ball.y + 0.5 * (self.pos_green_ball.y - self.pos_blue_ball.y)
 
