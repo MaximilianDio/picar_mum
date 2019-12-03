@@ -7,7 +7,7 @@ import picar as picar
 class ControllerValues(object):
     """Object that holds desired/actual values for the controller."""
 
-    def __init__(self, distance_x, distance_y, phi):
+    def __init__(self, distance_x, distance_y):
         """
 
         Args:
@@ -17,7 +17,6 @@ class ControllerValues(object):
         """
         self.distance_x = distance_x
         self.distance_y = distance_y
-        self.phi = phi
         self.distance = np.sqrt(distance_x * distance_x + distance_y * distance_y)  # Additional Distance
 
 
@@ -78,10 +77,10 @@ class Controller(object):
         error_velocity = actual_values.velocity - desired_values.velocity
 
         # compute displacement error in x direction
-        error_x = actual_values.x - desired_values.x
+        error_x = actual_values.x
 
         # compute velocity error in x
-        error_dx = actual_values.dx - desired_values.dx
+        error_dx = actual_values.dx
 
 
         # Control Design (Simple PI Controller)
