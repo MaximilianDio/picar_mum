@@ -44,7 +44,7 @@ class LeaderPoseEstimation(object):
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
         # relative position in X and Y coordinates (Z=0)
-        self.publishers["leader_relative_pos"] = rospy.Publisher("~leader_relative_position",
+        self.publishers["leader_relative_pos"] = rospy.Publisher("~leader_relative_pos",
                                                                               Point32,
                                                                               queue_size=1)
 

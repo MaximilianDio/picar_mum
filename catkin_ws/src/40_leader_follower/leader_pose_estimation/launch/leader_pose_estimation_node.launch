@@ -22,6 +22,6 @@
     <!-- "~leader_green_ball_position": geometry_msgs/Point32 -->
 
     <!-- Publications -->
-    <!-- "~leader_relative_position": geometry_msgs/Point32 -->
+    <!-- "~leader_relative_pos": geometry_msgs/Point32 -->
 
 </launch>
