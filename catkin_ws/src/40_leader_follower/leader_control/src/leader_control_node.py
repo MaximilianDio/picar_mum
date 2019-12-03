@@ -39,6 +39,8 @@ class LeaderControlNode(object):
         # create all services
         self.init_services()
 
+        self.last_values = ControllerValues(0.0,0.0)
+
 #TODO set subscriber
         self.sub_pose = rospy.Subscriber("~leader_relative_pos_input",
                                          Point32,
@@ -94,12 +96,12 @@ class LeaderControlNode(object):
             Float64,
             queue_size=1)
 
-        self.publishers["error_x"] = rospy.Publisher(
+        self.publishers["error_y"] = rospy.Publisher(
             "~error_x",
             Float64,
             queue_size=1)
 
-        self.publishers["error_dx"] = rospy.Publisher(
+        self.publishers["error_dy"] = rospy.Publisher(
             "~error_dx",
             Float64,
             queue_size=1)
@@ -181,12 +183,17 @@ class LeaderControlNode(object):
 
         actual_values = ControllerValues(message.x,
                                          message.y)
+
+        last_values = self.last_values
+
         (steering_angle,
          velocity,
          errors) = self.controller.get_control_output(desired_values,
-                                                      actual_values)
+                                                      actual_values,last_values)
 
         self.publish_car_cmd(steering_angle, velocity)
+
+        self.last_values=actual_values
 
         self.publish_errors(errors)
 
@@ -218,17 +225,17 @@ class LeaderControlNode(object):
         error_velocity = Float64
         error_velocity.data = errors[1]
 
-        error_x = Float64
-        error_x.data = errors[2]
+        error_y = Float64
+        error_y.data = errors[2]
 
-        error_dx = Float64
-        error_dx.data = errors[3]
+        error_dy = Float64
+        error_dy.data = errors[3]
 
         self.publishers["error_distance"].publish(error_distance)
         self.publishers["error_velocity"].publish(error_velocity)
 
-        self.publishers["error_x"].publish(error_x)
-        self.publishers["error_dx"].publish(error_dx)
+        self.publishers["error_x"].publish(error_y)
+        self.publishers["error_dx"].publish(error_dy)
 
 
 def main():
