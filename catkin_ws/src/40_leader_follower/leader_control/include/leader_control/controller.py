@@ -4,8 +4,6 @@ import picar as picar
 
 #class declaration
 
-l=picar.Picar.get_angle(parameter x)
-
 class ControllerValues(object):
     """Object that holds desired/actual values for the controller."""
 
@@ -89,10 +87,10 @@ class Controller(object):
         # Control Design (Simple PI Controller)
 
         # Control Input Velocity
-        velocity_output = self.K_p["vel"] * error_distance + self.K_d["vel"] * error_velocity
+        velocity_output = picar.get_velocity(self.K_p["vel"] * error_distance + self.K_d["vel"] * error_velocity)
 
         # Control Input Steering Angle
-        steering_angle_output = - self.K_p["steer"] * error_x - self.K_d["steer"] * error_dx
+        steering_angle_output = picar.get_angle(self.K_p["steer"] * error_x + self.K_d["steer"] * error_dx)
 
 
         errors = (error_distance, error_velocity, error_x, error_dx)
