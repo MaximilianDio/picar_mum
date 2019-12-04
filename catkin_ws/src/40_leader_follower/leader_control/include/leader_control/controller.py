@@ -1,6 +1,6 @@
 # Imports
 import numpy as np
-import picar
+from picar import Picar
 
 
 #class declaration
@@ -97,12 +97,13 @@ class Controller(object):
 
 
         # Control Design (Simple PI Controller)
+        #todo resolve get_velocity and get angle error
 
         # Control Input Velocity
-        velocity_output = picar.Picar.get_velocity(self.K_p["vel"] * error_distance + self.K_d["vel"] * error_velocity) #input meters per seconds output 0-1
+        velocity_output = Picar.get_velocity(self.K_p["vel"] * error_distance + self.K_d["vel"] * error_velocity) #input meters per seconds output 0-1
 
         # Control Input Steering Angle
-        steering_angle_output = picar.Picar.get_angle(self.K_p["steer"] * error_y + self.K_d["steer"] * error_dy) #input degree -output virtual degree
+        steering_angle_output = Picar.get_angle(self.K_p["steer"] * error_y + self.K_d["steer"] * error_dy) #input degree -output virtual degree
 
 
         errors = (error_distance, error_velocity, error_y, error_dy)
