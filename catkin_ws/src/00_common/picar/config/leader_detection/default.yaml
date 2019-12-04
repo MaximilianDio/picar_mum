@@ -13,7 +13,7 @@
 # |                                           |
 # |                                           |  v
 # ---------------------------------------------
-crop_ratio_middle_x: 0.5
+crop_ratio_middle_x: 1
 crop_ratio_top_y: 0.65
 # masking parameters
 # masking parameters blue_ball
@@ -23,9 +23,9 @@ mask_param_blue_high: [130, 255, 255]
 mask_param_green_low: [35, 230, 20]
 mask_param_green_high: [70, 255, 255]
 # cicrle detection parameters
-dp: 2
-minDist: 10
+dp: 1.5
+minDist: 15
 param1: 50
 param2: 20
-min_circle_radius: 1
-max_circle_radius: 30
+min_circle_radius: 0
+max_circle_radius: 20

@@ -6,14 +6,27 @@ from geometry_msgs.msg import Point32
 from picar_common.picar_common import get_param, get_config_file_path, get_camera_info
 import world_projection
 
+def array2point32msg(array):
+    """ transforms a array into a Point32 message
+        :param array
+    """
+    msg = Point32()
+
+    msg.x = array[0]
+    msg.y = array[1]
+    msg.z = array[2]
+
+    return msg
+
 
 class WorldProjectionNode(object):
     def __init__(self):
-        self.pos_blue_ball = [-1, -1]
-        self.pos_green_ball = [-1, -1]
+        # TODO init with None and find way to deal with None declaration
+        self.pos_blue_ball = None
+        self.pos_green_ball = None
 
         self._params = {}
-        self.publishers = {}
+
         self.services = {}
 
         # distorted_input is set to False only in simulation mode
@@ -29,48 +42,44 @@ class WorldProjectionNode(object):
             "intrinsics",
             extrinsics_file_name)
 
+        # load intrinsic and extrinsic camera data
         with open(extrinsics_file_path, "r") as file_handle:
             data = yaml.safe_load(file_handle)
-            h_matrix = np.array(data["H"]["data"]).reshape(3, 3)
-            s_matrix = np.array(data["S"]["data"]).reshape(3, 3)
+            r_matrix = np.array(data["S"]["data"]).reshape(3, 3)
             t_matrix = np.array(data["t"]["data"]).reshape(3, 1)
 
         with open(intrinsics_file_path, "r") as file_handle:
             data = yaml.safe_load(file_handle)
             k_matrix = np.array(data["projection_matrix"]["data"]).reshape(3, 4)
-            k_matrix = k_matrix[:, 0:3]
-
-        # calculate projection matrix P = K*[S|t]
-        p_matrix = np.matmul(k_matrix, np.concatenate((s_matrix, t_matrix), axis=1))
-
 
         # create instance of the WorldProjector
         self.projector = world_projection.WorldProjector(
             camera_info,
-            h_matrix,
-            p_matrix,
+            r_matrix,
+            t_matrix,
+            k_matrix,
             distorted_input)
 
         # register all publishers
+        self.publishers = {}
         self.init_publishers()
 
         # register all publishers
         self.init_subscribers()
 
     def __run(self):
-        ball_blue = self.projector.pixel2world(self.pos_blue_ball)
-        ball_green = self.projector.pixel2world(self.pos_green_ball)
+        if self.pos_blue_ball is not None or self.pos_green_ball is not None:
+            ball_blue = array2point32msg(self.projector.pixel2world(self.pos_blue_ball))
+            ball_green = array2point32msg(self.projector.pixel2world(self.pos_green_ball))
 
-        self.publishers["leader_blue_ball_position_output"].publish(ball_blue)
-        self.publishers["leader_green_ball_position_output"].publish(ball_green)
+            self.publishers["leader_blue_ball_position_output"].publish(ball_blue)
+            self.publishers["leader_green_ball_position_output"].publish(ball_green)
 
     def get_position_blue_ball_cb(self, data):
-        self.pos_blue_ball[0] = data.x
-        self.pos_blue_ball[1] = data.y
+        self.pos_blue_ball = [data.x, data.y]
 
     def get_position_green_ball_cb(self, data):
-        self.pos_green_ball[0] = data.x
-        self.pos_green_ball[1] = data.y
+        self.pos_green_ball = [data.x, data.y]
 
         # run node operation only once - choice is arbitrary!
         self.__run()

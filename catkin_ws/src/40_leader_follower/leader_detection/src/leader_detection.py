@@ -127,7 +127,7 @@ class LeaderGetter(object):
         # convert color to hsv, so it is easier to mask certain colors
         img_hsv = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2HSV)
 
-        # img_hsv = cv2.GaussianBlur(img_hsv, (5, 5), cv2.BORDER_DEFAULT)
+        img_hsv = cv2.GaussianBlur(img_hsv, (5, 5), cv2.BORDER_DEFAULT)
 
         # mask images
         mask_blue = self._mask(img_hsv, "blue")
@@ -203,7 +203,7 @@ class LeaderGetter(object):
 
             return (x_blue + x_offset, y_blue, x_green + x_offset, y_green), output
         else:
-            return (-1, -1, -1, -1), output # TODO find out if none works
+            return None, output
 
     def __crop_image(self, img):
         # get dimension of image
