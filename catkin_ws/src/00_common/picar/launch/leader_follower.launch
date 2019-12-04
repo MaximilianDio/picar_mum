@@ -45,53 +45,14 @@
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
     </include>
 
-    <!--  launch  DETECTION nodes (line and leader) -->
-
-    <!-- launch line_detection_node -->
-    <remap from="line_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
-    <include file="$(find line_detection)/launch/line_detection_node.launch">
-        <arg name="ns" value="$(arg ns)"/>
-        <arg name="machine" value="$(arg machine)"/>
-        <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
-    </include>
-
-    <!-- start ground_projection_node -->
-    <remap from="ground_projection_node/track_position_input" to="line_detection_node/track_position"/>
+    <!--  for test purposes keyboard control -->
     <group if="$(arg sim)">
-        <include file="$(find ground_projection)/launch/ground_projection_node.launch">
-            <arg name="ns" value="$(arg ns)"/>
-            <arg name="machine" value="$(arg machine)"/>
-            <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
-            <arg name="distorted_input" value="false"/>
+        <!-- start keyboard control -->
+        <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">
+            <arg name="ns" value="simcar"/>
         </include>
     </group>
-    <group unless="$(arg sim)">
-        <include file="$(find ground_projection)/launch/ground_projection_node.launch">
-            <arg name="ns" value="$(arg ns)"/>
-            <arg name="machine" value="$(arg machine)"/>
-            <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
-            <arg name="distorted_input" value="true"/>
-        </include>
-    </group>
-
-    <!-- start lane_pose_estimation_node -->
-    <remap from="lane_pose_estimation_node/track_position" to="ground_projection_node/track_position_output"/>
-    <include file="$(find lane_pose_estimation)/launch/lane_pose_estimation_node.launch">
-        <arg name="ns" value="$(arg ns)"/>
-        <arg name="machine" value="$(arg machine)"/>
-        <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
-    </include>
-
-    <!-- start lane_control_node -->
-    <remap from="lane_control_node/pose_input" to="lane_pose_estimation_node/pose"/>
-    <remap from="lane_control_node/car_cmd" to="motor_node/car_cmd" />
-    <include file="$(find lane_control)/launch/lane_control_node.launch">
-        <arg name="ns" value="$(arg ns)"/>
-        <arg name="machine" value="$(arg machine)"/>
-        <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
-    </include>
-
-    <!--  parallel control path: leader follower -->
+    <!--  control path: leader follower -->
 
     <!-- EDIT: 02.12.19 (MAX) - leader_detection -->
     <!-- launch leader_detection_node -->
