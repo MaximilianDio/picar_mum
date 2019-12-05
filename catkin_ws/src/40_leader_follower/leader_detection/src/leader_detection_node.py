@@ -72,6 +72,9 @@ class LeaderDetectionNode(object):
         self.publishers["leader_green_ball_position"] = rospy.Publisher("~leader_green_ball_position", Point32,
                                                                         queue_size=1)
 
+        # Publish (mask_green+mask_blue) for debugging
+        self.publishers["mask_added"] = rospy.Publisher("~mask_added", Image, queue_size=1)
+
         # # relative position of leaders green ball to picar
         # self.publishers["leader_detection_image"] = rospy.Publisher("~leader_green_ball_position", Image,
         #                                                                 queue_size=1)
@@ -83,7 +86,7 @@ class LeaderDetectionNode(object):
             """
         img_bgr = self.bridge.imgmsg_to_cv2(image_data)
 
-        positions, output_img = self.leader_detector.process_image(img_bgr)
+        positions, output_img, mask_img = self.leader_detector.process_image(img_bgr)
 
         if positions is None:
             return
@@ -100,6 +103,9 @@ class LeaderDetectionNode(object):
         # publish position and orientation of leader
         self.publishers["leader_blue_ball_position"].publish(msg_out_blue_ball_pos)
         self.publishers["leader_green_ball_position"].publish(msg_out_green_ball_pos)
+
+        # Publish mask
+        self.publishers["mask_added"].publish(mask_img)
 
         # output image
         cv2.imshow("leader_detection",output_img)

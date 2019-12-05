@@ -136,12 +136,14 @@ class LeaderGetter(object):
         mask_blue = cv2.GaussianBlur(mask_blue, (3, 3), cv2.BORDER_DEFAULT)
         mask_green = cv2.GaussianBlur(mask_green, (3, 3), cv2.BORDER_DEFAULT)
 
+        mask_add = mask_blue + mask_green
+
         if self.use_trackbars == True:
             cv2.imshow("mask_blue", mask_blue)
             cv2.imshow("mask_green", mask_green)
 
 
-        return self.__get_circle_pos(img_rgb, mask_blue, mask_green, x_offset)
+        return self.__get_circle_pos(img_rgb, mask_blue, mask_green, x_offset), mask_add
 
 
     # TODO implement a better masking function
