@@ -90,14 +90,17 @@ class LeaderGetter(object):
 
             # masking parameters blue_ball
             self.mask_param_blue_low = np.array(
-                [params["mask_param_blue_low_H"], params["mask_param_blue_low_S"], params["mask_param_blue_low_V"]])
+                [params["mask_param_blue_low_H"], params["mask_param_blue_low_S"], params["mask_param_blue_low_V"]],
+                dtype=int)
             self.mask_param_blue_high = np.array(
-                [params["mask_param_blue_high_H"], params["mask_param_blue_high_S"], params["mask_param_blue_high_V"]])
+                [params["mask_param_blue_high_H"], params["mask_param_blue_high_S"], params["mask_param_blue_high_V"]],
+                dtype=int)
             # masking parameters green ball
             self.mask_param_green_low = np.array(
-                [params["mask_param_green_low_H"], params["mask_param_green_low_S"], params["mask_param_green_low_V"]])
+                [params["mask_param_green_low_H"], params["mask_param_green_low_S"], params["mask_param_green_low_V"]],
+                dtype=int)
             self.mask_param_green_high = np.array([params["mask_param_green_high_H"], params["mask_param_green_high_S"],
-                                                   params["mask_param_green_high_V"]])
+                                                   params["mask_param_green_high_V"]], dtype=int)
         except Exception as exc:
             print exc
             self.crop_ratio_middle_x = 1.0
@@ -150,13 +153,6 @@ class LeaderGetter(object):
 
     # TODO implement a better masking function
     def _mask(self, img_hsv, color):
-
-        ### DEBUG DELETE
-        print self.mask_param_blue_low
-        print self.mask_param_blue_high
-        print self.mask_param_green_low
-        print self.mask_param_green_high
-        ###
         if color == "blue":
             mask = cv2.inRange(img_hsv, self.mask_param_blue_low, self.mask_param_blue_high)
         elif color == "green":

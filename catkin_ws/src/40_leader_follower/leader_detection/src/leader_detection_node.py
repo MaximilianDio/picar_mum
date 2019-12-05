@@ -141,6 +141,11 @@ class LeaderDetectionNode(object):
 
         (positions, output_img), mask_img = self.leader_detector.process_image(img_bgr)
 
+        # output image
+        cv2.imshow('mask', mask_img)
+        cv2.imshow("leader_detection", output_img)
+        cv2.waitKey(1)
+
         if positions is None:
             return
 
@@ -162,10 +167,7 @@ class LeaderDetectionNode(object):
         image_mask_msg = self.bridge.cv2_to_imgmsg(mask_img, encoding="passthrough")
         self.publishers["mask_added"].publish(image_mask_msg)
 
-        # output image
-        cv2.imshow('mask',mask_img)
-        cv2.imshow("leader_detection",output_img)
-        cv2.waitKey(1)
+
         # self.publishers["leader_detection_image"].publish(output_img)
 
     def set_mask_param_blue_low_H(self, request):
