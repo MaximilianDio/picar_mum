@@ -3,7 +3,7 @@ import numpy as np
 from picar import Picar
 
 
-#class declaration
+# class declaration
 class ControllerValuesDesired(object):
     """Object that holds desired/actual values for the controller."""
 
@@ -17,6 +17,7 @@ class ControllerValuesDesired(object):
         self.distance = distance
         self.velocity = velocity
 
+
 class ControllerValues(object):
     """Object that holds desired/actual values for the controller."""
 
@@ -29,7 +30,7 @@ class ControllerValues(object):
             phi (float): Vehicle's angle relative to the center line of the track.
         """
 
-        #TODO if integrator time is needed
+        # TODO if integrator time is needed
         self.distance_x = distance_x
         self.distance_y = distance_y
         self.distance = np.sqrt(distance_x * distance_x + distance_y * distance_y)  # Additional Distance
@@ -62,11 +63,13 @@ class Controller(object):
             steer=k_dsteer,
         )
 
+        self.picar_fun = Picar()
+
     def get_control_output(self, desired_values, actual_values, last_values):
         """Calculates steering angle and velocity output based on desired and  actual values.
 
         Args:
-            desired_values (ControllerValues): Desired values for distance and
+            desired_values (ControllerValuesDesired): Desired values for distance and
                 angle offset relative to track. Used to compute control output.
             actual_values (ControllerValues): Actual values for distance and
                 angle offset relative to track. Used to compute control output.
@@ -80,36 +83,34 @@ class Controller(object):
 
         """
 
-        #space for integration
-        last_values=last_values
+        # space for integration
+        last_values = last_values
 
         # compute distance error
         error_distance = actual_values.distance - desired_values.distance
 
         # compute velocity error
-        error_velocity = 0 #actual_values.velocity - desired_values.velocity
+        error_velocity = 0.0  # actual_values.velocity - desired_values.velocity
 
         # compute displacement error in y direction
         error_y = actual_values.distance_y
 
         # compute velocity error in x
-        error_dy = 0 # actual_values.dy
-
+        error_dy = 0.0  # actual_values.dy
 
         # Control Design (Simple PI Controller)
-        #todo resolve get_velocity and get angle error
+        # todo resolve get_velocity and get angle error  - call method in the right way
 
         # Control Input Velocity
-        velocity_output = Picar.get_velocity(self.K_p["vel"] * error_distance + self.K_d["vel"] * error_velocity) #input meters per seconds output 0-1
+        velocity_output = self.picar_fun.get_velocity(self.K_p["vel"] * error_distance + self.K_d["vel"] * error_velocity)  # input meters per seconds output 0-1
 
         # Control Input Steering Angle
-        steering_angle_output = Picar.get_angle(self.K_p["steer"] * error_y + self.K_d["steer"] * error_dy) #input degree -output virtual degree
-
+        steering_angle_output = self.picar_fun.get_angle(
+            self.K_p["steer"] * error_y + self.K_d["steer"] * error_dy)  # input degree -output virtual degree
 
         errors = (error_distance, error_velocity, error_y, error_dy)
 
         return steering_angle_output, velocity_output, errors
-
 
     def update_parameters(self, k_pvel=None, k_psteer=None,
                           k_dvel=None, k_dsteer=None):

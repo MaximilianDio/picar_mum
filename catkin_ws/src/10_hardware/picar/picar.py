@@ -10,7 +10,7 @@ class Wheel:
     ksh=115.25 #N/rad
 
 
-class  Picar:
+class  Picar(object):
     #All picar in SI Units
 
     def __init__(self):
@@ -38,7 +38,7 @@ class  Picar:
     ########Functions
 
     #velocity transform
-    def get_velocity(x):
+    def get_velocity(self,x):
 
         p1 = -0.76149
         p2 = 2.6308
@@ -48,7 +48,7 @@ class  Picar:
         return y
 
     #angle transform
-    def get_angle(x):
+    def get_angle(self,x):
 
         p1 = 0.87857
         p2 = 0.25

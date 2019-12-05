@@ -124,6 +124,7 @@ class LaneControlNode(object):
         Args:
             message (LanePose):
         """
+
         desired_values = ControllerValues(self._params["distance_desired"],
                                           self._params["angle_desired"],
                                           self._params["velocity_desired"])

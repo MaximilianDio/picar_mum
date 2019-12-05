@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 import rospy
 from geometry_msgs.msg import Point32
-from std_msgs.msg import Float32
-from picar_common.picar_common import get_param, get_config_file_path, get_camera_info
 
 
 class LeaderPoseEstimation(object):
@@ -22,16 +20,10 @@ class LeaderPoseEstimation(object):
     def run(self):
         position = Point32()
 
-        ### Pauls debug action
-        #todo solve mistake here
-        #tests for console outputs
-        print('pos_blue_ball')
-        print(self.pos_blue_ball)
-        print('pos_blue_ball_x')
-        print(self.pos_blue_ball.x)
+        if self.pos_blue_ball is not None and self.pos_green_ball is not None:
 
-        position.x = self.pos_blue_ball.x + 0.5 * (self.pos_green_ball.x - self.pos_blue_ball.x)
-        position.y = self.pos_blue_ball.y + 0.5 * (self.pos_green_ball.y - self.pos_blue_ball.y)
+            position.x = self.pos_blue_ball.x + 0.5 * (self.pos_green_ball.x - self.pos_blue_ball.x)
+            position.y = self.pos_blue_ball.y + 0.5 * (self.pos_green_ball.y - self.pos_blue_ball.y)
 
         self.publishers["leader_relative_pos"].publish(position)
 
