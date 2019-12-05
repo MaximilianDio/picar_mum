@@ -235,7 +235,7 @@ class LeaderDetectionNode(object):
         self.update_leader_detector()
         return 1
 
-    def set_mask_param_green_low_S(self, request):
+    def set_mask_param_green_high_S(self, request):
         """Sets the mask_param_green_low_S of leadergetter"""
         self._params["mask_param_green_high_S"] = request.value
         set_param("~mask_param_green_high_S", request.value)
