@@ -184,6 +184,7 @@ class LeaderControlNode(object):
         actual_values = ControllerValues(message.x,
                                          message.y)
 
+        #TODO include last values for PD controller
         last_values = self.last_values
 
         (steering_angle,
