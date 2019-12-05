@@ -12,7 +12,7 @@ class LeaderGetter(object):
 
         self.update_params(params)
 
-        self.use_trackbars = True
+        self.use_trackbars = False
 
         if self.use_trackbars == True:
             self.__create_trackbar()
