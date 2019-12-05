@@ -159,7 +159,7 @@ class LeaderGetter(object):
         img_rgb, x_offset = self.__crop_image(img_rgb)
 
         # convert color to hsv, so it is easier to mask certain colors
-        img_hsv = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2HSV)
+        img_hsv = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2HSV)
 
         img_hsv = cv2.GaussianBlur(img_hsv, (3, 3), cv2.BORDER_DEFAULT)
 
@@ -171,10 +171,6 @@ class LeaderGetter(object):
         # mask_green = cv2.GaussianBlur(mask_green, (3, 3), cv2.BORDER_DEFAULT)
 
         mask_add = mask_blue + mask_green
-
-        if self.use_trackbars:
-            cv2.imshow("mask_blue", mask_blue)
-            cv2.imshow("mask_green", mask_green)
 
         # return self.__get_circle_pos(img_rgb, mask_blue, mask_green, x_offset), mask_add
         return self.__get_blob_pos(img_rgb, mask_blue, mask_green, x_offset, 0), mask_add

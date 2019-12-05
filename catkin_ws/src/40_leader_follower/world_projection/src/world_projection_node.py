@@ -70,16 +70,17 @@ class WorldProjectionNode(object):
 
     def __run(self):
         # wait until both positions where initialized by ros message
-        if self.pos_blue_ball is not None or self.pos_green_ball is not None:
+        if self.pos_blue_ball is not None and self.pos_green_ball is not None:
             # if pixle coordinates are [-1 -1] then blob could not be detected
-            if self.pos_blue_ball[0] < 0 or self.pos_green_ball < 0:
-                # TODO: @Paul und @Matti check if values are ok
+            if self.pos_blue_ball[0] < 0 or self.pos_green_ball[0] < 0:
+                # TODO: @Paul und @Matti check if values [0 0 0] are ok for the controller or choose new ones!
                 ball_blue = array2point32msg([0, 0, 0])
                 ball_green = array2point32msg([0, 0, 0])
             else:
                 ball_blue = array2point32msg(self.projector.pixel2world(self.pos_blue_ball))
                 ball_green = array2point32msg(self.projector.pixel2world(self.pos_green_ball))
 
+            # start publishing the first time the blobs could be detected
             self.publishers["leader_blue_ball_position_output"].publish(ball_blue)
             self.publishers["leader_green_ball_position_output"].publish(ball_green)
 

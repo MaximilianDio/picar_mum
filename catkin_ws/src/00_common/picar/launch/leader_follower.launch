@@ -50,7 +50,7 @@
 
     <!-- EDIT: 02.12.19 (MAX) - leader_detection -->
     <!-- launch leader_detection_node -->
-    <remap from="leader_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
+    <remap from="leader_detection_node/input_image/raw" to="camera_node/image"/>
     <include file="$(find leader_detection)/launch/leader_detection_node.launch">
         <arg name="ns" value="$(arg ns)"/>
         <arg name="machine" value="$(arg machine)"/>
