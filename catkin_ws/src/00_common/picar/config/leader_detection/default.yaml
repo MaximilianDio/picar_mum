@@ -24,7 +24,6 @@ mask_param_blue_low_V: 0
 mask_param_blue_high_H: 130
 mask_param_blue_high_S: 255
 mask_param_blue_high_V: 255
-
 # masking parameters green ball
 mask_param_green_low_H: 35
 mask_param_green_low_S: 230
