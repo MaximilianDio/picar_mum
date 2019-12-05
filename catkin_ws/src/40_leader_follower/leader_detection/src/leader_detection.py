@@ -89,11 +89,11 @@ class LeaderGetter(object):
             self.min_circle_radius = params["min_circle_radius"]
             self.max_circle_radius = params["max_circle_radius"]
             # masking parameters blue_ball
-            self.mask_param_blue_low = np.array(params["mask_param_blue_low"])
-            self.mask_param_blue_high = np.array(params["mask_param_blue_high"])
+            self.mask_param_blue_low = np.array(params["mask_param_blue_low_H"],params["mask_param_blue_low_S"] ,params["mask_param_blue_low_V"])
+            self.mask_param_blue_high = np.array(params["mask_param_blue_high_H"],params["mask_param_high_low_S"] ,params["mask_param_blue_high_V"])
             # masking parameters green ball
-            self.mask_param_green_low = np.array(params["mask_param_green_low"])
-            self.mask_param_green_high = np.array(params["mask_param_green_high"])
+            self.mask_param_green_low = np.array(params["mask_param_green_low_H"],params["mask_param_green_low_S"] ,params["mask_param_green_low_V"])
+            self.mask_param_green_high = np.array(params["mask_param_green_high_H"],params["mask_param_green_low_S"] ,params["mask_param_green_high_V"])
         except Exception as exc:
             print exc
             self.crop_ratio_middle_x = 1.0

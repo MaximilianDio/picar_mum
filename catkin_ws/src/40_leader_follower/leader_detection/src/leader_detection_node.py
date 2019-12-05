@@ -52,15 +52,68 @@ class LeaderDetectionNode(object):
             set_param("~" + param_name, self._params[param_name])
 
     def init_services(self):
-        """ initialization of ROS services to configure parameters of leader detection during runtime"""
-        # TODO: add services to change parameters online
-        pass
-        # self.services["set_123_TEST"] = rospy.Service("~set_123_TEST", SetValue, self.set_123_TEST)
+        """Initialize ROS services to configure the controller during runtime"""
 
-    # def set_123_TEST(self, request):
-    #     """ this is a test service callback function"""
-    #     print request.value
-    #     return 1
+        self.services["set_mask_param_blue_low_H"] = rospy.Service(
+            "~set_mask_param_blue_low_H",
+            SetValue,
+            self.set_mask_param_blue_low_H)
+
+        self.services["set_mask_param_blue_low_S"] = rospy.Service(
+            "~set_mask_param_blue_low_S",
+            SetValue,
+            self.set_mask_param_blue_low_S)
+
+        self.services["set_mask_param_blue_low_V"] = rospy.Service(
+            "~set_mask_param_blue_low_V",
+            SetValue,
+            self.set_mask_param_blue_low_V)
+
+        self.services["set_mask_param_blue_high_H"] = rospy.Service(
+            "~set_mask_param_blue_high_H",
+            SetValue,
+            self.set_mask_param_blue_high_H)
+
+        self.services["set_mask_param_blue_high_S"] = rospy.Service(
+            "~set_mask_param_blue_high_S",
+            SetValue,
+            self.set_mask_param_blue_high_S)
+
+        self.services["set_mask_param_blue_high_V"] = rospy.Service(
+            "~set_mask_param_blue_high_V",
+            SetValue,
+            self.set_mask_param_blue_high_V)
+
+        self.services["set_mask_param_green_low_H"] = rospy.Service(
+            "~set_mask_param_green_low_H",
+            SetValue,
+            self.set_mask_param_green_low_H)
+
+        self.services["set_mask_param_green_low_S"] = rospy.Service(
+            "~set_mask_param_green_low_S",
+            SetValue,
+            self.set_mask_param_green_low_S)
+
+        self.services["set_mask_param_green_low_V"] = rospy.Service(
+            "~set_mask_param_green_low_V",
+            SetValue,
+            self.set_mask_param_green_low_V)
+
+        self.services["set_mask_param_green_high_H"] = rospy.Service(
+            "~set_mask_param_green_high_H",
+            SetValue,
+            self.set_mask_param_green_high_H)
+
+        self.services["set_mask_param_green_high_S"] = rospy.Service(
+            "~set_mask_param_green_high_S",
+            SetValue,
+            self.set_mask_param_green_high_S)
+
+        self.services["set_mask_param_green_high_V"] = rospy.Service(
+            "~set_mask_param_green_high_V",
+            SetValue,
+            self.set_mask_param_green_high_V)
+
 
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
@@ -105,6 +158,97 @@ class LeaderDetectionNode(object):
         cv2.imshow("leader_detection",output_img)
         cv2.waitKey(1)
         # self.publishers["leader_detection_image"].publish(output_img)
+
+    def set_mask_param_blue_low_H(self, request):
+        """Sets the mask_param_blue_low_H of leadergetter"""
+        self._params["mask_param_blue_low_H"] = request.value
+        set_param("~mask_param_blue_low_H", request.value)
+        self.update_leader_detector()
+        return 1
+
+    def set_mask_param_blue_low_S(self, request):
+        """Sets the mask_param_blue_low_S of leadergetter"""
+        self._params["mask_param_blue_low_S"] = request.value
+        set_param("~mask_param_blue_low_S", request.value)
+        self.update_leader_detector()
+        return 1
+
+    def set_mask_param_blue_low_V(self, request):
+        """Sets the mask_param_blue_low_Vof leadergetter"""
+        self._params["mask_param_blue_low_V"] = request.value
+        set_param("~mask_param_blue_low_V", request.value)
+        self.update_leader_detector()
+        return 1
+
+    def set_mask_param_blue_high_H(self, request):
+        """Sets the mask_param_blue_low_H of leadergetter"""
+        self._params["mask_param_blue_high_H"] = request.value
+        set_param("~mask_param_blue_high_H", request.value)
+        self.update_leader_detector()
+        return 1
+
+    def set_mask_param_blue_low_S(self, request):
+        """Sets the mask_param_blue_low_S of leadergetter"""
+        self._params["mask_param_blue_high_S"] = request.value
+        set_param("~mask_param_blue_high_S", request.value)
+        self.update_leader_detector()
+        return 1
+
+    def set_mask_param_blue_high_V(self, request):
+        """Sets the mask_param_blue_low_Vof leadergetter"""
+        self._params["mask_param_blue_high_V"] = request.value
+        set_param("~mask_param_blue_high_V", request.value)
+        self.update_leader_detector()
+        return 1
+
+    def set_mask_param_green_low_H(self, request):
+        """Sets the mask_param_blue_low_H of leadergetter"""
+        self._params["mask_param_green_low_H"] = request.value
+        set_param("~mask_param_green_low_H", request.value)
+        self.update_leader_detector()
+        return 1
+
+    def set_mask_param_green_low_S(self, request):
+        """Sets the mask_param_blue_low_S of leadergetter"""
+        self._params["mask_param_green_low_S"] = request.value
+        set_param("~mask_param_green_low_S", request.value)
+        self.update_leader_detector()
+        return 1
+
+    def set_mask_param_green_low_V(self, request):
+        """Sets the mask_param_blue_low_Vof leadergetter"""
+        self._params["mask_param_green_low_V"] = request.value
+        set_param("~mask_param_green_low_V", request.value)
+        self.update_leader_detector()
+        return 1
+
+    def set_mask_param_green_high_H(self, request):
+        """Sets the mask_param_blue_low_H of leadergetter"""
+        self._params["mask_param_green_high_H"] = request.value
+        set_param("~mask_param_green_high_H", request.value)
+        self.update_leader_detector()
+        return 1
+
+    def set_mask_param_green_low_S(self, request):
+        """Sets the mask_param_green_low_S of leadergetter"""
+        self._params["mask_param_green_high_S"] = request.value
+        set_param("~mask_param_green_high_S", request.value)
+        self.update_leader_detector()
+        return 1
+
+    def set_mask_param_green_high_V(self, request):
+        """Sets the mask_param_green_low_Vof leadergetter"""
+        self._params["mask_param_green_high_V"] = request.value
+        set_param("~mask_param_green_high_V", request.value)
+        self.update_leader_detector()
+        return 1
+
+
+    def update_leader_detector(self):
+        """Updates the controller object's picar"""
+        self.leader_detector.update_params(
+            self._params
+        )
 
 
 if __name__ == "__main__":
