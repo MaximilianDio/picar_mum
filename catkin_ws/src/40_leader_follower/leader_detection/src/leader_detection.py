@@ -7,6 +7,25 @@ def nothing(x):
     pass
 
 
+def blob_detection(mask, img, x_offset, y_offset):
+    # calculate moments of binary image
+    M = cv2.moments(mask)
+
+    # calculate x,y coordinate of center
+    if M["m00"] != 0:
+        cX = int(M["m10"] / M["m00"])
+        cY = int(M["m01"] / M["m00"])
+
+        cv2.circle(img, (cX, cY), 3, (255, 255, 255), -1)
+        # add offset due to cropping (important for recalculation to world coordinate system
+        cX += x_offset
+        cY += y_offset
+    else:
+        cX, cY = None, None
+
+    return cX, cY, img
+
+
 class LeaderGetter(object):
     def __init__(self, params):
 
@@ -102,6 +121,7 @@ class LeaderGetter(object):
             self.mask_param_green_high = np.array([params["mask_param_green_high_H"], params["mask_param_green_high_S"],
                                                    params["mask_param_green_high_V"]], dtype=int)
         except Exception as exc:
+            # use these values if something went wrong with the import of parameters
             print exc
             self.crop_ratio_middle_x = 1.0
             self.crop_ratio_top_y = 1.0
@@ -141,25 +161,26 @@ class LeaderGetter(object):
         # convert color to hsv, so it is easier to mask certain colors
         img_hsv = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2HSV)
 
-        img_hsv = cv2.GaussianBlur(img_hsv, (5, 5), cv2.BORDER_DEFAULT)
+        img_hsv = cv2.GaussianBlur(img_hsv, (3, 3), cv2.BORDER_DEFAULT)
 
         # mask images
-        mask_blue = self._mask(img_hsv, "blue")
-        mask_green = self._mask(img_hsv, "green")
+        mask_blue = self.__mask(img_hsv, "blue")
+        mask_green = self.__mask(img_hsv, "green")
 
-        mask_blue = cv2.GaussianBlur(mask_blue, (3, 3), cv2.BORDER_DEFAULT)
-        mask_green = cv2.GaussianBlur(mask_green, (3, 3), cv2.BORDER_DEFAULT)
+        # mask_blue = cv2.GaussianBlur(mask_blue, (3, 3), cv2.BORDER_DEFAULT)
+        # mask_green = cv2.GaussianBlur(mask_green, (3, 3), cv2.BORDER_DEFAULT)
 
         mask_add = mask_blue + mask_green
 
-        if self.use_trackbars == True:
+        if self.use_trackbars:
             cv2.imshow("mask_blue", mask_blue)
             cv2.imshow("mask_green", mask_green)
 
-        return self.__get_circle_pos(img_rgb, mask_blue, mask_green, x_offset), mask_add
+        # return self.__get_circle_pos(img_rgb, mask_blue, mask_green, x_offset), mask_add
+        return self.__get_blob_pos(img_rgb, mask_blue, mask_green, x_offset, 0), mask_add
 
     # TODO implement a better masking function
-    def _mask(self, img_hsv, color):
+    def __mask(self, img_hsv, color):
 
         if color == "blue":
             mask = cv2.inRange(img_hsv, self.mask_param_blue_low, self.mask_param_blue_high)
@@ -171,7 +192,22 @@ class LeaderGetter(object):
 
         return mask
 
-    # FIXME balls at which are farther away from the center will appear as ellipses -will not be detected correctly
+    def __get_blob_pos(self, img_rgb, mask_blue, mask_green, x_offset, y_offset):
+        '''
+        :param img_rgb:
+        :param mask_blue:
+        :param mask_green:
+        :return: x_blue, y_blue, x_green, y_green, image_with_detection
+        '''
+        output = img_rgb.copy()
+
+        x_blue, y_blue, output = blob_detection(mask_blue, output, x_offset, y_offset)
+        x_green, y_green, output = blob_detection(mask_green, output, x_offset, y_offset)
+
+        # if no ball Ball is detected None will be printed
+        return (x_blue, y_blue, x_green, y_green), output
+
+    # TODO: currently not in use DELETE?
     def __get_circle_pos(self, img_rgb, mask_blue, mask_green, x_offset):
         '''
         :param img_rgb:
