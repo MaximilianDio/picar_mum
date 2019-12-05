@@ -41,17 +41,16 @@
         </include>
 
         <model name="box">
-        <static>true</static>
+        <!-- <static>true</static> -->
             <pose>-1 0 0 0 0 0</pose>
             <link name="link1">
-                <!-- <collision name="collision">
+               <collision name="collision">
                 <geometry>
                     <box>
-                    <size>.1 .1 .1</size>
+                    <size>.01 .01 .01</size>
                     </box>
                 </geometry>
-                </collision> -->
-
+                </collision>
                 <!-- <visual name="visual">
                 <geometry>
                     <box>
