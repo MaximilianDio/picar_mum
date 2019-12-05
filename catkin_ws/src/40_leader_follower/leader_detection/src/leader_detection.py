@@ -119,6 +119,13 @@ class LeaderGetter(object):
             self.mask_param_green_low = np.array([35, 230, 20])
             self.mask_param_green_high = np.array([70, 255, 255])
 
+        ### DEBUG DELETE
+        print self.mask_param_blue_low
+        print self.mask_param_blue_high
+        print self.mask_param_green_low
+        print self.mask_param_green_high
+        ###
+
     def process_image(self, img_rgb):
         """
             :param img_rgb: image of picar
@@ -153,6 +160,7 @@ class LeaderGetter(object):
 
     # TODO implement a better masking function
     def _mask(self, img_hsv, color):
+
         if color == "blue":
             mask = cv2.inRange(img_hsv, self.mask_param_blue_low, self.mask_param_blue_high)
         elif color == "green":
