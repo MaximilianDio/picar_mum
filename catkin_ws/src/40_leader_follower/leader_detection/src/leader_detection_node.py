@@ -158,12 +158,10 @@ class LeaderDetectionNode(object):
         self.publishers["leader_green_ball_position"].publish(msg_out_green_ball_pos)
 
         # Publish mask
-        # TODO mask as Image object
 
         image_mask_msg = self.bridge.cv2_to_imgmsg(mask_img, encoding="passthrough")
         self.publishers["mask_added"].publish(image_mask_msg)
 
-        print mask_img
         # output image
         cv2.imshow('mask',mask_img)
         cv2.imshow("leader_detection",output_img)
@@ -173,7 +171,10 @@ class LeaderDetectionNode(object):
     def set_mask_param_blue_low_H(self, request):
         """Sets the mask_param_blue_low_H of leadergetter"""
         self._params["mask_param_blue_low_H"] = request.value
+
+
         set_param("~mask_param_blue_low_H", request.value)
+
         self.update_leader_detector()
         return 1
 
@@ -198,7 +199,7 @@ class LeaderDetectionNode(object):
         self.update_leader_detector()
         return 1
 
-    def set_mask_param_blue_low_S(self, request):
+    def set_mask_param_blue_high_S(self, request):
         """Sets the mask_param_blue_low_S of leadergetter"""
         self._params["mask_param_blue_high_S"] = request.value
         set_param("~mask_param_blue_high_S", request.value)

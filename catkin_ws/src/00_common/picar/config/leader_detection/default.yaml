@@ -17,7 +17,6 @@ crop_ratio_middle_x: 1
 crop_ratio_top_y: 0.65
 # masking parameters
 # masking parameters blue_ball
-mask_param_blue_low: [100, 215, 0]
 mask_param_blue_low_H: 100
 mask_param_blue_low_S: 215
 mask_param_blue_low_V: 0

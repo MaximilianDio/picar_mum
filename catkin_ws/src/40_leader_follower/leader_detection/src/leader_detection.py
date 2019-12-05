@@ -75,7 +75,6 @@ class LeaderGetter(object):
         self.min_circle_radius = cv2.getTrackbarPos("min_circle_radius", self.window_name)
         self.max_circle_radius = cv2.getTrackbarPos("max_circle_radius", self.window_name)
 
-
     def update_params(self, params):
         # TODO make it more modular!
         try:
@@ -88,12 +87,17 @@ class LeaderGetter(object):
             self.param2 = params["param2"]
             self.min_circle_radius = params["min_circle_radius"]
             self.max_circle_radius = params["max_circle_radius"]
+
             # masking parameters blue_ball
-            self.mask_param_blue_low = np.array(params["mask_param_blue_low_H"],params["mask_param_blue_low_S"] ,params["mask_param_blue_low_V"])
-            self.mask_param_blue_high = np.array(params["mask_param_blue_high_H"],params["mask_param_high_low_S"] ,params["mask_param_blue_high_V"])
+            self.mask_param_blue_low = np.array(
+                [params["mask_param_blue_low_H"], params["mask_param_blue_low_S"], params["mask_param_blue_low_V"]])
+            self.mask_param_blue_high = np.array(
+                [params["mask_param_blue_high_H"], params["mask_param_blue_high_S"], params["mask_param_blue_high_V"]])
             # masking parameters green ball
-            self.mask_param_green_low = np.array(params["mask_param_green_low_H"],params["mask_param_green_low_S"] ,params["mask_param_green_low_V"])
-            self.mask_param_green_high = np.array(params["mask_param_green_high_H"],params["mask_param_green_low_S"] ,params["mask_param_green_high_V"])
+            self.mask_param_green_low = np.array(
+                [params["mask_param_green_low_H"], params["mask_param_green_low_S"], params["mask_param_green_low_V"]])
+            self.mask_param_green_high = np.array([params["mask_param_green_high_H"], params["mask_param_green_high_S"],
+                                                   params["mask_param_green_high_V"]])
         except Exception as exc:
             print exc
             self.crop_ratio_middle_x = 1.0
@@ -105,7 +109,7 @@ class LeaderGetter(object):
             self.min_circle_radius = 1
             self.max_circle_radius = 30
             # masking parameters blue_ball
-            self.mask_param_blue_low = np.array([100, 215, 0])
+            self.mask_param_blue_low = np.array([100, 215, 10])
             self.mask_param_blue_high = np.array([130, 255, 255])
 
             # masking parameters green ball
@@ -142,12 +146,17 @@ class LeaderGetter(object):
             cv2.imshow("mask_blue", mask_blue)
             cv2.imshow("mask_green", mask_green)
 
-
         return self.__get_circle_pos(img_rgb, mask_blue, mask_green, x_offset), mask_add
-
 
     # TODO implement a better masking function
     def _mask(self, img_hsv, color):
+
+        ### DEBUG DELETE
+        print self.mask_param_blue_low
+        print self.mask_param_blue_high
+        print self.mask_param_green_low
+        print self.mask_param_green_high
+        ###
         if color == "blue":
             mask = cv2.inRange(img_hsv, self.mask_param_blue_low, self.mask_param_blue_high)
         elif color == "green":
