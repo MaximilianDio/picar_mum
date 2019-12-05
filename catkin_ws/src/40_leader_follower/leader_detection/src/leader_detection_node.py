@@ -86,7 +86,7 @@ class LeaderDetectionNode(object):
             """
         img_bgr = self.bridge.imgmsg_to_cv2(image_data)
 
-        positions, output_img, mask_img = self.leader_detector.process_image(img_bgr)
+        (positions, output_img), mask_img = self.leader_detector.process_image(img_bgr)
 
         if positions is None:
             return
@@ -105,9 +105,14 @@ class LeaderDetectionNode(object):
         self.publishers["leader_green_ball_position"].publish(msg_out_green_ball_pos)
 
         # Publish mask
-        self.publishers["mask_added"].publish(mask_img)
+        # TODO mask as Image object
 
+        image_mask_msg = self.bridge.cv2_to_imgmsg(mask_img, encoding="passthrough")
+        self.publishers["mask_added"].publish(image_mask_msg)
+
+        print mask_img
         # output image
+        cv2.imshow('mask',mask_img)
         cv2.imshow("leader_detection",output_img)
         cv2.waitKey(1)
         # self.publishers["leader_detection_image"].publish(output_img)
