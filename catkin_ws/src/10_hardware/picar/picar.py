@@ -46,7 +46,7 @@ class  Picar(object):
         #
         # y = p1 * x*x + p2 * x + p3tt
         p1 = 0.5824
-        p2 = 0.1067
+        p2 = 0.0621
 
         if x > 0:
             y = p1 * x + p2
@@ -58,8 +58,12 @@ class  Picar(object):
     #angle transform
     def get_angle(self,x):
 
-        p1 = 0.87857
-        p2 = 0.25
+        p1 = 1.1382
+        p2 = -0.2846
 
-        y = p1*x + p2
+        if x > 0:
+            y = p1 * x + p2
+        else:
+            y = p1 * x - p2
+
         return y
