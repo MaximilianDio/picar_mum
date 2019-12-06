@@ -14,22 +14,40 @@
 # |                                           |  v
 # ---------------------------------------------
 crop_ratio_middle_x: 1
-crop_ratio_top_y: 0.65
-# masking parameters
+crop_ratio_top_y: 1 #0.65
+# masking parameters simulation
 # masking parameters blue_ball
-mask_param_blue_low_H: 100
-mask_param_blue_low_S: 215
-mask_param_blue_low_V: 0
-mask_param_blue_high_H: 130
+#mask_param_blue_low_H: 100
+#mask_param_blue_low_S: 215
+#mask_param_blue_low_V: 0
+#mask_param_blue_high_H: 130
+#mask_param_blue_high_S: 255
+#mask_param_blue_high_V: 255
+## masking parameters green ball
+#mask_param_green_low_H: 35
+#mask_param_green_low_S: 230
+#mask_param_green_low_V: 20
+#mask_param_green_high_H: 70
+#mask_param_green_high_S: 255
+#mask_param_green_high_V: 255
+#masking parameters picar -pink green balls
+#masking parameters blue ball
+mask_param_blue_low_H: 120
+mask_param_blue_low_S: 115
+mask_param_blue_low_V: 115
+mask_param_blue_high_H: 150
 mask_param_blue_high_S: 255
 mask_param_blue_high_V: 255
 # masking parameters green ball
-mask_param_green_low_H: 35
-mask_param_green_low_S: 230
-mask_param_green_low_V: 20
-mask_param_green_high_H: 70
+mask_param_green_low_H: 30
+mask_param_green_low_S: 115
+mask_param_green_low_V: 111
+mask_param_green_high_H: 59
 mask_param_green_high_S: 255
 mask_param_green_high_V: 255
+
+
+
 # cicrle detection parameters
 dp: 1.5
 minDist: 15
