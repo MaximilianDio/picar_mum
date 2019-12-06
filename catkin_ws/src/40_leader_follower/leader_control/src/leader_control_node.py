@@ -192,7 +192,10 @@ class LeaderControlNode(object):
         actual_values = ControllerValues(message.x,
                                          message.y)
 
-        time_difference = self.timestamp.secs - self.last_time
+        self.timestamp = rospy.get_rostime()
+
+        time_difference = (1e-9)*(self.timestamp.nsecs - self.last_time)
+
         #TODO include last values for PD controller
         last_values = self.last_values
 
@@ -202,7 +205,7 @@ class LeaderControlNode(object):
                                                       actual_values, last_values, time_difference)
 
         # Update last values and time
-        self.last_time = self.timestamp.secs
+        self.last_time = self.timestamp.nsecs
 
         self.last_values = actual_values
 
