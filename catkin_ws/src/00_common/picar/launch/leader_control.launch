@@ -1,3 +1,5 @@
+<!-- This launchfile refers to taks 2 .  it launches the leader controllpath on simcar and picar. -->
+
 <launch>
     <arg name="ns"/>
     <arg name="machine" default="$(arg ns)"/>
@@ -41,7 +43,7 @@
             <arg name="ns" value="simcar"/>
         </include>
 
-        <include file="$(find simulation)/launch/simple_loop_cw_new.launch">
+        <include file="$(find simulation)/launch/simple_loop_cw_new.launch"> <!-- import strecke mit punkten grade aus-->
             <arg name="ns" value="$(arg ns)"/>
             <arg name="paused" value="$(arg paused)"/>
             <arg name="gui" value="$(arg gui)"/>
@@ -49,18 +51,10 @@
         </include>
     </group>
 
-
     <!-- Running always-->
+    <!--  control path: leader follower -->
 
-    <!--color_normalization_node -->
-    <remap from="color_normalization_node/input_image/compressed" to="camera_node/image/compressed"/>
-    <include file="$(find color_normalization)/launch/color_normalization_node.launch">
-        <arg name="ns" value="$(arg ns)"/>
-        <arg name="machine" value="$(arg machine)"/>
-        <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
-    </include>
-
-    <!-- launch leader_detection_node -->
+    <!-- start leader_detection_node -->
     <remap from="leader_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
     <include file="$(find leader_detection)/launch/leader_detection_node.launch">
         <arg name="ns" value="$(arg ns)"/>
@@ -98,7 +92,7 @@
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
     </include>
 
- <!-- start leader control_node-->
+    <!-- start leader control_node-->
     <remap from="leader_control_node/leader_relative_pos_input" to="leader_pose_estimation_node/leader_relative_pos"/>
     <remap from="leader_control_node/car_cmd" to="motor_node/car_cmd" />
     <include file="$(find leader_control)/launch/leader_control_node.launch">
