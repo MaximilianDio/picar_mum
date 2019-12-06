@@ -111,6 +111,9 @@ class Controller(object):
                 steering_angle_output = self.picar_fun.get_angle(
                     self.K_p["steer"] * error_y + self.K_d["steer"] * error_dy)
 
+        if velocity_output < 0:
+            steering_angle_output=-steering_angle_output
+
         print(error_distance)
         errors = (error_distance, error_velocity, error_y, error_dy)
 
