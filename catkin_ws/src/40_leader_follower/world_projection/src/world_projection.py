@@ -30,7 +30,7 @@ class WorldProjector(object):
 
         # TODO import projection_z as parameter
         # defines height of the projection plane
-        self.projection_z = 0.05
+        self.projection_z = 0
 
         # camera data
         self.r_matrix = r_matrix

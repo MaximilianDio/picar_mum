@@ -85,7 +85,7 @@ class Controller(object):
 
 
         # compute distance error
-        error_distance = 30*actual_values.distance_x - desired_values.distance
+        error_distance = actual_values.distance_x - desired_values.distance
 
         # compute displacement error in y direction
         error_y = actual_values.distance_y
