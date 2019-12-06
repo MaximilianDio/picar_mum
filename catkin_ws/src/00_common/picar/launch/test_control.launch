@@ -45,13 +45,6 @@
             <arg name="local" value="true"/>
         </include>
 
-         <!-- start the image node to show image on computer screen -->
-        <!-- ><remap from="calibrate_intrinsics_node/image/raw" to="camera/image/raw"/>-->
-        <include file="$(find video_live_stream)/launch/video_live_stream_node.launch">
-            <!--<arg name="ns" value="$(arg ns)"/>-->
-        </include>
-        <!-- TODO: livestream does not work find out how to create new node and read data! -->
-
     </group>
 
     <!-- if running on simulated vehicle -->
@@ -68,4 +61,5 @@
             <arg name="gui" value="true"/>
         </include>
     </group>
+
 </launch>
