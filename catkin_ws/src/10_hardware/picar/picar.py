@@ -40,11 +40,19 @@ class  Picar(object):
     #velocity transform
     def get_velocity(self,x):
 
-        p1 = -0.76149
-        p2 = 2.6308
-        p3 = -0.3301
+        # p1 = -0.76149
+        # p2 = 2.6308
+        # p3 = -0.3301
+        #
+        # y = p1 * x*x + p2 * x + p3tt
+        p1 = 0.5824
+        p2 = 0.1067
 
-        y = p1 * x*x + p2 * x + p3
+        if x > 0:
+            y = p1 * x + p2
+        else:
+            y = p1 * x - p2
+
         return y
 
     #angle transform

@@ -204,6 +204,7 @@ class LeaderControlNode(object):
          errors) = self.controller.get_control_output(desired_values,
                                                       actual_values, last_values, time_difference)
 
+
         # Update last values and time
         self.last_time = self.timestamp.nsecs
 
