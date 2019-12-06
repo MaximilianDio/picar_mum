@@ -65,7 +65,7 @@ class Controller(object):
 
         self.picar_fun = Picar()
 
-    def get_control_output(self, desired_values, actual_values, last_values):
+    def get_control_output(self, desired_values, actual_values, last_values, time_diff):
         """Calculates steering angle and velocity output based on desired and  actual values.
 
         Args:
@@ -84,29 +84,31 @@ class Controller(object):
         """
 
         # space for integration
-        last_values = last_values
+        error_dy = (actual_values.distance_x - last_values.distance_x)/time_diff
+        error_velocity = (actual_values.distance - last_values.distance)/time_diff
 
         # compute distance error
         error_distance = actual_values.distance - desired_values.distance
 
-        # compute velocity error
-        error_velocity = 0.0  # actual_values.velocity - desired_values.velocity
-
         # compute displacement error in y direction
         error_y = actual_values.distance_y
 
-        # compute velocity error in x
-        error_dy = 0.0  # actual_values.dy
 
         # Control Design (Simple PI Controller)
         # todo resolve get_velocity and get angle error  - call method in the right way
 
         # Control Input Velocity
-        velocity_output = self.picar_fun.get_velocity(-self.K_p["vel"] * error_distance + self.K_d["vel"] * error_velocity)  # input meters per seconds output 0-1
-
-        # Control Input Steering Angle
-        steering_angle_output = self.picar_fun.get_angle(
-            self.K_p["steer"] * error_y + self.K_d["steer"] * error_dy)  # input degree -output virtual degree
+        if actual_values.distance == 0:
+            velocity_output = 0.0
+            steering_angle_output = 0.0
+        else:
+            if time_diff == 0:
+                velocity_output = self.picar_fun.get_velocity(self.K_p["vel"] * error_distance)
+                steering_angle_output = self.picar_fun.get_angle(self.K_p["steer"] * error_y)
+            else:
+                velocity_output = self.picar_fun.get_velocity(self.K_p["vel"] * error_distance + self.K_d["vel"] * error_velocity)  # input meters per seconds output 0-1
+                steering_angle_output = self.picar_fun.get_angle(
+                    self.K_p["steer"] * error_y + self.K_d["steer"] * error_dy)
 
         errors = (error_distance, error_velocity, error_y, error_dy)
 

@@ -18,6 +18,11 @@ class LeaderControlNode(object):
         self._params = {}
         self.publishers = {}
         self.services = {}
+
+        # initialize timestamp
+        self.timestamp = rospy.get_rostime()
+        self.last_time = 0.0
+
         config_file_name = get_param("~config_file_name", "default")
 
         config_file_path = get_config_file_path("leader_control",
@@ -179,23 +184,29 @@ class LeaderControlNode(object):
         Args:
             message (LeaderPose):
         """
+
+
         desired_values = ControllerValuesDesired(self._params["distance_desired"],
                                           self._params["velocity_desired"])
 
         actual_values = ControllerValues(message.x,
                                          message.y)
 
+        time_difference = self.timestamp.secs - self.last_time
         #TODO include last values for PD controller
         last_values = self.last_values
 
         (steering_angle,
          velocity,
          errors) = self.controller.get_control_output(desired_values,
-                                                      actual_values,last_values)
+                                                      actual_values, last_values, time_difference)
+
+        # Update last values and time
+        self.last_time = self.timestamp.secs
+
+        self.last_values = actual_values
 
         self.publish_car_cmd(steering_angle, velocity)
-
-        self.last_values=actual_values
 
         self.publish_errors(errors)
 
