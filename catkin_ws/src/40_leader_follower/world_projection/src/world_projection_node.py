@@ -2,9 +2,10 @@
 import rospy
 import yaml
 import numpy as np
+from sensor_msgs.msg import CompressedImage, CameraInfo
 from geometry_msgs.msg import Point32
-from picar_common.picar_common import get_param, get_config_file_path, get_camera_info
-import world_projection
+from picar_common.picar_common import get_config_file_path, get_param, get_camera_info
+from world_projection import WorldProjector
 
 
 def array2point32msg(array):
@@ -30,36 +31,30 @@ class WorldProjectionNode(object):
 
         self.services = {}
 
-        # distorted_input is set to False only in simulation mode
-        distorted_input = get_param("~distorted_input", "False")
-
+        name = get_param("~extrinsics_file_name", "default")
+        path = get_config_file_path("extrinsics", name)
         camera_info = get_camera_info()
 
-        extrinsics_file_name = rospy.get_namespace().strip("/")
-        extrinsics_file_path = get_config_file_path(
-            "extrinsics",
-            extrinsics_file_name)
-        intrinsics_file_path = get_config_file_path(
-            "intrinsics",
-            extrinsics_file_name)
+        if path is None:
+            rospy.logfatal("No extrinsics found!")
+            rospy.signal_shutdown("No extrinsics found!")
+        with open(path, "r") as f:
+            data = yaml.safe_load(f)
+            H = np.array(data["H"]["data"])
+            H = np.resize(H, (3, 3))
 
-        # load intrinsic and extrinsic camera data
-        with open(extrinsics_file_path, "r") as file_handle:
-            data = yaml.safe_load(file_handle)
-            r_matrix = np.array(data["S"]["data"]).reshape(3, 3)
-            t_matrix = np.array(data["t"]["data"]).reshape(3, 1)
+        rospy.loginfo("[{}] Waiting for camera_info message..."
+                      "".format(rospy.get_name()))
 
-        with open(intrinsics_file_path, "r") as file_handle:
-            data = yaml.safe_load(file_handle)
-            k_matrix = np.array(data["projection_matrix"]["data"]).reshape(3, 4)
+        camera_info = rospy.wait_for_message("camera_node/camera_info",
+                                             CameraInfo)
+        rospy.loginfo("[{}] Received camera_info message."
+                      "".format(rospy.get_name()))
 
-        # create instance of the WorldProjector
-        self.projector = world_projection.WorldProjector(
-            camera_info,
-            r_matrix,
-            t_matrix,
-            k_matrix,
-            distorted_input)
+        if camera_info.D[0] == 0.0:
+            self.projector = WorldProjector(camera_info, H, False)
+        else:
+            self.projector = WorldProjector(camera_info, H, True)
 
         # register all publishers
         self.publishers = {}
@@ -77,8 +72,8 @@ class WorldProjectionNode(object):
                 ball_blue = array2point32msg([0, 0, 0])
                 ball_green = array2point32msg([0, 0, 0])
             else:
-                ball_blue = array2point32msg(self.projector.pixel2world(self.pos_blue_ball))
-                ball_green = array2point32msg(self.projector.pixel2world(self.pos_green_ball))
+                ball_blue = array2point32msg(self.projector.pixel2ground(self.pos_blue_ball))
+                ball_green = array2point32msg(self.projector.pixel2ground(self.pos_green_ball))
 
             # start publishing the first time the blobs could be detected
             self.publishers["leader_blue_ball_position_output"].publish(ball_blue)
@@ -116,5 +111,4 @@ class WorldProjectionNode(object):
 if __name__ == "__main__":
     rospy.init_node("world_projection_node")
     WorldProjectionNode()
-
     rospy.spin()

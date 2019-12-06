@@ -97,12 +97,12 @@ class Controller(object):
         # todo resolve get_velocity and get angle error  - call method in the right way
 
         # Control Input Velocity
-        if actual_values.distance == 0 or (actual_values.distance_x - last_values.distance_x) > 0.1:
+        if actual_values.distance == 0:
             velocity_output = 0.0
             steering_angle_output = 0.0
         else:
             if time_diff == 0 or time_diff < 0:
-                velocity_output = self.picar_fun.get_velocity(self.K_p["vel"] * error_distance)
+                velocity_output = self.K_p["vel"] * error_distance  #self.picar_fun.get_velocity(self.K_p["vel"] * error_distance)
                 steering_angle_output = self.picar_fun.get_angle(self.K_p["steer"] * error_y)
             else:
                 error_dy = (actual_values.distance_x - last_values.distance_x) / time_diff
