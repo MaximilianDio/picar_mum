@@ -45,18 +45,12 @@
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
     </include>
 
-    <!--  for test purposes keyboard control -->
-    <group if="$(arg sim)">
-        <!-- start keyboard control -->
-        <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">
-            <arg name="ns" value="simcar"/>
-        </include>
-    </group>
+
     <!--  control path: leader follower -->
 
     <!-- EDIT: 02.12.19 (MAX) - leader_detection -->
     <!-- launch leader_detection_node -->
-    <remap from="leader_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
+    <remap from="leader_detection_node/input_image/raw" to="camera_node/image"/>
     <include file="$(find leader_detection)/launch/leader_detection_node.launch">
         <arg name="ns" value="$(arg ns)"/>
         <arg name="machine" value="$(arg machine)"/>
@@ -84,7 +78,7 @@
         </include>
     </group>
 
-    <!-- start leader_pose_estimation_node -->
+     <!-- start lane_pose_estimation_node -->
     <remap from="leader_pose_estimation_node/leader_blue_ball_position" to="world_projection_node/leader_blue_ball_position_output"/>
     <remap from="leader_pose_estimation_node/leader_green_ball_position" to="world_projection_node/leader_green_ball_position_output"/>
     <include file="$(find leader_pose_estimation)/launch/leader_pose_estimation_node.launch">
@@ -93,7 +87,7 @@
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
     </include>
 
- <!-- start leader control_node
+     <!-- start leader control_node-->
     <remap from="leader_control_node/leader_relative_pos_input" to="leader_pose_estimation_node/leader_relative_pos"/>
     <remap from="leader_control_node/car_cmd" to="motor_node/car_cmd" />
     <include file="$(find leader_control)/launch/leader_control_node.launch">
@@ -101,5 +95,5 @@
         <arg name="machine" value="$(arg machine)"/>
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
     </include>
-    -->
+
 </launch>

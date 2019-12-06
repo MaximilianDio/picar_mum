@@ -102,7 +102,7 @@ class Controller(object):
         # todo resolve get_velocity and get angle error  - call method in the right way
 
         # Control Input Velocity
-        velocity_output = self.picar_fun.get_velocity(self.K_p["vel"] * error_distance + self.K_d["vel"] * error_velocity)  # input meters per seconds output 0-1
+        velocity_output = self.picar_fun.get_velocity(-self.K_p["vel"] * error_distance + self.K_d["vel"] * error_velocity)  # input meters per seconds output 0-1
 
         # Control Input Steering Angle
         steering_angle_output = self.picar_fun.get_angle(

@@ -28,6 +28,7 @@
     <!-- Publications -->
     <!-- "~leader_blue_ball_position": geometry_msgs/Point32 -->
     <!-- "~leader_green_ball_position": geometry_msgs/Point32 -->
+    <!-- "~mask_added": sensor_msgs/Image -->
     <!-- "~leader_green_ball_position": sensor_msgs/Image -->
 
 </launch>

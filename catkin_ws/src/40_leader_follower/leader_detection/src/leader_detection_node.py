@@ -114,7 +114,6 @@ class LeaderDetectionNode(object):
             SetValue,
             self.set_mask_param_green_high_V)
 
-
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
         # relative position of leaders blue ball to picar
@@ -141,39 +140,45 @@ class LeaderDetectionNode(object):
 
         (positions, output_img), mask_img = self.leader_detector.process_image(img_bgr)
 
-        if positions is None:
-            return
+        # DEGBUG DELETE
+        # output image
+        cv2.imshow('mask', mask_img)
+        output_img = cv2.cvtColor(output_img,cv2.COLOR_RGB2BGR)
+        cv2.imshow("leader_detection", output_img)
+        cv2.waitKey(1)
 
-        # format output msgs
         msg_out_blue_ball_pos = Point32()
-        msg_out_blue_ball_pos.x = positions[0]
-        msg_out_blue_ball_pos.y = positions[1]
-
         msg_out_green_ball_pos = Point32()
-        msg_out_green_ball_pos.x = positions[2]
-        msg_out_green_ball_pos.y = positions[3]
+        # TODO react to None positions appropriately
+        if None in positions:
+            # format output msgs
+            msg_out_blue_ball_pos.x = -1
+            msg_out_blue_ball_pos.y = -1
 
-        # publish position and orientation of leader
+            msg_out_green_ball_pos.x = -1
+            msg_out_green_ball_pos.y = -1
+        else:
+            # format output msgs
+            msg_out_blue_ball_pos.x = positions[0]
+            msg_out_blue_ball_pos.y = positions[1]
+
+            msg_out_green_ball_pos.x = positions[2]
+            msg_out_green_ball_pos.y = positions[3]
+
+        # publish position of balls in pixel coordinates
         self.publishers["leader_blue_ball_position"].publish(msg_out_blue_ball_pos)
         self.publishers["leader_green_ball_position"].publish(msg_out_green_ball_pos)
 
         # Publish mask
-        # TODO mask as Image object
-
         image_mask_msg = self.bridge.cv2_to_imgmsg(mask_img, encoding="passthrough")
         self.publishers["mask_added"].publish(image_mask_msg)
-
-        print mask_img
-        # output image
-        cv2.imshow('mask',mask_img)
-        cv2.imshow("leader_detection",output_img)
-        cv2.waitKey(1)
-        # self.publishers["leader_detection_image"].publish(output_img)
 
     def set_mask_param_blue_low_H(self, request):
         """Sets the mask_param_blue_low_H of leadergetter"""
         self._params["mask_param_blue_low_H"] = request.value
+
         set_param("~mask_param_blue_low_H", request.value)
+
         self.update_leader_detector()
         return 1
 
@@ -253,7 +258,6 @@ class LeaderDetectionNode(object):
         set_param("~mask_param_green_high_V", request.value)
         self.update_leader_detector()
         return 1
-
 
     def update_leader_detector(self):
         """Updates the controller object's picar"""

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from leader_control.controller import Controller, ControllerValues, ControllerValuesDesired
-from picar import  Picar
+from src.controller import Controller, ControllerValues, ControllerValuesDesired
+from src.picar import Picar
 
 picar = Picar()
 

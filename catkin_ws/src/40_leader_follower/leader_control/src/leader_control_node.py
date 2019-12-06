@@ -3,7 +3,7 @@ import rospy
 import yaml
 
 from geometry_msgs.msg import Point32
-from leader_control.controller import Controller, ControllerValues, ControllerValuesDesired
+from controller import Controller, ControllerValues, ControllerValuesDesired
 from picar_common.picar_common import get_param, get_config_file_path, set_param
 from picar_msgs.msg import CarCmd
 from std_msgs.msg import Float64
@@ -14,6 +14,7 @@ class LeaderControlNode(object):
     """Leader controller ROS node."""
 
     def __init__(self):
+        pass
         self._params = {}
         self.publishers = {}
         self.services = {}
@@ -223,13 +224,13 @@ class LeaderControlNode(object):
         error_distance = Float64()
         error_distance.data = errors[0]
 
-        error_velocity = Float64
+        error_velocity = Float64()
         error_velocity.data = errors[1]
 
-        error_y = Float64
+        error_y = Float64()
         error_y.data = errors[2]
 
-        error_dy = Float64
+        error_dy = Float64()
         error_dy.data = errors[3]
 
         self.publishers["error_distance"].publish(error_distance)
