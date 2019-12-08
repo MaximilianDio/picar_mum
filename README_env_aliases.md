@@ -10,22 +10,21 @@ alias picarcopy='cd ~/picar_mum/catkin_ws/src && bash copy_pi.sh picar04'
 
 #set functions for common ros and ssh commands -> .bashrc 
 
+#picarfunctions
 picarremote() {
     if [ $1 = "simcar" ]; then
         roslaunch picar keyboard_control.launch ns:=simcar sim:=true
-    else
+    else 
         roslaunch picar keyboard_control.launch ns:=picar04
 fi
 }
 
 picarleadercontroll() {
-    if [ $1 = "simcar"]; then
+    if [ $1 = "simcar" ]; then
         roslaunch picar leader_control.launch ns:=simcar sim:=true
-    else
+    else 
         roslaunch picar leader_control.launch ns:=picar04
 fi
 }
-
-
 
 
