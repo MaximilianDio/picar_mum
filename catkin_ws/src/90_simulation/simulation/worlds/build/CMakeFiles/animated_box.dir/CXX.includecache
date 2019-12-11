@@ -7,8 +7,6 @@
 #IncludeRegexTransform: 
 
 /home/timo/picar_mum/catkin_ws/src/90_simulation/simulation/worlds/animated_box.cc
-boost/bind.hpp
--
 gazebo/gazebo.hh
 -
 ignition/math.hh
@@ -16,8 +14,6 @@ ignition/math.hh
 gazebo/physics/physics.hh
 -
 gazebo/common/common.hh
--
-ignition/math/Vector3.hh
 -
 stdio.h
 -

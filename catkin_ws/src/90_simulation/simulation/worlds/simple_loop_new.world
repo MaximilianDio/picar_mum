@@ -92,8 +92,8 @@
             </sphere>
             </geometry>
              <material>
-                    <ambient>0 0 .2 1</ambient>
-                    <diffuse>0 0 .8 1</diffuse>
+                    <ambient>.4 0 0 1</ambient>
+                    <diffuse>.9 0 0 1</diffuse>
                     <specular>0.1 0.1 0.1 1</specular>
                     <emissive>0 0 0 0</emissive>
                 </material>

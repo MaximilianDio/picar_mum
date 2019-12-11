@@ -1,4 +1,4 @@
-distance_desired: 1 # use this to follow the lane with an offset
+distance_desired: 0.5 # use this to follow the lane with an offset
 velocity_desired: 0
 k_pvel: 0.5 # Distance gain
 k_psteer: 50 # Steering gain
