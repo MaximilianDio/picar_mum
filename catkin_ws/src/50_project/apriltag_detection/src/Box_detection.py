@@ -54,8 +54,7 @@ class BoxDetector:
                     tag.calc_pose(quality, corners, center, mtx, dist)
 
         for box in self.boxes:
-            pass
-            # TODO determine pose of Box
+            box.get_pose()
 
     def draw_boxes(self, image, mtx, dist):
         """ draws edges around detected boxes """

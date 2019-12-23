@@ -23,7 +23,6 @@ class Tag:
                               [-tag_size / 2, -tag_size / 2, 0],
                               [-tag_size / 2, tag_size / 2, 0]], np.float32)
 
-        # TODO rotate tag!!!
         corners3D = np.matmul(self.rvecref, corners3D.reshape(-1, 3, 1)) + self.tvecref
 
         self.corners3D = corners3D.reshape(-1, 1, 3)
@@ -62,7 +61,7 @@ class Tag:
             # draw centers of apriltags with ID
             cv2.circle(image, (self.center_image[0], self.center_image[1]), 3, (0, 255, 0), -1)
 
-            ID = "ID#" + str(self.tag_id)
+            ID = "ID #" + str(self.tag_id)
             font = cv2.FONT_HERSHEY_SIMPLEX
             cv2.putText(image, ID, (self.center_image[0] + 15, self.center_image[1]), font, 0.5, (255, 255, 0), 1,
                         cv2.LINE_AA)

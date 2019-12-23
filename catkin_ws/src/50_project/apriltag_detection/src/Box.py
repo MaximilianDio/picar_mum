@@ -46,9 +46,6 @@ class Box:
         return self.__tags
 
     def get_pose(self):
-        pass
-
-    def draw_box(self, image, mtx, dist):
         # calculate a mean value for tvec and rvec
         i = 0
         rvec = np.zeros(shape=(3, 1))
@@ -61,32 +58,39 @@ class Box:
 
         # project 3D points to image plane
         try:
-            rvec /= i
-            tvec /= i
-
-            # project box corners to image
-            corners2D, jac = cv2.projectPoints(self.__corners3D, rvec, tvec, mtx, dist)
-            corners2D = corners2D.astype('int32').reshape((-1, 1, 2))
-            draw_edges(image, corners2D)
-
-            # project coordinate axis to image
-            imgpts, jac = cv2.projectPoints(self.axis, rvec, tvec, mtx, dist)
-            draw_axis(image, corners2D[0], imgpts)
-
-            ID = "OBSTACLE ID#" + str(self.__id)
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(image, ID, (corners2D[0].ravel()[0] + 15, corners2D[0].ravel()[1]), font, 0.5, (255, 255, 0), 1,
-                        cv2.LINE_AA)
+            self.__rvec = rvec / i
+            self.__tvec = tvec / i
         except ZeroDivisionError:
             # no tag was detected
             pass
 
-        # draw tags above other stuff
-        for tag in self.__tags:
-            tag.draw_tag(image, mtx, dist)
+    def draw_box(self, image, mtx, dist):
+        try:
+            if self.__rvec is None or self.__tvec is None:
+                raise TypeError
+            # project box corners to image
+            corners2D, jac = cv2.projectPoints(self.__corners3D, self.__rvec, self.__tvec, mtx, dist)
+            corners2D = corners2D.astype('int32').reshape((-1, 1, 2))
+            draw_edges(image, corners2D)
+
+            # project coordinate axis to image
+            imgpts, jac = cv2.projectPoints(self.axis, self.__rvec, self.__tvec, mtx, dist)
+            draw_axis(image, corners2D[0], imgpts)
+
+            ID = "OBSTACLE ID #" + str(self.__id)
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            cv2.putText(image, ID, (corners2D[0].ravel()[0] + 15, corners2D[0].ravel()[1]), font, 0.5, (255, 255, 0), 1,
+                        cv2.LINE_AA)
+
+            # draw tags above other stuff
+            for tag in self.__tags:
+                tag.draw_tag(image, mtx, dist)
+        except TypeError:
+            # do nothing - no tag was detected
+            pass
+
 
     def __calc_corners(self):
-
         # length of box edges
         l_x = self.__dimension[0]
         l_y = self.__dimension[1]
