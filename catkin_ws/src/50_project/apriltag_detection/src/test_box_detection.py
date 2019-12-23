@@ -19,9 +19,14 @@ if __name__ == "__main__":
 
     dist = np.load(output_path)
 
-    boxes = [Box([Tag(0, 0.0765, np.array([0, 0, 0]), np.array([0, 0, 0])),
-                  Tag(2, 0.0765, np.array([10.0, 0, 0]), np.array([0, 0, 0])),
-                  Tag(3, 0.0765, np.array([-10.0, 0, 0]), np.array([0, 0, 0]))], (20, 20, 20))]
+    boxes = [
+        Box(0,[Tag(0, 0.0765, np.array([0.0, 0.068, 0.05]),
+                 np.array([[0.0, 0.0, -1.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]])),
+             Tag(2, 0.0765, np.array([0.11, 0.14, 0.065]),
+                 np.array([[1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, -1.0, 0.0]])),
+             Tag(3, 0.0765, np.array([0.11, 0.073, 0.12]),
+                 np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]))],
+            (.2, .14, .12))]
     box_detector = BoxDetector(boxes)
 
     # start webcam capture
@@ -37,7 +42,8 @@ if __name__ == "__main__":
         dim = (width, height)
         # resize image
         frame = cv2.resize(frame, dim, interpolation=cv2.INTER_AREA)
-        # TODO: dynamic resize frame for better performance
+        # FIXME: only works for full resulution, because camera matrix will change when resized!
+        # TODO: implement dynamic resolution change (based on how well apriltags were detected
 
         # Our operations on the frame come here
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)

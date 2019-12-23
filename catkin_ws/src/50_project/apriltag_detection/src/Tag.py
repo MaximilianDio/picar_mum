@@ -2,21 +2,11 @@ import numpy as np
 import cv2
 
 
-def draw_axis(img, corners, imgpts):
-    try:
-        corner = tuple(corners.ravel())
-        cv2.line(img, corner, tuple(imgpts[0].ravel()), (255, 0, 0), 2)
-        cv2.line(img, corner, tuple(imgpts[1].ravel()), (0, 255, 0), 2)
-        cv2.line(img, corner, tuple(imgpts[2].ravel()), (0, 0, 255), 2)
-    except Exception as exc:
-        pass
-
-
 class Tag:
 
     def __init__(self, tag_id, tag_size, tvecref, rvecref):
         self.tag_id = int(tag_id)
-        self.tvecref = tvecref
+        self.tvecref = tvecref.reshape(3, 1)
         self.rvecref = rvecref
 
         tag_size = float(tag_size)
@@ -26,14 +16,17 @@ class Tag:
 
         self.parent = None
 
-        self.axis = np.float32([[0.03825, 0, 0], [0, 0.03825, 0], [0, 0, -0.03825]]).reshape(-1, 3)
-
     def __calc_obj_corners(self, tag_size):
         """ determine corners in 3d of tag"""
-        self.corners3D = np.array([[-tag_size / 2, tag_size / 2, 0],
-                                   [tag_size / 2, tag_size / 2, 0],
-                                   [tag_size / 2, -tag_size / 2, 0],
-                                   [-tag_size / 2, -tag_size / 2, 0]], np.float32)
+        corners3D = np.array([[tag_size / 2, tag_size / 2, 0],
+                              [tag_size / 2, -tag_size / 2, 0],
+                              [-tag_size / 2, -tag_size / 2, 0],
+                              [-tag_size / 2, tag_size / 2, 0]], np.float32)
+
+        # TODO rotate tag!!!
+        corners3D = np.matmul(self.rvecref, corners3D.reshape(-1, 3, 1)) + self.tvecref
+
+        self.corners3D = corners3D.reshape(-1, 1, 3)
 
     def clear_pose(self):
         """ clear pose of tag"""
@@ -46,7 +39,7 @@ class Tag:
     def calc_pose(self, quality, corners_image, center_image, mtx, dist):
         """ calculates the pose (tvec,rvec) of tag """
 
-        # apply image coordinates and reshape for drawing
+        # apply image coordinates and reshape for drawingself.axis = np.float32([[tag_size / 2, 0, 0], [0, tag_size / 2, 0], [0, 0, -tag_size / 2]]).reshape(-1, 3)
         self.center_image = np.array(center_image, np.int32)
         self.corners_image = np.array(corners_image, np.int32).reshape((-1, 1, 2))
 
@@ -71,13 +64,8 @@ class Tag:
 
             ID = "ID#" + str(self.tag_id)
             font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(image, ID, (self.center_image[0] + 15, self.center_image[1]), font, 1, (0, 255, 0), 2,
+            cv2.putText(image, ID, (self.center_image[0] + 15, self.center_image[1]), font, 0.5, (255, 255, 0), 1,
                         cv2.LINE_AA)
-
-            # project 3D points to image plane
-            imgpts, jac = cv2.projectPoints(self.axis, self.rvec, self.tvec, mtx, dist)
-
-            draw_axis(image, self.center_image, imgpts)
 
     def set_parent(self, parent):
         self.parent = parent
