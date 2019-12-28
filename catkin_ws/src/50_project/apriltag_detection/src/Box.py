@@ -21,12 +21,16 @@ def draw_axis(img, origin, imgpts):
         pass
 
 
+# TODO add exceptions
 class Box:
     __tvec = None
     __rvec = None
     __corners3D = None
 
     def __init__(self, id, tags, dimension):
+
+
+
         self.__id = id
         self.__tags = tags
 
@@ -88,7 +92,6 @@ class Box:
         except TypeError:
             # do nothing - no tag was detected
             pass
-
 
     def __calc_corners(self):
         # length of box edges

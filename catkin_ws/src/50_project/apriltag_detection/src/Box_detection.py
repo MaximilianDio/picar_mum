@@ -2,11 +2,8 @@ import numpy as np
 import apriltag
 from Box import Box
 
-
+# TODO add exceptions
 class BoxDetector:
-    tvec = None
-    rvec = None
-
     def __init__(self, boxes):
 
         if not isinstance(boxes, list):

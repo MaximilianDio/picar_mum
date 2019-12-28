@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 
-
+# TODO make attributes private and add exceptions
 class Tag:
 
     def __init__(self, tag_id, tag_size, tvecref, rvecref):
@@ -38,7 +38,6 @@ class Tag:
     def calc_pose(self, quality, corners_image, center_image, mtx, dist):
         """ calculates the pose (tvec,rvec) of tag """
 
-        # apply image coordinates and reshape for drawingself.axis = np.float32([[tag_size / 2, 0, 0], [0, tag_size / 2, 0], [0, 0, -tag_size / 2]]).reshape(-1, 3)
         self.center_image = np.array(center_image, np.int32)
         self.corners_image = np.array(corners_image, np.int32).reshape((-1, 1, 2))
 
