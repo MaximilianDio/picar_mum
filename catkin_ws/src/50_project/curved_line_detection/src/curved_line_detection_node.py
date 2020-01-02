@@ -64,7 +64,7 @@ class CurveDetector():
         # TODO use values from yaml file
         hsv_mask_interval = np.matrix([[0, 50, 100], [30, 255, 255]])
         self.__curve_point_detector = CurvePointExtractor(hsv_mask_interval, 10,
-                                                          [1, 0.35, 0.35])
+                                                          [0.7, 0.35, 0.35])
 
         if camera_info.D[0] == 0.0:
             self.curve_estimator = CurveEstimator(camera_info, H, False)
@@ -142,11 +142,26 @@ class CurveDetector():
         mat_x.data = xs
         mat_y.data = ys
 
+        global counter
+        if counter % 10 == 0:
+            plt.cla()
+            plt.plot(xs, ys, 'r:')
+            plt.plot(xs, ys, 'r*')
+            plt.axis("equal")
+            plt.draw()
+            plt.pause(0.00000000001)
+
+        counter += 1
+
         self.publishers["world_curve_point_x"].publish(mat_x)
         self.publishers["world_curve_point_y"].publish(mat_y)
 
 
 if __name__ == "__main__":
+    counter = 0
+
     rospy.init_node("world_projection_node")
     CurveDetector()
+    plt.ion()
+    plt.show()
     rospy.spin()

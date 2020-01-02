@@ -106,6 +106,9 @@ class CurvePointExtractor:
         :param roi: region of interest
         :return: points of curve
         """
+
+        # segment roi in stripes
+        height_roi, width_roi, _ = roi.shape
         # convert color to hsv, so it is easier to mask certain colors
         roi_hsv = cv2.cvtColor(roi, cv2.COLOR_RGB2HSV)
 
@@ -119,9 +122,6 @@ class CurvePointExtractor:
         # mask image
         mask_roi = self.__mask(roi_hsv)
 
-        # segment roi in stripes
-        height_roi, width_roi = mask_roi.shape
-
         curve_points = []
         # number of stripes -> number of points in x direction of car
         for i in range(0, self.__num_stripes, 1):
@@ -131,6 +131,7 @@ class CurvePointExtractor:
 
             y = int((y1 + y2) / 2)  # alternative 1
             # y = int(y2 - 1)  # alternative 2
+
             # crop image to line
             line = mask_roi[y, :]
 
@@ -202,7 +203,4 @@ class CurveEstimator:
         for image_curve_point in image_curve_points:
             self.world_curve_points.append(self.world_projector.pixel2ground(image_curve_point))
 
-
         # TODO: curve fitting
-
-
