@@ -1,6 +1,40 @@
 import cv2
 import numpy as np
 from world_projection import WorldProjector
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from matplotlib import style
+
+
+def nothing(x):
+    pass
+
+
+class Trackbar:
+    def __init__(self, param_dict):
+        self.param_dict = param_dict
+
+        self.__create_trackbar(param_dict)
+        self.__update_trackbars()
+
+    def __create_trackbar(self, param_dict):
+        self.WIDTH = 300  # px
+        self.HEIGHT = 600  # px
+        self.trackbar_window = np.zeros((self.WIDTH, self.HEIGHT, 3), np.uint8)
+        self.window_name = "trackbars"
+        cv2.namedWindow(self.window_name)
+        for name, param in self.param_dict.items():
+            print name
+            cv2.createTrackbar(name, self.window_name, param[0], param[2], nothing)
+            cv2.setTrackbarMin(name, self.window_name, param[1])
+
+    def __update_trackbars(self):
+        cv2.imshow(self.window_name, self.trackbar_window)
+        cv2.waitKey(1)
+
+    def update_trackbar_pos(self):
+        for parameter, value in self.param_dict.items():
+            self.param_dict[parameter][0] = cv2.getTrackbarPos(parameter, self.window_name)
 
 
 class CurvePointExtractor:
@@ -17,6 +51,17 @@ class CurvePointExtractor:
         self.__num_stripes = num_stripes
 
         self.__hsv_mask_interval = hsv_mask_interval
+        self.use_trackbars = True
+        if self.use_trackbars:
+            param_dict = {'Hue_low': [hsv_mask_interval[0, 0], 0, 180],
+                          'Saturation_low': [hsv_mask_interval[0, 1], 0, 255],
+                          'Value_low': [hsv_mask_interval[0, 2], 0, 255],
+                          'Hue_high': [hsv_mask_interval[1, 0], 0, 180],
+                          'Saturation_high': [hsv_mask_interval[1, 1], 0, 255],
+                          'Value_high': [hsv_mask_interval[1, 2], 0, 255],
+                          'Num_stripes': [self.__num_stripes, 1, 30]}
+
+            self.trackbar = Trackbar(param_dict)
 
         # ROI
         if len(roi_interval) != 3:
@@ -100,34 +145,64 @@ class CurvePointExtractor:
 
             # start and end points will always have two high values exactly next to each other
             # -> only use the even values
-            for start_point, end_point in zip(start_points, end_points)[1::2]:
-                try:
+            try:
+                for start_point, end_point in zip(start_points, end_points)[1::2]:
                     curve_point = [(start_point[0] + end_point[0]) / 2 + line_offset[0], line_offset[1]]
-                except ReferenceError:
-                    print "error with point extraction"
-
-            curve_points.append(curve_point)
+                    curve_points.append(curve_point)
+            except Exception:
+                print "error with point extraction"
 
         return curve_points
 
     def __mask(self, img_hsv):
-        # TODO implement a better masking function
-        return cv2.inRange(img_hsv, self.__hsv_mask_interval[0], self.__hsv_mask_interval[1])
+        # TODO implement a better masking function for red color
+
+        mask = cv2.inRange(img_hsv, self.__hsv_mask_interval[0], self.__hsv_mask_interval[1])
+
+        cv2.imshow("Mask", mask)
+        cv2.waitKey(1)
+        return mask
 
     def detect_curve(self, image):
+        # update parameters from trackbar
+        self.__update_param()
+
         roi = self.__get_roi(image)
         curve_points = self.__extract_image_curve_points(roi)
 
         return curve_points
 
+    def __update_param(self):
+        """
+            update parameter dictionary
+        :return:
+        """
+        try:
+            self.trackbar.update_trackbar_pos()
+            param_dict = self.trackbar.param_dict
+
+            self.__hsv_mask_interval[0] = [param_dict["Hue_low"][0], param_dict["Saturation_low"][0],
+                                           param_dict["Value_low"][0]]
+            self.__hsv_mask_interval[1] = [param_dict["Hue_high"][0], param_dict["Saturation_high"][0],
+                                           param_dict["Value_high"][0]]
+
+            self.__num_stripes = param_dict["Num_stripes"][0]
+
+        except ReferenceError:
+            pass
+
 
 class CurveEstimator:
-    def __init__(self, camera_info, h_matrix):
-        self.world_projector = WorldProjector(camera_info, h_matrix)
+    def __init__(self, camera_info, h_matrix, distortion_input=True):
+        self.world_projector = WorldProjector(camera_info, h_matrix, distortion_input)
 
     def estimate_curve(self, image_curve_points):
-        # TODO: project points to world coordinates
+        # project points to world coordinates
+        self.world_curve_points = []
+        for image_curve_point in image_curve_points:
+            self.world_curve_points.append(self.world_projector.pixel2ground(image_curve_point))
+
 
         # TODO: curve fitting
 
-        pass
+

@@ -5,12 +5,15 @@ import numpy as np
 from cv_bridge import CvBridgeError, CvBridge
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Point32
+from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import MultiArrayDimension
 from picar_msgs.srv import SetValue
 from sensor_msgs.msg import CompressedImage, CameraInfo
 from picar_common.picar_common import get_config_file_path, get_param, set_param, get_camera_info
 from curved_line_detection import CurvePointExtractor, CurveEstimator
 import time
 import cv2
+import matplotlib.pyplot as plt
 
 
 class CurveDetector():
@@ -59,20 +62,23 @@ class CurveDetector():
 
         # create curve point detector
         # TODO use values from yaml file
-        self.__curve_point_detector = CurvePointExtractor(np.matrix([[90, 124, 124], [180, 255, 255]]), 10,
+        hsv_mask_interval = np.matrix([[0, 50, 100], [30, 255, 255]])
+        self.__curve_point_detector = CurvePointExtractor(hsv_mask_interval, 10,
                                                           [1, 0.35, 0.35])
 
-        # create Curve estimator
         if camera_info.D[0] == 0.0:
-            self.projector = CurveEstimator(camera_info, H, False)
+            self.curve_estimator = CurveEstimator(camera_info, H, False)
         else:
-            self.projector = CurveEstimator(camera_info, H, True)
+            self.curve_estimator = CurveEstimator(camera_info, H, True)
 
         # register all publishers
         self.init_publishers()
 
         # register all publishers
         self.init_subscribers()
+
+        # ros Image has to be bridged to openCV
+        self.bridge = CvBridge()
 
     # --------------------------------------------------------------------
     # ----------------------- initialization -----------------------------
@@ -90,7 +96,10 @@ class CurveDetector():
 
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
-        pass
+        self.publishers["world_curve_point_x"] = rospy.Publisher("~world_curve_point_x", Float32MultiArray,
+                                                                 queue_size=1)
+        self.publishers["world_curve_point_y"] = rospy.Publisher("~world_curve_point_y", Float32MultiArray,
+                                                                 queue_size=1)
 
     # --------------------------------------------------------------------
     # ----------------------- main callback ------------------------------
@@ -108,15 +117,33 @@ class CurveDetector():
         curve_points_image = self.__curve_point_detector.detect_curve(img_bgr)
 
         # transform curve image points to world and extract curve data
-        # TODO: transform curve points to world and extract curve data
+        self.curve_estimator.estimate_curve(np.array(curve_points_image))
 
         print time.time() - t0
+
+        # publish world curve points for visualization
+        self.publish_world_curve_points(self.curve_estimator.world_curve_points)
 
         # DEBUG
         for curve_point in curve_points_image:
             cv2.circle(img_bgr, (curve_point[0], curve_point[1]), 5, (255, 0, 0))
         cv2.imshow("line", img_bgr)
-        cv2.waitKey(0)
+        cv2.waitKey(1)
+
+    def publish_world_curve_points(self, world_curve_points):
+        mat_x = Float32MultiArray()
+        mat_y = Float32MultiArray()
+
+        xs = []
+        ys = []
+        for point in world_curve_points:
+            xs.append(point[0])
+            ys.append(point[1])
+        mat_x.data = xs
+        mat_y.data = ys
+
+        self.publishers["world_curve_point_x"].publish(mat_x)
+        self.publishers["world_curve_point_y"].publish(mat_y)
 
 
 if __name__ == "__main__":
