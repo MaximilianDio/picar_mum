@@ -18,6 +18,8 @@ import matplotlib.pyplot as plt
 
 class CurveDetector():
     def __init__(self):
+        # counts how many messages were send
+        self.msg_counter = 0
 
         # dictionaries for easy access
         self._params = {}
@@ -109,7 +111,8 @@ class CurveDetector():
             receive image callback: process image and processes it.
             :param image_data: form camera
             """
-        t0 = time.time()
+        # t0 = time.time()
+
         # convert to open cv format
         img_bgr = self.bridge.imgmsg_to_cv2(image_data)
 
@@ -119,16 +122,18 @@ class CurveDetector():
         # transform curve image points to world and extract curve data
         self.curve_estimator.estimate_curve(np.array(curve_points_image))
 
-        print time.time() - t0
+        # print time.time() - t0
 
         # publish world curve points for visualization
+        # DEBUG: REMOVE
         self.publish_world_curve_points(self.curve_estimator.world_curve_points)
 
-        # DEBUG
+        # DEBUG: REMOVE
         for curve_point in curve_points_image:
             cv2.circle(img_bgr, (curve_point[0], curve_point[1]), 5, (255, 0, 0))
         cv2.imshow("line", img_bgr)
         cv2.waitKey(1)
+
 
     def publish_world_curve_points(self, world_curve_points):
         mat_x = Float32MultiArray()
@@ -142,8 +147,8 @@ class CurveDetector():
         mat_x.data = xs
         mat_y.data = ys
 
-        global counter
-        if counter % 10 == 0:
+        # plot x-y coordinates - every 10th message
+        if self.msg_counter % 10 == 0:
             plt.cla()
             plt.plot(xs, ys, 'r:')
             plt.plot(xs, ys, 'r*')
@@ -151,15 +156,13 @@ class CurveDetector():
             plt.draw()
             plt.pause(0.00000000001)
 
-        counter += 1
-
         self.publishers["world_curve_point_x"].publish(mat_x)
         self.publishers["world_curve_point_y"].publish(mat_y)
 
+        self.msg_counter += 1
+
 
 if __name__ == "__main__":
-    counter = 0
-
     rospy.init_node("world_projection_node")
     CurveDetector()
     plt.ion()

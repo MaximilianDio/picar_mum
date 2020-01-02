@@ -5,6 +5,13 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib import style
 
+MIN_HUE = MIN_SATURATION = MIN_VALUE = 0
+MAX_HUE = 180
+MAX_SATURATION = MAX_VALUE = 255
+
+MIN_NUM_STRIPES = 1
+MAX_NUM_STRIPES = 30
+
 
 def nothing(x):
     pass
@@ -18,13 +25,15 @@ class Trackbar:
         self.__update_trackbars()
 
     def __create_trackbar(self, param_dict):
+        # dimensions of trackbar window
         self.WIDTH = 300  # px
         self.HEIGHT = 600  # px
+
+        # create black window
         self.trackbar_window = np.zeros((self.WIDTH, self.HEIGHT, 3), np.uint8)
         self.window_name = "trackbars"
         cv2.namedWindow(self.window_name)
         for name, param in self.param_dict.items():
-            print name
             cv2.createTrackbar(name, self.window_name, param[0], param[2], nothing)
             cv2.setTrackbarMin(name, self.window_name, param[1])
 
@@ -39,7 +48,7 @@ class Trackbar:
 
 class CurvePointExtractor:
 
-    def __init__(self, hsv_mask_interval, num_stripes, roi_interval):
+    def __init__(self, hsv_mask_interval, num_stripes, roi_interval, use_trackbar=True):
         """
         :param num_stripes: amount of stripes in which the roi will be disected
         :param roi_interval: list/ tuple of cropping parameters with length 3
@@ -51,15 +60,16 @@ class CurvePointExtractor:
         self.__num_stripes = num_stripes
 
         self.__hsv_mask_interval = hsv_mask_interval
-        self.use_trackbars = True
+
+        self.use_trackbars = use_trackbar
         if self.use_trackbars:
-            param_dict = {'Hue_low': [hsv_mask_interval[0, 0], 0, 180],
-                          'Saturation_low': [hsv_mask_interval[0, 1], 0, 255],
-                          'Value_low': [hsv_mask_interval[0, 2], 0, 255],
-                          'Hue_high': [hsv_mask_interval[1, 0], 0, 180],
-                          'Saturation_high': [hsv_mask_interval[1, 1], 0, 255],
-                          'Value_high': [hsv_mask_interval[1, 2], 0, 255],
-                          'Num_stripes': [self.__num_stripes, 1, 30]}
+            param_dict = {'Hue_low': [hsv_mask_interval[0, 0], MIN_HUE, MAX_HUE],
+                          'Saturation_low': [hsv_mask_interval[0, 1], MIN_SATURATION, MAX_SATURATION],
+                          'Value_low': [hsv_mask_interval[0, 2], MIN_VALUE, MAX_VALUE],
+                          'Hue_high': [hsv_mask_interval[1, 0], MIN_HUE, MAX_HUE],
+                          'Saturation_high': [hsv_mask_interval[1, 1], MIN_SATURATION, MAX_SATURATION],
+                          'Value_high': [hsv_mask_interval[1, 2], MIN_VALUE, MAX_VALUE],
+                          'Num_stripes': [self.__num_stripes, MIN_NUM_STRIPES, MAX_NUM_STRIPES]}
 
             self.trackbar = Trackbar(param_dict)
 
@@ -76,7 +86,7 @@ class CurvePointExtractor:
 
     def __get_roi(self, image):
         """
-
+        crop image to region of interest parameters
         :param image:
         :return: image of region of interest
         """
@@ -156,12 +166,29 @@ class CurvePointExtractor:
         return curve_points
 
     def __mask(self, img_hsv):
-        # TODO implement a better masking function for red color
 
-        mask = cv2.inRange(img_hsv, self.__hsv_mask_interval[0], self.__hsv_mask_interval[1])
+        if self.__hsv_mask_interval[0, 0] > self.__hsv_mask_interval[1, 0]:
+            hsv_interval_1_low = np.copy(self.__hsv_mask_interval[0])
+            hsv_interval_1_high = np.copy(self.__hsv_mask_interval[1])
 
-        cv2.imshow("Mask", mask)
-        cv2.waitKey(1)
+            hsv_interval_2_low = np.copy(self.__hsv_mask_interval[0])
+            hsv_interval_2_high = np.copy(self.__hsv_mask_interval[1])
+
+            hsv_interval_1_high[0, 0] = MAX_HUE
+            hsv_interval_2_low[0, 0] = MIN_HUE
+
+            mask1 = cv2.inRange(img_hsv, hsv_interval_1_low, hsv_interval_1_high)
+            mask2 = cv2.inRange(img_hsv, hsv_interval_2_low, hsv_interval_2_high)
+
+            # add two masks locically
+            mask = mask1 | mask2
+        else:
+            mask = cv2.inRange(img_hsv, self.__hsv_mask_interval[0], self.__hsv_mask_interval[1])
+
+        if self.use_trackbars:
+            cv2.imshow(self.trackbar.window_name, mask)
+            cv2.waitKey(1)
+
         return mask
 
     def detect_curve(self, image):
