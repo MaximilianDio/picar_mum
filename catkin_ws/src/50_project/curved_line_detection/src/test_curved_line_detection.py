@@ -1,26 +1,21 @@
 import unittest
-from curved_line_detection import CurveDetector
+from curved_line_detection import CurvePointExtractor
 import cv2
 import numpy as np
-
-S = np.array([-0.0031492212495974376, -0.34023754131384776, 0.9403342479598564,
-     -0.9999925768464749, -0.0010161312944974607, -0.003716682544870674,
-     0.002220057987550638, -0.9403389723700173, -0.34023181565607885]).reshape(3,3)
-
-t = np.array([0.05136152075211747, 0.0005203214221408542, 0.28160219512361456])
-
-H = np.array([0.0002686595140457771, 0.10488455827295876, -0.4061955862092705,
-              1.1061983852247257, -0.0008527834995076362, -0.5532538083452886,
-              0.001683547184268164, -2.8373028779951337, 1.0]).reshape(3,3)
-
-dist = np.array([-0.43018125805202023, 0.17414720043315005, 0.0008924018457424842, 7.746295477050289e-05,
-    -0.031819544261190276])
-
-mtx = np.array([318.72171720229136, 0.0, 319.86432368483133, 0.0, 318.7640628148838, 237.71549678920138, 0.0, 0.0, 1.0]).reshape(3,3)
+import time
 
 if __name__ == "__main__":
     image_file = "Bild3.png"
     image = cv2.imread(image_file)
 
-    curve_detector = CurveDetector(mtx, dist, H, (1, 0.35, 0.3))
-    curve_detector.detect_curve(image)
+    curve_detector = CurvePointExtractor(np.matrix([[90, 124, 124], [180, 255, 255]]), 10, [1, 0.35, 0.35])
+
+    t0 = time.time()
+    curve_points = curve_detector.detect_curve(image)
+    print time.time()-t0
+
+    # DEBUG
+    for curve_point in curve_points:
+        cv2.circle(image, (curve_point[0], curve_point[1]), 5, (255, 0, 0))
+    cv2.imshow("line", image)
+    cv2.waitKey(0)
