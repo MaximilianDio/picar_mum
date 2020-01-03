@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from world_projection import WorldProjector
 
-
+# Constants for track bar
 MIN_HUE = MIN_SATURATION = MIN_VALUE = 0
 MAX_HUE = 180
 MAX_SATURATION = MAX_VALUE = 255
@@ -12,18 +12,26 @@ MAX_NUM_STRIPES = 30
 
 
 def nothing(x):
+    """ dummy function does nothing, used as dummy callback for trackbar"""
     pass
 
 
 class Trackbar:
+    """ window with trackbars based on parameter dictionary which has a list value of 3 entries"""
+
     def __init__(self, param_dict):
+
+        # check dimension of dictionary values:
+        for value in param_dict.values():
+            if len(value) != 3:
+                raise TypeError("dimension of values in parameter dictionary has to be 3")
         self.param_dict = param_dict
 
         self.__create_trackbar(param_dict)
         self.__update_trackbars()
 
     def __create_trackbar(self, param_dict):
-        # dimensions of trackbar window
+        # dimensions of track bar window
         self.WIDTH = 300  # px
         self.HEIGHT = 600  # px
 
@@ -31,15 +39,19 @@ class Trackbar:
         self.trackbar_window = np.zeros((self.WIDTH, self.HEIGHT, 3), np.uint8)
         self.window_name = "trackbars"
         cv2.namedWindow(self.window_name)
+
+        # create trackbars based on parameter dictionary with keys as trackbar name
         for name, param in self.param_dict.items():
             cv2.createTrackbar(name, self.window_name, param[0], param[2], nothing)
             cv2.setTrackbarMin(name, self.window_name, param[1])
 
     def __update_trackbars(self):
+        """ show trackbar window """
         cv2.imshow(self.window_name, self.trackbar_window)
         cv2.waitKey(1)
 
     def update_trackbar_pos(self):
+        """ update the dictionary"""
         for parameter, value in self.param_dict.items():
             self.param_dict[parameter][0] = cv2.getTrackbarPos(parameter, self.window_name)
 
@@ -48,14 +60,27 @@ class CurvePointExtractor:
 
     def __init__(self, hsv_mask_interval, num_stripes, roi_interval, use_trackbar=True):
         """
+        :param hsv_mask_interval: 2 by 3 numpy array which contains low HSV values and high HSV values for masking the
+        region of interest
         :param num_stripes: amount of stripes in which the roi will be disected
         :param roi_interval: list/ tuple of cropping parameters with length 3
          with values between 0 an 1:
          (normalized width, normalized cropping border bottom, normalized cropping border top)
+        :param use_trackbar: flag to show trackbar and mask
         """
+
         self.EDGE_THRESHOLD = 200
 
+        if not isinstance(num_stripes, int) or num_stripes < MIN_NUM_STRIPES:
+            raise ValueError("num_stripes must be integer > 0")
+
         self.__num_stripes = num_stripes
+
+        try:
+            if hsv_mask_interval.shape != (2, 3):
+                raise ValueError("hsv_mask interval must be numpy array of dimension 2 by 3")
+        except AttributeError:
+            raise ValueError("hsv_mask interval must be numpy array of dimension 2 by 3")
 
         self.__hsv_mask_interval = hsv_mask_interval
 
@@ -73,13 +98,13 @@ class CurvePointExtractor:
 
         # ROI
         if len(roi_interval) != 3:
-            raise TypeError("roi has to be tuple or list of 3 elements between 0 and 1")
+            raise ValueError("roi has to be tuple or list of 3 elements between 0 and 1")
         if all(x <= 1 for x in roi_interval) and all(x >= 0 for x in roi_interval) and roi_interval[0] > 0 and \
                 roi_interval[1] + roi_interval[2] < 1:
 
             self.__roi_interval = roi_interval
         else:
-            raise TypeError(
+            raise ValueError(
                 "ROI has to be tuple or list of 3 elements between 0 and 1 while normalized cropping borders have to be less than 0")
 
     def __get_roi(self, image):
@@ -164,8 +189,12 @@ class CurvePointExtractor:
         return curve_points
 
     def __mask(self, img_hsv):
-
+        """ mask image by hsv interval """
         if self.__hsv_mask_interval[0, 0] > self.__hsv_mask_interval[1, 0]:
+            # because hue value is degree 0 to 180 it should be possible to have a range from e.g. 170 to 20
+            # therefore, if Hue_low is larger than hue_high 2 masks are created. one for 170 to 180 and one for 0 to
+            # 20. combining both with an or operation gives desired mask
+
             hsv_interval_1_low = np.copy(self.__hsv_mask_interval[0])
             hsv_interval_1_high = np.copy(self.__hsv_mask_interval[1])
 
@@ -178,11 +207,13 @@ class CurvePointExtractor:
             mask1 = cv2.inRange(img_hsv, hsv_interval_1_low, hsv_interval_1_high)
             mask2 = cv2.inRange(img_hsv, hsv_interval_2_low, hsv_interval_2_high)
 
-            # add two masks locically
+            # add two masks logically
             mask = mask1 | mask2
         else:
+            # normal mask
             mask = cv2.inRange(img_hsv, self.__hsv_mask_interval[0], self.__hsv_mask_interval[1])
 
+        # show mask result in trackbar window -> will resize window to witdh of mask!!!
         if self.use_trackbars:
             cv2.imshow(self.trackbar.window_name, mask)
             cv2.waitKey(1)
@@ -214,7 +245,7 @@ class CurvePointExtractor:
 
             self.__num_stripes = param_dict["Num_stripes"][0]
 
-        except ReferenceError:
+        except AttributeError:
             pass
 
 

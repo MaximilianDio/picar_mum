@@ -9,7 +9,7 @@ if __name__ == "__main__":
     image = cv2.imread(image_file)
 
     hsv_interval = np.matrix([[90, 124, 124], [180, 255, 255]])
-    curve_detector = CurvePointExtractor(hsv_interval, 10, [1, 0.35, 0.35])
+    curve_detector = CurvePointExtractor(hsv_interval, 10, [1, 0.35, 0.35],0)
 
     while True:
         t0 = time.time()
