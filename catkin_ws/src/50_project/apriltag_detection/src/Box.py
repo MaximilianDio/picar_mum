@@ -81,7 +81,7 @@ class Box:
             imgpts, jac = cv2.projectPoints(self.axis, self.__rvec, self.__tvec, mtx, dist)
             draw_axis(image, corners2D[0], imgpts)
 
-            ID = "OBSTACLE ID #" + str(self.__id)
+            ID = "OBSTACLE ID #" + str(self.__id) + " D: " + str(self.__tvec[2])
             font = cv2.FONT_HERSHEY_SIMPLEX
             cv2.putText(image, ID, (corners2D[0].ravel()[0] + 15, corners2D[0].ravel()[1]), font, 0.5, (255, 255, 0), 1,
                         cv2.LINE_AA)
