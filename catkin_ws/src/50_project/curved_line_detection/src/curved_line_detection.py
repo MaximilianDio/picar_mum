@@ -1,9 +1,7 @@
 import cv2
 import numpy as np
 from world_projection import WorldProjector
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from matplotlib import style
+
 
 MIN_HUE = MIN_SATURATION = MIN_VALUE = 0
 MAX_HUE = 180
