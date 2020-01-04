@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from world_projection import WorldProjector
+import math
 
 # Constants for track bar
 MIN_HUE = MIN_SATURATION = MIN_VALUE = 0
@@ -180,12 +181,16 @@ class CurvePointExtractor:
             # start and end points will always have two high values exactly next to each other
             # -> only use the even values
             try:
-                for start_point, end_point in zip(start_points, end_points)[1::2]:
+                points = zip(start_points, end_points)[1::2]
+                curve_points.append([])
+
+                for start_point, end_point in points:
                     curve_point = [(start_point[0] + end_point[0]) / 2 + line_offset[0], line_offset[1]]
-                    curve_points.append(curve_point)
-            except Exception:
+                    curve_points[i].append(curve_point)
+            except IndexError:
                 print "error with point extraction"
 
+        curve_points = [x for x in curve_points if x != []]
         return curve_points
 
     def __mask(self, img_hsv):
@@ -213,7 +218,11 @@ class CurvePointExtractor:
             # normal mask
             mask = cv2.inRange(img_hsv, self.__hsv_mask_interval[0], self.__hsv_mask_interval[1])
 
-        # show mask result in trackbar window -> will resize window to witdh of mask!!!
+        # create black edge so that sobel edge detection recognizes it as an edge
+        mask[:, 0:2] = 0
+        mask[:, -1:-3] = 0
+
+        # show mask result in trackbar window -> will resize window to width of mask!!!
         if self.use_trackbars:
             cv2.imshow(self.trackbar.window_name, mask)
             cv2.waitKey(1)
@@ -254,9 +263,159 @@ class CurveEstimator:
         self.world_projector = WorldProjector(camera_info, h_matrix, distortion_input)
 
     def estimate_curve(self, image_curve_points):
-        # project points to world coordinates
-        self.world_curve_points = []
-        for image_curve_point in image_curve_points:
-            self.world_curve_points.append(self.world_projector.pixel2ground(image_curve_point))
 
-        # TODO: curve fitting
+        if len(image_curve_points) != 0:
+            num_curves = max(len(x) for x in image_curve_points)
+        else:
+            return []
+
+        # separate curve into multiple possible paths -> multiple y values for one x value
+        #  try to define roi so that a curve with angles greater that 90 deg are not visible
+        # FIXME not the best implementation find better one!!!
+        curve_points = [[] for i in range(num_curves)]
+        # project points to world coordinates
+        for image_curve_point_same_x_value in image_curve_points:
+            for curve_num, image_curve_point in enumerate(image_curve_point_same_x_value):
+                world_point = self.world_projector.pixel2ground(image_curve_point)
+                curve_points[curve_num].append(Point2D([world_point[0], world_point[1]]))
+
+        for curve_id, curve in enumerate(curve_points):
+            num_points = len(curve)
+            # only proceed if at least 3 points in curve
+            if len(curve) < 3:
+                continue
+            for i in range(0, num_points, 1):
+
+                # define points for derivative
+                if i == 0:
+                    p1 = curve[i]
+                    p2 = curve[i + 1]
+                elif i == num_points - 1:
+                    p1 = curve[i - 1]
+                    p2 = curve[i]
+                else:
+                    p1 = curve[i - 1]
+                    p2 = curve[i + 1]
+                # calc derivative
+                slope = diff(p1, p2)
+                curve_points[curve_id][i].slope = slope
+
+                # radius requires 3 points - cant use end points
+                if i > 0 and i < num_points - 1:
+                    circle = Circle2D(curve[i - 1], curve[i], curve[i + 1])
+                    curve_points[curve_id][i].circle = circle
+
+            curve_points[curve_id][0].circle = curve_points[curve_id][1].circle
+            curve_points[curve_id][num_points - 1].circle = curve_points[curve_id][num_points - 2].circle
+
+        return curve_points
+
+
+def diff(p1, p2):
+    """
+
+    :param p1: poin2D object with first value x and second value y
+    :param p2: same as p1
+    :return: float - slope f'(x) ~= (y2-y1)/(x2-x1)
+    """
+    try:
+        if isinstance(p1, Point2D) and isinstance(p2, Point2D):
+            return (p2.y - p1.y) / (p2.x - p1.x)
+        else:
+            raise ValueError("input must be 2 point2D objects")
+    except ZeroDivisionError:
+        raise ValueError("points must have different x-values")
+
+
+def midpoint(p1, p2):
+    """
+
+    :param p1: list of shape [x,y]
+    :param p2: same as p1
+    :return: point2D - midpoint between both points
+    """
+    if isinstance(p1, Point2D) and isinstance(p2, Point2D):
+        return Point2D([(p1.x + p2.x) / 2, (p1.y + p2.y) / 2])
+    else:
+        raise ValueError("input must be 2 point2D objects")
+
+
+def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
+    return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
+
+class Point2D(object):
+
+    def __init__(self, point):
+        if not isinstance(point[0], list) and not isinstance(point[1], list):
+            self.x = float(point[0])
+            self.y = float(point[1])
+        else:
+            raise ValueError("points must be 1D list or tuple of length 2")
+
+
+class CurvePoint2D(Point2D):
+    def __init__(self, point):
+        self.slope = None
+        self.circle = None
+        super(CurvePoint2D, self).__init__(point)
+
+
+class Circle2D:
+
+    def __init__(self, p1, p2, p3):
+        if isinstance(p1, Point2D) and isinstance(p2, Point2D) and isinstance(p3, Point2D):
+            self.calc_circle(p1, p2, p3)
+        else:
+            raise ValueError("input must be 3 point2D objects")
+
+    def calc_circle(self, p1, p2, p3):
+
+        """
+
+        :param p1: list of shape [x,y] with first value the variable (e.g. x) and second function value (e.g. y)
+        :param p2: same as p1
+        :param p3: same as p1
+        :return: center of circle and radius
+        """
+
+        # calculate midpoints of points
+        mp1 = midpoint(p1, p2)
+        mp2 = midpoint(p2, p3)
+
+        # calculate orthogonal gradient of midpoint lines
+        try:
+            grad_L1 = -1 / diff(p1, p2)
+            grad_L2 = -1 / diff(p2, p3)
+
+            if isclose(grad_L1, grad_L2):
+                self.center = Point2D([float("inf"), float("inf")])
+                self.radius = float("inf")
+                return
+
+            # no edge case
+            x = 1 / (grad_L1 - grad_L2) * (-mp1.y + mp2.y + grad_L1 * mp1.x - grad_L2 * mp2.x)
+            y = grad_L1 * (x - mp1.x) + mp1.y
+        except ZeroDivisionError:
+            # go through edge cases:
+            gradp1p2 = diff(p1, p2)
+            gradp2p3 = diff(p2, p3)
+            if isclose(gradp1p2, 0.0) and isclose(gradp2p3, 0.0):
+                self.center = Point2D([float("inf"), float("inf")])
+                self.radius = float("inf")
+                return
+            elif isclose(gradp1p2, 0.0):
+                grad_L2 = -1 / gradp2p3
+                x = mp1.x
+                y = grad_L2 * (x - mp2.x) + mp2.y
+            elif isclose(gradp2p3, 0.0):
+                grad_L1 = -1 / gradp1p2
+                x = mp2.x
+                y = grad_L1 * (x - mp1.x) + mp1.y
+
+
+        # calculate radius
+        radius = math.sqrt(math.pow(p1.x - x, 2) + math.pow(p1.y - y, 2))
+
+        self.center = Point2D([x, y])
+        self.radius = radius

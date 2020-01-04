@@ -98,10 +98,10 @@ class CurveDetector():
 
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
-        self.publishers["world_curve_point_x"] = rospy.Publisher("~world_curve_point_x", Float32MultiArray,
-                                                                 queue_size=1)
-        self.publishers["world_curve_point_y"] = rospy.Publisher("~world_curve_point_y", Float32MultiArray,
-                                                                 queue_size=1)
+        # self.publishers["world_curve_point_x"] = rospy.Publisher("~world_curve_point_x", Float32MultiArray,
+        #                                                          queue_size=1)
+        # self.publishers["world_curve_point_y"] = rospy.Publisher("~world_curve_point_y", Float32MultiArray,
+        #                                                          queue_size=1)
 
     # --------------------------------------------------------------------
     # ----------------------- main callback ------------------------------
@@ -111,7 +111,7 @@ class CurveDetector():
             receive image callback: process image and processes it.
             :param image_data: form camera
             """
-        # t0 = time.time()
+        t0 = time.time()
 
         # convert to open cv format
         img_bgr = self.bridge.imgmsg_to_cv2(image_data)
@@ -120,44 +120,72 @@ class CurveDetector():
         curve_points_image = self.__curve_point_detector.detect_curve(img_bgr)
 
         # transform curve image points to world and extract curve data
-        self.curve_estimator.estimate_curve(np.array(curve_points_image))
+        curve_points = self.curve_estimator.estimate_curve(np.array(curve_points_image))
 
-        # print time.time() - t0
+        calc_time = time.time() - t0
 
         # publish world curve points for visualization
         # DEBUG: REMOVE
-        self.publish_world_curve_points(self.curve_estimator.world_curve_points)
+        self.publish_world_curve_points(curve_points)
 
         # DEBUG: REMOVE
-        for curve_point in curve_points_image:
-            cv2.circle(img_bgr, (curve_point[0], curve_point[1]), 5, (255, 0, 0))
+        if len(curve_points_image) != 0:
+            for curve_points_same_x_value in curve_points_image:
+                for i, curve_point in enumerate(curve_points_same_x_value):
+                    cv2.circle(img_bgr, (curve_point[0], curve_point[1]), 5, (50 + 50 * i, 0, 0))
+
+        cv2.putText(img_bgr, str(calc_time), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
         cv2.imshow("line", img_bgr)
         cv2.waitKey(1)
 
+    def publish_world_curve_points(self, curve_points):
 
-    def publish_world_curve_points(self, world_curve_points):
-        mat_x = Float32MultiArray()
-        mat_y = Float32MultiArray()
+        # mat_x = Float32MultiArray()
+        # mat_y = Float32MultiArray()
 
-        xs = []
-        ys = []
-        for point in world_curve_points:
-            xs.append(point[0])
-            ys.append(point[1])
-        mat_x.data = xs
-        mat_y.data = ys
-
-        # plot x-y coordinates - every 10th message
+        # create world plot
         if self.msg_counter % 10 == 0:
             plt.cla()
-            plt.plot(xs, ys, 'r:')
-            plt.plot(xs, ys, 'r*')
-            plt.axis("equal")
+            for curve in curve_points:
+                xs = []
+                ys = []
+                for i, curve_point in enumerate(curve):
+                    xs.append(curve_point.x)
+                    ys.append(curve_point.y)
+
+                    if i == 1:
+                        try:
+                            r = curve_point.circle.radius
+                            cx = curve_point.circle.center.x
+                            cy = curve_point.circle.center.y
+
+                            theta = np.linspace(0, 2 * np.pi, 100)
+
+                            x1 = cx + r * np.cos(theta)
+                            x2 = cy + r * np.sin(theta)
+
+                            plt.plot(x1, x2)
+                        except AttributeError:
+                            # point has no circle - do nothing
+                            pass
+
+                plt.plot(xs, ys, ':')
+
+
+
+
             plt.draw()
+            plt.axis("equal")
+            plt.grid(color='gray', linestyle='-', linewidth=1)
+            plt.ylim((-1, 1))
+            plt.xlim(0, 3)
             plt.pause(0.00000000001)
 
-        self.publishers["world_curve_point_x"].publish(mat_x)
-        self.publishers["world_curve_point_y"].publish(mat_y)
+        # mat_x.data = xs
+        # mat_y.data = ys
+
+        # self.publishers["world_curve_point_x"].publish(mat_x)
+        # self.publishers["world_curve_point_y"].publish(mat_y)
 
         self.msg_counter += 1
 
