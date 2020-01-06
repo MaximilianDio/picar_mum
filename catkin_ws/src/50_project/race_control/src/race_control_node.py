@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import yaml
-from race_control.controller import Controller, ControllerValues
+from race_control.controller import Controller
 from picar_common.picar_common import get_param, get_config_file_path, set_param
 from picar_msgs.msg import LanePose, CarCmd
 from std_msgs.msg import Float64
@@ -9,7 +9,7 @@ from picar_msgs.srv import SetValue
 
 
 class RaceControlNode(object):
-    """Lane controller ROS node."""
+    """Race controller ROS node."""
 
     def __init__(self):
         self._params = {}
@@ -27,9 +27,10 @@ class RaceControlNode(object):
         # read the controller configuration from config file
         self.setup_params(config_file_path)
 
-        self.controller = Controller(self._params["p_gain"],
-                                     self._params["weight_distance"],
-                                     self._params["weight_angle"])
+        self.controller = Controller(self._params["k_pvel"],
+                                     self._params["k_psteer"],
+                                     self._params["k_dvel"],
+                                     self._params["k_dsteer"])  #TODO: Load params from config file
 
         # register all publishers
         self.init_publishers()
