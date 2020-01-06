@@ -1,25 +1,28 @@
-class Controller(object):
-    """Simple proportional controller."""
-    def __init__(self, radius, CirclePos, yx, ObjectDetectedBool, ObjectPos, gains, CurVel):
-        """
 
-        Args:
-            radius:
-            CirclePos:
-            yx:
-            ObjectDetectedBool:
-            ObjectPos:
-            gains:
-            CurVel:
+
+class Controller(object):
+
+
+    def __init__(self, Kp, Kd):
         """
-        self.radius = radius
+        Args:
+            Kp (list of proportional gains [Velocity, Steering])
+            Kd (list of derivative gains [Velocity, Steering])
+        """
+        self.Kp = Kp
+        self.Kd = Kd
+        self.Radius = None
         self.CirclePos = CirclePos
-        self.yx = yx
-        self.ObjectDetectedBool = ObjectDetectedBool
-        self.gains = dict(
-            kpvel=k_pvel,
-            kpsteer=k_psteer,
-        )
+        self.ObjectDetected = False
+        self.CurrentVel = None
+        self.DesiredVel = 0.0
+        self.DesiredAngle = 0.0
+        self.CurveClass = None
+
+    def CurveClassification(self, Rad):
+        self.Radius = Rad
+        if Rad is inf:
+
 
 
     def get_control_output(self, desired_values, actual_values):
