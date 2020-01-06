@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 class CurveDetector:
     # TODO define rate for picar
-    PUBLISH_RATE = 20
+    PUBLISH_RATE = 10
 
     def __init__(self):
         # set true for testing
