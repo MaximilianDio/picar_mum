@@ -16,10 +16,17 @@ import cv2
 import matplotlib.pyplot as plt
 
 
-class CurveDetector():
+class CurveDetector:
+    PUBLISH_RATE = 20
+
     def __init__(self):
+        # set true for testing
+        self.visualize = True
+
         # counts how many messages were send
         self.msg_counter = 0
+        # publish rate
+        self.rate = rospy.Rate(self.PUBLISH_RATE)
 
         # dictionaries for easy access
         self._params = {}
@@ -66,7 +73,7 @@ class CurveDetector():
         # TODO use values from yaml file
         hsv_mask_interval = np.matrix([[0, 50, 100], [30, 255, 255]])
         self.__curve_point_detector = CurvePointExtractor(hsv_mask_interval, 10,
-                                                          [0.7, 0.35, 0.35])
+                                                          [0.7, 0.35, 0.35], self.visualize)
 
         if camera_info.D[0] == 0.0:
             self.curve_estimator = CurveEstimator(camera_info, H, False)
@@ -124,10 +131,13 @@ class CurveDetector():
 
         calc_time = time.time() - t0
 
+        if self.visualize:
+            self.visualize_data(img_bgr, curve_points_image, curve_points, calc_time)
+
         # publish world curve points for visualization
-        # DEBUG: REMOVE
         self.publish_world_curve_points(curve_points)
 
+    def visualize_data(self, img_bgr, curve_points_image, curve_points, calc_time):
         # DEBUG: REMOVE
         if len(curve_points_image) != 0:
             for curve_points_same_x_value in curve_points_image:
@@ -138,12 +148,7 @@ class CurveDetector():
         cv2.imshow("line", img_bgr)
         cv2.waitKey(1)
 
-    def publish_world_curve_points(self, curve_points):
-
-        # mat_x = Float32MultiArray()
-        # mat_y = Float32MultiArray()
-
-        # create world plot
+        # create world plot for every 10th message publish
         if self.msg_counter % 10 == 0:
             plt.cla()
             for curve in curve_points:
@@ -171,15 +176,17 @@ class CurveDetector():
 
                 plt.plot(xs, ys, ':')
 
-
-
-
             plt.draw()
             plt.axis("equal")
             plt.grid(color='gray', linestyle='-', linewidth=1)
             plt.ylim((-1, 1))
             plt.xlim(0, 3)
             plt.pause(0.00000000001)
+
+    def publish_world_curve_points(self, curve_points):
+
+        # mat_x = Float32MultiArray()
+        # mat_y = Float32MultiArray()
 
         # mat_x.data = xs
         # mat_y.data = ys
