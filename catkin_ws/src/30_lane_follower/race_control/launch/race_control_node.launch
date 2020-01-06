@@ -6,11 +6,11 @@
     <!-- launch lane_control_node -->
     <group ns="$(arg ns)">
         <group if="$(arg local)">
-            <node pkg="lane_control" type="lane_control_node.py" name="lane_control_node" output="screen"/>
+            <node pkg="lane_control" type="race_control_node.py" name="lane_control_node" output="screen"/>
         </group>
 
         <group unless="$(arg local)">
-            <node machine="$(arg machine)" pkg="lane_control" type="lane_control_node.py" name="lane_control_node" output="screen"/>
+            <node machine="$(arg machine)" pkg="lane_control" type="race_control_node.py" name="lane_control_node" output="screen"/>
         </group>
     </group>
 
