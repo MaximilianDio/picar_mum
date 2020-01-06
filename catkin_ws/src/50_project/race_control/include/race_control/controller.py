@@ -1,23 +1,24 @@
 class Controller(object):
     """Simple proportional controller."""
-    def __init__(self, radius, CirclePos, yx, ObjectDetectedBool, ObjectPos, Gains, CurVel):
+    def __init__(self, radius, CirclePos, yx, ObjectDetectedBool, ObjectPos, gains, CurVel):
         """
 
         Args:
-            p_gain (float): The proportional gain of the controller.
-            weight_distance (float): This factor determines at which proportion
-                the desired/actual distance influences the control output.
-            weight_angle:  This factor determines at which proportion the
-                desired/actual angle between track and vehicle influenes the
-                control output.
+            radius:
+            CirclePos:
+            yx:
+            ObjectDetectedBool:
+            ObjectPos:
+            gains:
+            CurVel:
         """
         self.radius = radius
         self.CirclePos = CirclePos
         self.yx = yx
         self.ObjectDetectedBool = ObjectDetectedBool
         self.gains = dict(
-            vel=k_pvel,
-            steer=k_psteer,
+            kpvel=k_pvel,
+            kpsteer=k_psteer,
         )
 
 
