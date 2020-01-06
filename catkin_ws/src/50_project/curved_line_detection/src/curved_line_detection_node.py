@@ -19,7 +19,7 @@ class CurveDetector:
 
     def __init__(self):
         # set true for testing
-        self.visualize = True
+        self.visualize = False
 
         # counts how many messages were send
         self.msg_counter = 0
@@ -230,6 +230,6 @@ class CurveDetector:
 if __name__ == "__main__":
     rospy.init_node("world_projection_node")
     CurveDetector()
-    # plt.ion()
-    # plt.show()
+    plt.ion()
+    plt.show()
     rospy.spin()
