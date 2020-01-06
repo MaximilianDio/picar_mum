@@ -17,11 +17,21 @@ class Controller(object):
         self.CurrentVel = None
         self.DesiredVel = 0.0
         self.DesiredAngle = 0.0
-        self.CurveClass = None
+        self.CurveClass = 0
 
-    def CurveClassification(self, Rad):
+    def CurveClassification(self, Rad, MidPoint):
         self.Radius = Rad
-        if Rad is inf:
+        self.CirclePos = MidPoint
+        if self.Radius is inf:
+            self.CurveClass = 1  # Straight Line
+        elif self.CirclePos.y > 0:
+            self.CurveClass = 2  # Right Turn
+        elif self.CirclePos.y < 0:
+            self.CurveClass = 3  # Left Turn
+        else:
+            self.CurveClass = 0  # Error
+
+    
 
 
 
