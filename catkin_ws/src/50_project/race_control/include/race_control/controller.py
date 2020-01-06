@@ -1,21 +1,6 @@
-class ControllerValues(object):
-    """Object that holds desired/actual values for the controller."""
-    def __init__(self, distance, angle, velocity):
-        """
-
-        Args:
-            distance (float): Vehicle's distance to the center line of the track.
-            angle (float): Vehicle's angle relative to the center line of the track.
-            velocity (float): Vehicle's velocity.
-        """
-        self.distance = distance
-        self.angle = angle
-        self.velocity = velocity
-
-
 class Controller(object):
     """Simple proportional controller."""
-    def __init__(self, p_gain, weight_distance, weight_angle):
+    def __init__(self, radius, CirclePos, yx, ObjectDetectedBool, ObjectPos, Gains, CurVel):
         """
 
         Args:
@@ -26,11 +11,15 @@ class Controller(object):
                 desired/actual angle between track and vehicle influenes the
                 control output.
         """
-        self.p_gain = p_gain
-        self.weights = dict(
-            distance=weight_distance,
-            angle=weight_angle,
+        self.radius = radius
+        self.CirclePos = CirclePos
+        self.yx = yx
+        self.ObjectDetectedBool = ObjectDetectedBool
+        self.gains = dict(
+            vel=k_pvel,
+            steer=k_psteer,
         )
+
 
     def get_control_output(self, desired_values, actual_values):
         """Calculates steering angle and velocity output based on desired and  actual values.

@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 import rospy
 import yaml
-from lane_control.controller import Controller, ControllerValues
+from race_control.controller import Controller, ControllerValues
 from picar_common.picar_common import get_param, get_config_file_path, set_param
 from picar_msgs.msg import LanePose, CarCmd
 from std_msgs.msg import Float64
 from picar_msgs.srv import SetValue
 
 
-class LaneControlNode(object):
+class RaceControlNode(object):
     """Lane controller ROS node."""
 
     def __init__(self):
