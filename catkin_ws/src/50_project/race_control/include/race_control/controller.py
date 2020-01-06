@@ -1,4 +1,4 @@
-
+from picar_common.curve import *
 
 class Controller(object):
 
@@ -31,7 +31,13 @@ class Controller(object):
         else:
             self.CurveClass = 0  # Error
 
-    
+    def UpdateGains(self, Kp, Kd):
+        if isinstance(Kp, list) and isinstance(Kd, list):
+            self.Kp = Kp
+            self.Kd = Kd
+        else:
+            raise ValueError("Gains have to be specified in a list")
+
 
 
 
