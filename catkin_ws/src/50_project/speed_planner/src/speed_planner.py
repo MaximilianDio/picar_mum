@@ -6,6 +6,11 @@ class VelocityPlanner:
     """SpeedPlanner allows to specify a specific velocity profile for a given time interval (constant, linear,
      quadratic (progressive), quadratic(digressive)) with given start and end velocities while ensuring, that
     the maximum acceleration limit is kept."""
+    def __init__(self, velocity_profile, T, (v0, v1), a_max=0.5):
+        self.set_max_acceleration(a_max)
+        self.set_velocity_profile(velocity_profile)
+        self.set_duration(T)
+        self.set_velocity((v0, v1))
 
     # use function mapping by dictionary speed_profiles
     def constant_velocity(self, time):
@@ -52,12 +57,6 @@ class VelocityPlanner:
         "progressive": progressive_velocity,
         "digressive": digressive_velocity
     }
-
-    def __init__(self, velocity_profile, T, (v0, v1), a_max=0.5):
-        self.set_max_acceleration(a_max)
-        self.set_velocity_profile(velocity_profile)
-        self.set_duration(T)
-        self.set_velocity((v0, v1))
 
     # max acceleration will be used to determine the acceleration at end or beginning of quadratic acceleration/
     # deceleration in m/s
