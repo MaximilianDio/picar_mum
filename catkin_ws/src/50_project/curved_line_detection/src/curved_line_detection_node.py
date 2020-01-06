@@ -2,13 +2,10 @@
 import rospy
 import yaml
 import numpy as np
-from cv_bridge import CvBridgeError, CvBridge
+from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
-from geometry_msgs.msg import Point32
-from std_msgs.msg import Float32MultiArray
-from std_msgs.msg import MultiArrayDimension
-from picar_msgs.srv import SetValue
-from sensor_msgs.msg import CompressedImage, CameraInfo
+from sensor_msgs.msg import CameraInfo
+from picar_msgs.msg import MsgCurvePoint2D
 from picar_common.picar_common import get_config_file_path, get_param, set_param, get_camera_info
 from curved_line_detection import CurvePointExtractor, CurveEstimator
 import time
@@ -17,6 +14,7 @@ import matplotlib.pyplot as plt
 
 
 class CurveDetector:
+    # TODO define rate for picar
     PUBLISH_RATE = 20
 
     def __init__(self):
@@ -105,10 +103,8 @@ class CurveDetector:
 
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
-        # self.publishers["world_curve_point_x"] = rospy.Publisher("~world_curve_point_x", Float32MultiArray,
-        #                                                          queue_size=1)
-        # self.publishers["world_curve_point_y"] = rospy.Publisher("~world_curve_point_y", Float32MultiArray,
-        #                                                          queue_size=1)
+        self.publishers["curve_point"] = rospy.Publisher("~curve_point", MsgCurvePoint2D,
+                                                         queue_size=1)
 
     # --------------------------------------------------------------------
     # ----------------------- main callback ------------------------------
@@ -185,21 +181,55 @@ class CurveDetector:
 
     def publish_world_curve_points(self, curve_points):
 
-        # mat_x = Float32MultiArray()
-        # mat_y = Float32MultiArray()
-
-        # mat_x.data = xs
-        # mat_y.data = ys
-
-        # self.publishers["world_curve_point_x"].publish(mat_x)
-        # self.publishers["world_curve_point_y"].publish(mat_y)
+        DEFAULT_FALSE_VALUE = float("inf")
 
         self.msg_counter += 1
+        curve_point_msg = MsgCurvePoint2D()
+
+        try:
+            curve_point = curve_points[0][0]
+
+            try:
+                # point on curve
+                curve_point_msg.x = curve_point.x
+                curve_point_msg.y = curve_point.y
+            except AttributeError:
+                # point on curve
+                curve_point_msg.x = DEFAULT_FALSE_VALUE
+                curve_point_msg.y = DEFAULT_FALSE_VALUE
+
+            try:
+                # slope of point
+                curve_point_msg.slope = curve_point.slope
+            except AttributeError:
+                curve_point_msg.slope = DEFAULT_FALSE_VALUE
+
+            try:
+                # circle at point
+                curve_point_msg.cR = curve_point.circle.radius
+                curve_point_msg.cx = curve_point.circle.center.x
+                curve_point_msg.cy = curve_point.circle.center.y
+            except AttributeError:
+                curve_point_msg.cR = DEFAULT_FALSE_VALUE
+                curve_point_msg.cx = DEFAULT_FALSE_VALUE
+                curve_point_msg.cy = DEFAULT_FALSE_VALUE
+        except IndexError:
+            # point on curve
+            curve_point_msg.x = DEFAULT_FALSE_VALUE
+            curve_point_msg.y = DEFAULT_FALSE_VALUE
+            curve_point_msg.slope = DEFAULT_FALSE_VALUE
+            curve_point_msg.cR = DEFAULT_FALSE_VALUE
+            curve_point_msg.cx = DEFAULT_FALSE_VALUE
+            curve_point_msg.cy = DEFAULT_FALSE_VALUE
+
+        self.publishers["curve_point"].publish(curve_point_msg)
+        # publish message with given frequency
+        self.rate.sleep()
 
 
 if __name__ == "__main__":
     rospy.init_node("world_projection_node")
     CurveDetector()
-    plt.ion()
-    plt.show()
+    # plt.ion()
+    # plt.show()
     rospy.spin()

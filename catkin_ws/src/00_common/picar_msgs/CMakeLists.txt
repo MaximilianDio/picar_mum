@@ -16,6 +16,7 @@ add_message_files(
   LanePose.msg
   CarCmd.msg
   Pose2DStamped.msg
+  MsgCurvePoint2D.msg
 )
 
 add_service_files(

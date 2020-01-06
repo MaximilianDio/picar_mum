@@ -26,6 +26,6 @@
     <!-- "~input_image/raw": sensor_msgs/Image -->
 
     <!-- Publications -->
-    <!-- "~world:curve_point_x": std_msgs/Float32MultiArray -->
+    <!-- "~curve_point": picar_msgs/MsgCurvePoint2D -->
 
 </launch>
