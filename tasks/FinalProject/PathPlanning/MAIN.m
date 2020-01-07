@@ -15,7 +15,7 @@ xBnd = [-5, 5];
 yBnd = [-10, 10];
 
 startPoint = [0; 0; 0];   %Start here
-finishPoint = [1; 0; 0];   %Finish here
+finishPoint = [1; 0.3; 0];   %Finish here
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
@@ -24,8 +24,8 @@ finishPoint = [1; 0; 0];   %Finish here
 
 problem.func.dynamics = @(t,x,u)( BycicleModel(t,x,u) );
 problem.func.pathObj = @(t,x,u)(sum(u.^2,1));
-problem.func.pathCst = @(t,x,u)( pathConstraint(x) );
-problem.func.bndCst = @(t0,x0,tF,xF)( stepConstraint(x0,xF,param) );
+% problem.func.pathCst = @(t,x,u)( pathConstraint(x) );
+problem.func.bndCst = @(t0,x0,tF,xF,u0,uF)( boundaryConstraint(t0, x0, tF, xF,u0,uF) );
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
@@ -34,8 +34,8 @@ problem.func.bndCst = @(t0,x0,tF,xF)( stepConstraint(x0,xF,param) );
 
 problem.bounds.initialTime.low = 0;
 problem.bounds.initialTime.upp = 0;
-problem.bounds.finalTime.low = 2;
-problem.bounds.finalTime.upp = 100;
+problem.bounds.finalTime.low = 1;
+problem.bounds.finalTime.upp = 5;
 
 problem.bounds.state.low = [xBnd(1); yBnd(1); -2*pi];
 problem.bounds.state.upp = [xBnd(2); yBnd(2);  2*pi];
@@ -76,7 +76,7 @@ problem.options.nlpOpt = optimset(...
 % problem.options.method = 'gpops';
 
 problem.options.method = 'trapezoid';
-problem.options.trapezoid.nGrid = 15;
+problem.options.trapezoid.nGrid = 30;
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 %                            Solve!                                       %
@@ -84,4 +84,16 @@ problem.options.trapezoid.nGrid = 15;
 
 soln = optimTraj(problem);
 
+velocities = BycicleModel(soln.grid.time, soln.grid.state, soln.grid.control);
+
+%%
+L = 0.1207 + 0.1393;
+t_sim = linspace(soln.grid.time(1), soln.grid.time(end), 500);
+state_sim = soln.interp.state(t_sim);
+control_sim = soln.interp.control(t_sim);
+
+A = struct('L', L, 't', t_sim, 'theta', state_sim(3,:), 'u', control_sim,...
+            'x', state_sim(1,:), 'y', state_sim(2,:));
+        
+save('Animation.mat', 'A')
 
