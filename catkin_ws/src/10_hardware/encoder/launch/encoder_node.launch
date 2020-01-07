@@ -1,0 +1,16 @@
+<launch>
+    <arg name="ns"/>
+    <arg name="machine"/>
+
+    <!-- launch encoder node -->
+    <group ns="$(arg ns)">
+        <node machine="$(arg machine)" name="encoder_node" pkg="enc" type="encoder_node.py" output="screen">
+        </node>
+    </group>
+
+    <!-- Subscriptions -->
+
+    <!-- Publications -->
+    <!-- "~imu": sensor_msgs/Imu -->
+
+</launch>
