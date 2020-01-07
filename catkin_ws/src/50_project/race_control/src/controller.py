@@ -2,8 +2,8 @@ from curve import *
 from speed_planner import *
 from picar import Picar
 
-class Controller(object):
 
+class Controller(object):
 
     def __init__(self, kp, kd):
         """
@@ -25,8 +25,7 @@ class Controller(object):
         self.accTime = 0.5  # total time for acc maneuver
         self.changeCurveClass = False
 
-
-    def CurveClassification(self, circle):
+    def curveClassification(self, circle):
         if isinstance(circle, Circle2D):
             self.circle = circle
         else:
@@ -41,15 +40,15 @@ class Controller(object):
         else:
             self.curveClass = 0  # Error
 
-    def UpdateGains(self, kp, kd):
+    def updateGains(self, kp, kd):
         if isinstance(kp, list) and isinstance(kd, list):
             self.kp = kp
             self.kd = kd
         else:
             raise ValueError("Gains have to be specified in a list")
 
-    def GetControlOutputs(self, curVel, x, y, circle, curTime):
-        self.CurveClassification(circle)
+    def getControlOutputs(self, curVel, x, y, circle, curTime):
+        self.curveClassification(circle)
 
         if self.curveClass == 1:
             self.desiredVel = self.velocities[0]
