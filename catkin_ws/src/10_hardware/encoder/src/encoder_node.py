@@ -5,7 +5,7 @@ import struct
 from picar_msgs.msg import WheelSpeedStamped
 import rospy
 
-ticks_per_sec = 16000000.0/256.0
+ticks_per_sec = 16000000.0 / 256.0
 pulses_per_rev = 10
 
 
@@ -34,7 +34,7 @@ if __name__ == "__main__":
         data = struct.unpack('>HHHH', data)
         speed = []
         for ticks in data:
-            speed.append(ticks_per_sec/ticks/pulses_per_rev*2*3.1416 if ticks > 0 else 0.0)
+            speed.append(ticks_per_sec / ticks / pulses_per_rev * 2 * 3.1416 if ticks > 0 else 0.0)
         print(data)
         print(speed)
         message = WheelSpeedStamped()
