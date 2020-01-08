@@ -34,7 +34,7 @@ u = A.u.';
 x = A.x.';
 y = A.y.';
 %% Car Dimensions
-carLength=2.5*L;
+carLength=L;
 carWidth=carLength/2;
 wheelWidth=carLength/4;
 wheelLength=carLength/2;

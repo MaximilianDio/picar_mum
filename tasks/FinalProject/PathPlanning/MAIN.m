@@ -15,7 +15,7 @@ xBnd = [-5, 5];
 yBnd = [-10, 10];
 
 startPoint = [0; 0; 0];   %Start here
-finishPoint = [1; 0.3; 0];   %Finish here
+finishPoint = [0.8; 0.3; 0];   %Finish here
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
@@ -23,8 +23,8 @@ finishPoint = [1; 0.3; 0];   %Finish here
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 
 problem.func.dynamics = @(t,x,u)( BycicleModel(t,x,u) );
-problem.func.pathObj = @(t,x,u)(sum(u.^2,1));
-% problem.func.pathCst = @(t,x,u)( pathConstraint(x) );
+problem.func.pathObj = @(t,x,u)(sum([u(1,:); 100 * u(2,:)].^2,1));
+problem.func.pathCst = @(t,x,u)( pathConstraint(t,x,u) );
 problem.func.bndCst = @(t0,x0,tF,xF,u0,uF)( boundaryConstraint(t0, x0, tF, xF,u0,uF) );
 
 
@@ -46,8 +46,8 @@ problem.bounds.initialState.upp = startPoint;
 problem.bounds.finalState.low = finishPoint;
 problem.bounds.finalState.upp = finishPoint;
 
-problem.bounds.control.low = [0; - pi/2];
-problem.bounds.control.upp = [10; pi/2];
+problem.bounds.control.low = [0; - deg2rad(25)];
+problem.bounds.control.upp = [1.6; deg2rad(25)];
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
@@ -70,13 +70,13 @@ problem.options.nlpOpt = optimset(...
     'MaxFunEval',1e5,...
     'tolFun',1e-6);
 
-% problem.options.method = 'hermiteSimpson';
+problem.options.method = 'hermiteSimpson';
 % problem.options.hermiteSimpson.nSegment = 25;
 
 % problem.options.method = 'gpops';
 
-problem.options.method = 'trapezoid';
-problem.options.trapezoid.nGrid = 30;
+% problem.options.method = 'trapezoid';
+problem.options.trapezoid.nGrid = 60;
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 %                            Solve!                                       %
