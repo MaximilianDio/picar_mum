@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 
-class OvertakingTrajectory():
+
+class OvertakingTrajectory(object):
 
     def __init__(self):
         traj = np.genfromtxt("V0to0.csv", delimiter=',')
@@ -16,11 +17,12 @@ class OvertakingTrajectory():
         else:
             velocity_interp = interp1d(self.time, self.velocity)
             delta_interp = interp1d(self.time, self.delta)
-            return velocity_interp(current_time), delta_interp(current_time)
+            return velocity_interp(current_time), delta_interp(current_time)  # Outputs: desVel, desAngle
+
 
 test = OvertakingTrajectory()
 
-curTime = 1.4
+curTime = 0.8
 curVel, curDelta = test.get_feedforward_control(curTime)
 
 fig, ax = plt.subplots()
