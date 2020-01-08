@@ -52,17 +52,11 @@
         </include>
     </group>
 
-    <!--start color_normalization_node -->
-    <remap from="color_normalization_node/input_image/compressed" to="camera_node/image/compressed"/>
-    <include file="$(find color_normalization)/launch/color_normalization_node.launch">
-        <arg name="ns" value="$(arg ns)"/>
-        <arg name="machine" value="$(arg machine)"/>
-        <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
-    </include>
+
 
     <!-- start curve_detection_node -->
-    <remap from="curved_line_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
-    <include file="$(find curved_line_detection)/launch/curved_line_detection_node.launch">
+    <remap from="trajectory_test_node/car_cmd" to="motor_node/car_cmd" />
+    <include file="$(find race_control)/launch/trajectory_test_node.launch">
         <arg name="ns" value="$(arg ns)"/>
         <arg name="machine" value="$(arg machine)"/>
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
