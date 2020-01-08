@@ -1,13 +1,14 @@
 import numpy as np
 import cv2
 
+
 # TODO make attributes private and add exceptions
 class Tag:
 
-    def __init__(self, tag_id, tag_size, tvecref, rvecref):
+    def __init__(self, tag_id, tag_size, tvecref, rmatref):
         self.tag_id = int(tag_id)
         self.tvecref = tvecref.reshape(3, 1)
-        self.rvecref = rvecref
+        self.rmatref = rmatref
 
         tag_size = float(tag_size)
         self.__calc_obj_corners(tag_size)
@@ -23,7 +24,7 @@ class Tag:
                               [-tag_size / 2, -tag_size / 2, 0],
                               [-tag_size / 2, tag_size / 2, 0]], np.float32)
 
-        corners3D = np.matmul(self.rvecref, corners3D.reshape(-1, 3, 1)) + self.tvecref
+        corners3D = np.matmul(self.rmatref, corners3D.reshape(-1, 3, 1)) + self.tvecref
 
         self.corners3D = corners3D.reshape(-1, 1, 3)
 
@@ -51,7 +52,7 @@ class Tag:
         self.rvec = rvecs
         self.tvec = tvecs
 
-    def draw_tag(self, image, mtx, dist):
+    def draw_tag(self, image):
         """ draws a box around the tag with a coordinate sytsem and shows tag id """
         if self.corners_image is not None:
             # draw corners of apriltags

@@ -1,0 +1,45 @@
+<launch>
+    <arg name="ns"/>
+    <arg name="local"/>
+    <arg name="machine"/>
+
+    <arg name="config_file_name" default="$(arg ns)"/>
+
+    <arg name="distorted_input"/>
+
+    <arg name="intrinsics_file_name" default="$(arg ns)"/>
+    <arg name="extrinsics_file_name" default="$(arg ns)"/>
+
+    <!-- launch apriltag_detection_node -->
+    <group if="$(arg local)">
+        <group ns="$(arg ns)">
+            <node pkg="apriltag_detection" type="apriltag_detection_node.py" name="apriltag_detection_node"
+                  output="screen">
+                <param name="config_file_name" value="$(arg config_file_name)"/>
+                <param name="intrinsics_file_name" value="$(arg intrinsics_file_name)"/>
+                <param name="extrinsics_file_name" value="$(arg extrinsics_file_name)"/>
+                <param name="distorted_input" value="$(arg distorted_input)"/>
+            </node>
+
+        </group>
+    </group>
+
+    <group unless="$(arg local)">
+        <group ns="$(arg ns)">
+            <node machine="$(arg machine)" pkg="apriltag_detection" type="apriltag_detection_node.py"
+                  name="apriltag_detection_node" output="screen">
+                <param name="config_file_name" value="$(arg config_file_name)"/>
+                <param name="intrinsics_file_name" value="$(arg intrinsics_file_name)"/>
+                <param name="extrinsics_file_name" value="$(arg extrinsics_file_name)"/>
+                <param name="distorted_input" value="$(arg distorted_input)"/>
+            </node>
+        </group>
+    </group>
+
+    <!-- Subscriptions -->
+    <!-- "~input_image/raw": sensor_msgs/Image -->
+
+    <!-- Publications -->
+    <!-- "~apriltag_position": geometry_msgs/Point32 -->
+
+</launch>
