@@ -6,17 +6,21 @@ import numpy as np
 from picar_msgs.msg import WheelSpeedStamped
 import rospy
 
-ticks_per_sec = 16000000.0/256.0
+F_CPU = 16000000.0
+PRESCALER = 256.0
+BAUD = 57600
+
+ticks_per_sec = F_CPU/PRESCALER
 pulses_per_rev = 10
 
 
 class Node(object):
     def __init__(self):
-        self.serial = serial.Serial("/dev/ttyUSB0", 57600, timeout=1.0)
+        self.serial = serial.Serial("/dev/ttyUSB0", BAUD, timeout=1.0)
         time.sleep(2.0)
-        rospy.init_node("rpm")
+        rospy.init_node("wheel_speed_node")
         self.publisher = rospy.Publisher(
-            "wheel_speed",
+            "~wheel_speed",
             WheelSpeedStamped,
             queue_size=1)
 
@@ -42,6 +46,7 @@ if __name__ == "__main__":
         print(data)
         print(speed)
         message = WheelSpeedStamped()
+        message.header.stamp = rospy.Time.now()
         message.front_left = speed[0]
         message.front_right = speed[1]
         message.rear_left = speed[2]

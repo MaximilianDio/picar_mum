@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(encoder)
-
+project(picar_parameters)
 
 find_package(catkin REQUIRED COMPONENTS
   rospy
@@ -10,5 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_package()
+catkin_python_setup()
 
 include_directories(${catkin_INCLUDE_DIRS})
+

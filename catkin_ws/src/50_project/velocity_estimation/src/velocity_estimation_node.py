@@ -2,15 +2,15 @@
 import rospy
 from picar_msgs.msg import WheelSpeedStamped
 from std_msgs.msg import Float32
-from velocity_esitmator import VelocityEstimator
-from picar import Wheel
+from velocity_estimator import VelocityEstimator
+from picar.parameters import Wheel
 
 
 class VelocityEstimation(object):
     def __init__(self):
         self.rate = rospy.Rate(100)  # TODO publish hertz rate anpassen
         self.publishers = {}
-        self.velocity_esimator = VelocityEstimator(radius=Wheel.wheel_diameter)
+        self.velocity_estimator = VelocityEstimator(radius=Wheel.wheel_diameter/2)
 
         # register all publishers
         self.init_subscribers()
@@ -19,8 +19,8 @@ class VelocityEstimation(object):
 
     def encoder_callback(self, input_msg):
         velocity = Float32()
-        velocity.data = self.velocity_esimator.getCOMvel([input_msg.rear_left, input_msg.rear_right])
-        self.publishers["leader_relative_pos"].publish(velocity)
+        velocity.data = self.velocity_estimator.getCOMvel([input_msg.rear_left, input_msg.rear_right])
+        self.publishers["velocity_estimated"].publish(velocity)
         self.rate.sleep()
 
     def init_subscribers(self):

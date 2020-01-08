@@ -7,7 +7,7 @@ class VelocityEstimator(object):
         self.radius_wheel = radius
 
     def getVelocity(self, rawdata):
-        return rawdata * self.radius_wheel
+        return [x*self.radius_wheel for x in rawdata]
 
     def getCOMvel(self, rawdata):
         velocity_est = self.getVelocity(rawdata)

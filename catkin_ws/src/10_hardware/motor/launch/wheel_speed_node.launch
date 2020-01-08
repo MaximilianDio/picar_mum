@@ -4,8 +4,8 @@
 
     <!-- launch motor node -->
     <group ns="$(arg ns)">
-        <node machine="$(arg machine)" name="encoder_node" pkg="encoder"
-              type="encoder_node.py" output="screen">
+        <node machine="$(arg machine)" name="wheel_speed_node" pkg="motor"
+              type="wheel_speed_node.py" output="screen">
         </node>
     </group>
 
