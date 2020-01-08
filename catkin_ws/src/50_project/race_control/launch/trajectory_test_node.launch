@@ -3,24 +3,29 @@
     <arg name="local"/>
     <arg name="machine"/>
 
-    <!-- launch lane_control_node -->
-    <group ns="$(arg ns)">
-        <group if="$(arg local)">
-            <node pkg="race_control" type="trajectory_test_node.py" name="trajectory_test_node" output="screen"/>
-        </group>
+    <arg name="config_file_name" default="$(arg ns)"/>
 
-        <group unless="$(arg local)">
-            <node machine="$(arg machine)" pkg="race_control" type="trajectory_test_node.py" name="trajectory_test_node" output="screen"/>
+    <!-- launch line_detection_node -->
+    <group if="$(arg local)">
+        <group ns="$(arg ns)">
+            <node pkg="curved_line_detection" type="curved_line_detection_node.py" name="curved_line_detection_node" output="screen">
+                <param name="config_file_name" value="$(arg config_file_name)"/>
+            </node>
+
+        </group>
+    </group>
+
+    <group unless="$(arg local)">
+        <group ns="$(arg ns)">
+            <node machine="$(arg machine)" pkg="curved_line_detection" type="curved_line_detection_node.py" name="curved_line_detection_node" output="screen"/>
+            <param name="config_file_name" value="$(arg config_file_name)"/>
         </group>
     </group>
 
     <!-- Subscriptions -->
-    <!-- "~pose_input": picar_msgs/LanePose -->
+    <!-- "~input_image/raw": sensor_msgs/Image -->
 
     <!-- Publications -->
-    <!-- "~distance_error": std_msgs/Float64 -->
-    <!-- "~angle_error": std_msgs/Float64 -->
-    <!-- "~combined_error": std_msgs/Float64 -->
-    <!-- "~car_cmd": picar_msgs/CarCmd -->
+    <!-- "~curve_point": picar_msgs/MsgCurvePoint2D -->
 
 </launch>
