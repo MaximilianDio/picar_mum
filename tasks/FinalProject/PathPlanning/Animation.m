@@ -28,11 +28,17 @@ vel_gamma=1; %show plot of velocity and stearing angle? 1:true | 0:false --> bad
 % u:     vector: [v gamma] ([geschwindigkeit lenkung])
 load('animation.mat')
 L = A.L;
-t = A.t;
+t_ = A.t;
 theta = A.theta.';
 u = A.u.';
 x = A.x.';
 y = A.y.';
+RATE = 100;
+[t__,x] = even_sample(t_.',x, RATE);
+[t, u] = even_sample(t_.',u, RATE);
+[t, theta] = even_sample(t_.',theta, RATE);
+[t, y] = even_sample(t_.',y, RATE);
+
 %% Car Dimensions
 carLength=L;
 carWidth=carLength/2;
