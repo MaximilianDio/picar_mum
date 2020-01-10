@@ -26,15 +26,19 @@ class TrajectoryTestNode(object):
     def publish_car_cmd(self):
         pass
         while not rospy.is_shutdown():
-            curTime = rospy.get_rostime()
+            curTime = rospy.get_rostime() - self.start_time
             message = CarCmd()
             message.header.stamp = rospy.get_rostime()
             curTime = curTime.secs + float(curTime.nsecs*1e-9)
-            print curTime
-            message.velocity, message.angle = self.overtaker.get_feedforward_control(curTime)
-            message.angle = message.angle*180/3.1415
-            print message.velocity
-            print message.angle
+            print "Time: " + str(curTime)
+            if curTime > 10:
+                message.velocity, message.angle = self.overtaker.get_feedforward_control(curTime-10)
+                message.angle = message.angle
+            else:
+                message.velocity = 0.0
+                message.angle = 0.0
+            print "velocity: " + str(message.velocity)
+            print "angle: " + str(message.angle)
             self.publishers["car_cmd"].publish(message)
             self.rate.sleep()
 

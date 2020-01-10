@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 import rospkg
 import os
+from picar import Picar
 
 class OvertakingTrajectory(object):
 
@@ -14,6 +15,7 @@ class OvertakingTrajectory(object):
         self.time = traj[0, :]
         self.velocity = traj[1, :]
         self.delta = traj[2, :]
+        self.helper_function = Picar()
 
     def get_feedforward_control(self, current_time):
         if current_time > self.time[len(self.time)-1]:
@@ -21,19 +23,19 @@ class OvertakingTrajectory(object):
         else:
             velocity_interp = interp1d(self.time, self.velocity)
             delta_interp = interp1d(self.time, self.delta)
-            return velocity_interp(current_time), delta_interp(current_time)  # Outputs: desVel, desAngle
+            return velocity_interp(current_time), -delta_interp(current_time)*180/np.pi  # Outputs: desVel, desAngle
 
 
-# test = OvertakingTrajectory()
+test = OvertakingTrajectory()
 #
-# curTime = 0.8
-# curVel, curDelta = test.get_feedforward_control(curTime)
+curTime = 0.1
+curVel, curDelta = test.get_feedforward_control(curTime)
 #
-# fig, ax = plt.subplots()
-# ax.plot(test.time, test.velocity)
-# ax.plot(test.time, test.delta)
-# ax.plot(curTime, curVel, marker='o')
-# ax.plot(curTime, curDelta, marker='o')
-# ax.grid()
-# plt.show()
+fig, ax = plt.subplots()
+ax.plot(test.time, test.velocity)
+ax.plot(test.time, test.delta)
+ax.plot(curTime, curVel, marker='o')
+ax.plot(curTime, curDelta, marker='o')
+ax.grid()
+plt.show()
 
