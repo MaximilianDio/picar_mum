@@ -35,7 +35,7 @@ class VelocityEstimation(object):
         try:
             rospy.Subscriber("~input_encoder_data", WheelSpeedStamped, self.encoder_callback)
         except rospy.exceptions.TransportException as e:
-            print("unable to create subscriber transport:WheelSpeedStamped. Will try again Quaternion", e)
+            print("unable to create subscriber transport with msg:WheelSpeedStamped. Will try again -> msg:Quaternion", e)
             rospy.Subscriber("~input_encoder_data", Quaternion, self.encoder_callback) # input comes as float64 on .w
 
     def init_publishers(self):
