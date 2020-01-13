@@ -2,6 +2,7 @@
     <arg name="ns"/>
     <arg name="sim" default="false"/>
     <arg name="machine" default="$(arg ns)"/>
+    <arg name="local" default="true"/>
 
     <machine
             name="$(arg machine)"
@@ -29,6 +30,21 @@
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
         </include>
+
+         <!-- start encoder node -->
+        <include file="$(find encoder)/launch/encoder_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+        </include>
+
+        <!-- start velocity_estimation node -->
+        <remap from="velocity_estimation_node/input_encoder_data" to="encoder_node/wheel_speed"/>
+        <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(arg local)"/>
+        </include>
+
     </group>
 
     <!-- if running on simulated vehicle -->
@@ -36,6 +52,14 @@
         <!-- start keyboard control -->
         <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">
             <arg name="ns" value="simcar"/>
+        </include>
+
+                <!-- start velocity_estimation node -->
+        <remap from="velocity_estimation_node/input_encoder_data" to="wheel_speed"/>
+        <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(arg local)"/>
         </include>
 
 

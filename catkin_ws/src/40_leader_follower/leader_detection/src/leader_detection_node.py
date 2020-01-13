@@ -142,9 +142,9 @@ class LeaderDetectionNode(object):
 
         # DEGBUG DELETE
         # output image
-        cv2.imshow('mask', mask_img)
+        #cv2.imshow('mask', mask_img)
         # output_img = cv2.cvtColor(output_img,cv2.COLOR_RGB2BGR)
-        cv2.imshow("leader_detection", output_img)
+        #cv2.imshow("leader_detection", output_img)
         cv2.waitKey(1)
 
         msg_out_blue_ball_pos = Point32()
