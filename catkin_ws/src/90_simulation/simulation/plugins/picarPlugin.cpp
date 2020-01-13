@@ -14,7 +14,7 @@
 #include <ros/subscribe_options.h>
 #include <picar_msgs/CarCmd.h>
 #include <picar_msgs/Pose2DStamped.h>
-#include <geometry_msgs/Quaternion.h>
+#include <picar_msgs/WheelSpeedStamped.h>
 
 #include <thread>
 
@@ -40,6 +40,7 @@ public:
     {
         // get model
         this->model = _model;
+        this->carName = this->model->GetName();
         // get world in which the model is spawned
         this->world = _model->GetWorld();
         
@@ -48,6 +49,10 @@ public:
         // let gazebo handle the ros initialization
         this->gazeboNode = transport::NodePtr(new transport::Node());
         this->gazeboNode->Init(this->world->Name());
+        if(_sdf->HasElement("robotNamespace"))
+            this->carName = _sdf->Get<std::string>("robotNamespace");
+        gzmsg << "carName: " << this->carName << "\n";
+
         
         if(!ros::isInitialized())
         {
@@ -58,8 +63,8 @@ public:
         // create ros node handle
         this->nodeHandle = new ros::NodeHandle("");
         ROS_INFO("created ros node handle");
-        this->wheelSpeedPub = this->nodeHandle->advertise<geometry_msgs::Quaternion>("simcar/wheel_speed", 1);
-        this->posePub = this->nodeHandle->advertise<picar_msgs::Pose2DStamped>("simcar/pose", 1);
+        this->wheelSpeedPub = this->nodeHandle->advertise<picar_msgs::WheelSpeedStamped>(carName + "/wheel_speed", 1);
+        this->posePub = this->nodeHandle->advertise<picar_msgs::Pose2DStamped>(carName + "/pose", 1);
         
         
         ros::WallDuration(1.0).sleep();
@@ -67,7 +72,7 @@ public:
         // set the callback queue
         this->nodeHandle->setCallbackQueue(&this->jointCmdCallbackQueue);
         ROS_INFO("created callback queue");
-        this->jointCmdOptions = ros::SubscribeOptions::create<picar_msgs::CarCmd>("simcar/motor_node/car_cmd",
+        this->jointCmdOptions = ros::SubscribeOptions::create<picar_msgs::CarCmd>(carName + "/motor_node/car_cmd",
                                                                                   1, 
                                                                                   boost::bind(&PicarPlugin::CarCmdCb,
                                                                                               this,
@@ -180,12 +185,13 @@ public:
             poseMsg.theta = pose.Rot().Euler()[2];
             this->posePub.publish(poseMsg);
             
-            geometry_msgs::Quaternion wheelSpeedMsg;
+            picar_msgs::WheelSpeedStamped wheelSpeedMsg;
             timeSinceLastMsg = 0.0;
-            wheelSpeedMsg.w = this->velFL;
-            wheelSpeedMsg.x = this->velFR;
-            wheelSpeedMsg.y = this->velRL;
-            wheelSpeedMsg.z = this->velRR;
+            wheelSpeedMsg.header.stamp = ros::Time::now();
+            wheelSpeedMsg.front_left = this->velFL;
+            wheelSpeedMsg.front_right = this->velFR;
+            wheelSpeedMsg.rear_left = this->velRL;
+            wheelSpeedMsg.rear_right = this->velRR;
             this->wheelSpeedPub.publish(wheelSpeedMsg);
         }
         
@@ -211,6 +217,7 @@ public:
     
     
 private:
+    std::string carName;
     physics::WorldPtr world;
     physics::ModelPtr model;
     event::ConnectionPtr updateConnection;
