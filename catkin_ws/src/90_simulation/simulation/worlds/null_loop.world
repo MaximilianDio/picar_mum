@@ -40,6 +40,57 @@
             <uri>model://null_track</uri>
         </include>
 
-
+<model name="Tag0">
+            <pose>0 0 0.1 0 0 0</pose>
+            <link name="Tag1">
+            <pose>-1 -1 0 0 0 0</pose>
+            <collision name="collision">
+                <geometry>
+                <box>
+                    <size>.2 .2 .2</size>
+                </box>
+                </geometry>
+            </collision>
+            <visual name="visual">
+                <geometry>
+                <box>
+                    <size>.2 .2 .2</size>
+                </box>
+                </geometry>
+                <material>
+                <script>
+                    <uri>model://Tags/Tag-0/scripts</uri>
+                    <uri>model://Tags/Tag-0/textures</uri>
+                    <name>Tag0</name>
+                </script>
+                </material>
+            </visual>
+            </link>
+            
+            <link name="box">
+            <pose>-1 0 0 0 0 0</pose>
+            <collision name="collision">
+                <geometry>
+                <box>
+                    <size>.15 .15 .15</size>
+                </box>
+                </geometry>
+            </collision>
+            <visual name="visual">
+                <geometry>
+                <box>
+                    <size>.15 .15 .15</size>
+                </box>
+                </geometry>
+                <material>
+                <script>
+                    <uri>model://Tags/Tag-1/scripts</uri>
+                    <uri>model://Tags/Tag-1/textures</uri>
+                    <name>Tag1</name>
+                </script>
+                </material>
+            </visual>
+            </link>
+        </model> 
     </world>
 </sdf>
