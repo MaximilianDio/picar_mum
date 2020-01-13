@@ -1,0 +1,30 @@
+<launch>
+    <arg name="ns"/>
+    <arg name="local"/>
+    <arg name="machine"/>
+
+    <arg name="config_file_name" default="$(arg ns)"/>
+
+    <!-- launch line_detection_node -->
+    <group if="$(arg local)">
+        <group ns="$(arg ns)">
+            <node pkg="race_control" type="trajectory_test_node.py" name="trajectory_test_node" output="screen">
+                <param name="config_file_name" value="$(arg config_file_name)"/>
+            </node>
+
+        </group>
+    </group>
+
+    <group unless="$(arg local)">
+        <group ns="$(arg ns)">
+            <node machine="$(arg machine)" pkg="race_control" type="trajectory_test_node.py" name="trajectory_test_node" output="screen"/>
+            <param name="config_file_name" value="$(arg config_file_name)"/>
+        </group>
+    </group>
+
+    <!-- Subscriptions -->
+
+    <!-- Publications -->
+    <!-- "~car_cmd": picar_msgs/CarCmd -->
+
+</launch>

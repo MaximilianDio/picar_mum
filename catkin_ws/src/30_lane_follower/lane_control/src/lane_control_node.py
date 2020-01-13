@@ -17,7 +17,7 @@ class LaneControlNode(object):
         self.services = {}
         config_file_name = get_param("~config_file_name", "default")
 
-        config_file_path = get_config_file_path("lane_control",
+        config_file_path = get_config_file_path("race_control",
                                                 config_file_name)
 
         if config_file_path is None:

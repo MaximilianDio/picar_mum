@@ -1,5 +1,5 @@
 hsv_lower_red_1: [0, 120, 100]
-hsv_upper_red_1: [12, 255, 255]
+hsv_upper_red_1: [30, 255, 255]
 hsv_lower_red_2: [165, 120, 100]
 hsv_upper_red_2: [180, 255, 255]
 horizon_rel_height: 0.54
