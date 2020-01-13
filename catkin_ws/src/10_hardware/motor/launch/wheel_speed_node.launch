@@ -1,0 +1,17 @@
+<launch>
+    <arg name="ns"/>
+    <arg name="machine"/>
+
+    <!-- launch motor node -->
+    <group ns="$(arg ns)">
+        <node machine="$(arg machine)" name="wheel_speed_node" pkg="motor"
+              type="wheel_speed_node.py" output="screen">
+        </node>
+    </group>
+
+    <!-- Subscriptions -->
+
+    <!-- Publications -->
+    <!-- "~wheel_speed": picar_msgs/WheelSpeedStamped -->
+
+</launch>

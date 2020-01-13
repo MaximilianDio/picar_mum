@@ -55,13 +55,13 @@ class LeaderGetter(object):
         self.HEIGHT = 600  # px
         self.trackbar_window = np.zeros((self.WIDTH, self.HEIGHT, 3), np.uint8)
         self.window_name = "trackbars"
-        cv2.namedWindow(self.window_name)
+        #cv2.namedWindow(self.window_name)
         for name, value in zip(self.TRACKBAR_NAMES, self.HSV_values):
             print name
-            cv2.createTrackbar(name, self.window_name, value, 255, nothing)
+            #cv2.createTrackbar(name, self.window_name, value, 255, nothing)
 
     def __update_trackbars(self):
-        cv2.imshow(self.window_name, self.trackbar_window)
+        #cv2.imshow(self.window_name, self.trackbar_window)
         cv2.waitKey(1)
 
     def __update_trackbar_pos(self):
