@@ -4,7 +4,6 @@ from picar_msgs.msg import WheelSpeedStamped
 from std_msgs.msg import Float32
 from velocity_estimator import VelocityEstimator
 from picar.parameters import Wheel
-from geometry_msgs.msg import Quaternion
 
 
 class VelocityEstimation(object):
