@@ -1,0 +1,43 @@
+<launch>
+    <arg name="ns"/>
+    <arg name="machine" default="$(arg ns)"/>
+    <arg name="sim" default="false"/>
+    <arg name="paused" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="compute_on_pi" default="false"/>
+
+
+    <machine
+            name="$(arg machine)"
+            address="$(arg machine).local"
+            user="pi"
+            env-loader="/home/pi/picar_mum/catkin_ws/env.sh"
+    />
+
+    <group unless="$(arg sim)">
+        <!-- start camera node -->
+        <include file="$(find camera)/launch/camera_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+        </include>
+
+        <include file="$(find motor)/launch/motor_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+        </include>
+    </group>
+
+    <group if="$(arg sim)">
+                <!-- start keyboard control -->
+        <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">
+            <arg name="ns" value="simcar"/>
+        </include>
+
+
+        <include file="$(find simulation)/launch/null_loop.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="paused" value="$(arg paused)"/>
+            <arg name="gui" value="$(arg gui)"/>
+        </include>
+    </group>
+
+</launch>
