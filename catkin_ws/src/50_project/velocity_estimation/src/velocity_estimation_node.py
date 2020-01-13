@@ -22,9 +22,8 @@ class VelocityEstimation(object):
 
         velocity.data = self.velocity_estimator.getCOMvel([input_msg.rear_left, input_msg.rear_right])
 
-        # velocity.header.stamp = rospy.Time.now()
         self.publishers["velocity_estimated"].publish(velocity)
-        self.rate.sleep()
+        #self.rate.sleep()
 
     def init_subscribers(self):
         """ initialize ROS subscribers and stores them in a dictionary"""

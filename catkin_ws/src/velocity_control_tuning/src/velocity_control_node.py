@@ -9,6 +9,7 @@ from picar_msgs.srv import SetValue
 from velocity_controller import *
 from std_msgs.msg import Float32
 
+
 class VelocityControllerTuning(object):
     """Class to control the vehicle by publishing ROS messages based on keyboard input.
 
@@ -32,12 +33,13 @@ class VelocityControllerTuning(object):
     def __init__(self):
         pygame.init()
         # Initialize controller
-        self.controller = VelocityController(5)
+        self.controller = VelocityController(0.5, 0.1)
 
         vehicle_name = rospy.get_namespace().strip("/")
 
         self.velocity = 0.0
         self.angle = 100.0  # absolute value
+        self.cur_vel = 0.0
 
         self.screen = pygame.display.set_mode(
             (VelocityControllerTuning.SCREEN_SIZE, VelocityControllerTuning.SCREEN_SIZE)
@@ -80,19 +82,29 @@ class VelocityControllerTuning(object):
 
         # listen to encoder node
         self.subscriber = rospy.Subscriber("~velocity_estimated",
-                                            Float32,
-                                            self.update_current_velocity(),
-                                            queue_size=1)
+                                           Float32,
+                                           self.update_current_velocity,
+                                           queue_size=1)
 
         self.service = rospy.Service("~set_p_gain",
-                                    SetValue,
-                                    self.set_p_gain)
+                                     SetValue,
+                                     self.set_p_gain)
+
+        self.service = rospy.Service("~set_i_gain",
+                                     SetValue,
+                                     self.set_i_gain)
+
 
     def update_current_velocity(self, message):
-        self.cur_vel = message  # TODO how does the message look like?
+        self.cur_vel = message.data  # TODO how does the message look like?
 
     def set_p_gain(self, message):
         self.controller.kp = message.value
+        return 1
+
+    def set_i_gain(self, message):
+        self.controller.ki = message.value
+        return 1
 
     def run(self):
         """Main logic loop. Should be called periodically in a loop"""
@@ -189,15 +201,13 @@ class VelocityControllerTuning(object):
         if keys[self.K_DOWN]:
             car_cmd.velocity = -self.controller.get_velocity_output(self.cur_vel, self.velocity)
         if keys[self.K_LEFT]:
-            car_cmd.angle = self.angle # angle will be clamped by the car itself
+            car_cmd.angle = self.angle  # angle will be clamped by the car itself
         if keys[self.K_RIGHT]:
-            car_cmd.angle = -self.angle # angle will be clamped by the car itself
-
-
+            car_cmd.angle = -self.angle  # angle will be clamped by the car itself
 
         """ prints angle and data for debugging """
-        #print("angle = " + str(car_cmd.angle))
-        #print("velocity = " + str(car_cmd.velocity))
+        # print("angle = " + str(car_cmd.angle))
+        # print("velocity = " + str(car_cmd.velocity))
 
         self.publisher.publish(car_cmd)
 
@@ -210,8 +220,7 @@ class VelocityControllerTuning(object):
         if keys[self.K_0]:
             self.velocity = 1.0
         if keys[self.K_1]:
-            self.angle = input("set angle: ")
-            #self.velocity = 0.1
+            self.velocity = 0.1
         if keys[self.K_2]:
             self.velocity = 0.2
         if keys[self.K_3]:

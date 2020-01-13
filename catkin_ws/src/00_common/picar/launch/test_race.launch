@@ -18,7 +18,6 @@
     <group unless="$(arg sim)">
         <!-- start keyboard control -->
 
-
         <include file="$(find motor)/launch/motor_node.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
@@ -29,7 +28,7 @@
     <!-- if running on simulated vehicle -->
     <group if="$(arg sim)">
         <!-- start keyboard control -->
-
+        <remap from="trajectory_test_node/car_cmd" to="motor_node/car_cmd" />
         <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">
             <arg name="ns" value="simcar"/>
         </include>
@@ -42,15 +41,6 @@
         </include>
     </group>
 
-
-
-    <!-- start curve_detection_node -->
-    <remap from="trajectory_test_node/car_cmd" to="motor_node/car_cmd" />
-    <include file="$(find race_control)/launch/trajectory_test_node.launch">
-        <arg name="ns" value="$(arg ns)"/>
-        <arg name="machine" value="$(arg machine)"/>
-        <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
-    </include>
 
 
 </launch>

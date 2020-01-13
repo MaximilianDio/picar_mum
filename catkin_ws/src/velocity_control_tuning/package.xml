@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>keyboard_control</name>
+  <name>velocity_control_tuning</name>
   <version>0.0.0</version>
-  <description>The keyboard_control package</description>
+  <description>The velocity_control package</description>
 
   <maintainer email="thies.lennart.alff@tuhh.de">Thies Lennart Alff</maintainer>
 
