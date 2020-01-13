@@ -112,7 +112,7 @@ class ApriltagDetectionNode:
 
         # read image from ros message and bridge it to open cv format
         img_bgr = self.bridge.imgmsg_to_cv2(image_data)
-        
+
         # convert image to gray scale
         gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
 
