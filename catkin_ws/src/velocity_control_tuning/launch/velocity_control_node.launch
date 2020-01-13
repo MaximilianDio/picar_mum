@@ -1,0 +1,15 @@
+<launch>
+    <!-- the hostname of the car to control -->
+    <arg name="ns"/>
+
+    <!-- launch keyboard control node -->
+    <node ns="$(arg ns)" name="velocity_control_node" pkg="keyboard_control"
+          type="velocity_control_node.py" required="true"
+          output="screen"/>
+
+    <!-- Subscriptions -->
+
+    <!-- Publications -->
+    <!-- "motor_node/car_cmd": picar_msgs/CarCmd -->
+
+</launch>
