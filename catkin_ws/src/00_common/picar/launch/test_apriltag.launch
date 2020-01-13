@@ -15,6 +15,11 @@
     />
 
     <group unless="$(arg sim)">
+        <!-- start keyboard control -->
+        <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+        </include>
+
         <!-- start camera node -->
         <include file="$(find camera)/launch/camera_node.launch">
             <arg name="ns" value="$(arg ns)"/>
@@ -27,6 +32,12 @@
     </group>
 
     <group if="$(arg sim)">
+        <!-- start keyboard control -->
+        <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">
+            <arg name="ns" value="simcar"/>
+        </include>
+
+        <!-- simulation environment-->
         <include file="$(find simulation)/launch/null_loop.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="paused" value="$(arg paused)"/>

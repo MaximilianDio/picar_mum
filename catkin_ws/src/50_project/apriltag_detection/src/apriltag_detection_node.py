@@ -110,12 +110,9 @@ class ApriltagDetectionNode:
     def rcv_img_cb(self, image_data):
         tag_position = Point32()
 
-        # TODO remove if TAGS exist in simulation
-        if self.DEBUG:
-            # Capture frame-by-frame
-            ret, img_bgr = self.cap.read()
-        else:
-            img_bgr = self.bridge.imgmsg_to_cv2(image_data)
+        # read image from ros message and bridge it to open cv format
+        img_bgr = self.bridge.imgmsg_to_cv2(image_data)
+        
         # convert image to gray scale
         gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
 
