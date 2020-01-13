@@ -229,31 +229,6 @@ class LeaderControlNode(object):
         message.velocity = velocity
         self.publishers["car_cmd"].publish(message)
 
-    def publish_errors(self, errors):
-        """ Publishes error messages.
-
-        Args:
-            errors (iterable): Contains distance, velocity, x and dx
-        """
-
-        error_distance = Float64()
-        error_distance.data = errors[0]
-
-        error_velocity = Float64()
-        error_velocity.data = errors[1]
-
-        error_y = Float64()
-        error_y.data = errors[2]
-
-        error_dy = Float64()
-        error_dy.data = errors[3]
-
-        self.publishers["error_distance"].publish(error_distance)
-        self.publishers["error_velocity"].publish(error_velocity)
-
-        self.publishers["error_y"].publish(error_y)
-        self.publishers["error_dy"].publish(error_dy)
-
 
 def main():
     """Starts the leader control node"""

@@ -4,6 +4,7 @@ from scipy.interpolate import interp1d
 import rospkg
 import os
 from picar import Picar
+from discrete_integrator import *
 
 class OvertakingTrajectory(object):
 
@@ -16,6 +17,9 @@ class OvertakingTrajectory(object):
         self.velocity = traj[1, :]
         self.delta = traj[2, :]
         self.helper_function = Picar()
+        self.integrator = DiscreteIntegrator(0.0, 0.0)
+        self.cur_yaw = 0.0
+
 
     def get_feedforward_control(self, current_time):
         if current_time > self.time[len(self.time)-1]:
@@ -23,7 +27,14 @@ class OvertakingTrajectory(object):
         else:
             velocity_interp = interp1d(self.time, self.velocity)
             delta_interp = interp1d(self.time, self.delta)
-            return velocity_interp(current_time), -delta_interp(current_time)*180/np.pi  # Outputs: desVel, desAngle
+            return velocity_interp(current_time), delta_interp(current_time)*180/np.pi  # Outputs: desVel, desAngle
+
+    def get_current_angle(self, current_time, current_yaw_rate):
+
+        # Get current angle from IMU
+        self.cur_yaw = self.integrator.euler(current_yaw_rate, current_time)
+
+
 
 
 test = OvertakingTrajectory()
