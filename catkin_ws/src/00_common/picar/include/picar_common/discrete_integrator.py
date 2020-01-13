@@ -35,4 +35,9 @@ class DiscreteIntegrator(object):
 
 
 
-
+# test functionality
+t0 = 0
+init_val = 0
+Integrator = DiscreteIntegrator(t0, init_val)
+Integrator.euler(2, 0.1)
+print(Integrator.cur_val)
