@@ -20,10 +20,8 @@ class VelocityEstimation(object):
 
     def encoder_callback(self, input_msg):
         velocity = Float32()
-        try:
-            velocity.data = self.velocity_estimator.getCOMvel([input_msg.rear_left, input_msg.rear_right])
-        except AttributeError:
-            velocity.data = self.velocity_estimator.getCOMvel([input_msg.w, input_msg.w]) # map omega float64 value in both list places
+
+        velocity.data = self.velocity_estimator.getCOMvel([input_msg.rear_left, input_msg.rear_right])
 
         # velocity.header.stamp = rospy.Time.now()
         self.publishers["velocity_estimated"].publish(velocity)
@@ -32,11 +30,9 @@ class VelocityEstimation(object):
     def init_subscribers(self):
         """ initialize ROS subscribers and stores them in a dictionary"""
         # Subscription to encoder data - angular velocity
-        try:
-            rospy.Subscriber("~input_encoder_data", WheelSpeedStamped, self.encoder_callback)
-        except rospy.exceptions.TransportException as e:
-            print("unable to create subscriber transport with msg:WheelSpeedStamped. Will try again -> msg:Quaternion", e)
-            rospy.Subscriber("~input_encoder_data", Quaternion, self.encoder_callback) # input comes as float64 on .w
+
+        rospy.Subscriber("~input_encoder_data", WheelSpeedStamped, self.encoder_callback)
+
 
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
