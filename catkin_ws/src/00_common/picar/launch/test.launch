@@ -32,7 +32,7 @@
 <!--        </include>-->
 
                 <!-- start node controlling the imu -->
-<!--        <include file="$(find imu)/launch/encoder_node.launch">-->
+<!--        <include file="$(find imu)/launch/imu_node.launch">-->
 <!--            <arg name="ns" value="$(arg ns)"/>-->
 <!--            <arg name="machine" value="$(arg machine)"/>-->
 <!--        </include>-->

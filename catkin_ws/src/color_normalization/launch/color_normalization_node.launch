@@ -4,6 +4,12 @@
     <arg name="local"/>
 
     <!-- define the picar machine to run the remote nodes on. "veh" should be the hostname of the car -->
+    <machine
+            name="$(arg machine)"
+            address="$(arg machine).local"
+            user="pi"
+            env-loader="/home/pi/picar_mum/catkin_ws/env.sh"
+    />
 
     <!-- launch color_normalization_node -->
     <group if="$(arg local)">
