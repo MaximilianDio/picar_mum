@@ -8,6 +8,7 @@
             address="$(arg machine).local"
             user="pi"
             env-loader="/home/pi/picar_mum/catkin_ws/env.sh"
+            timeout="10"
     />
 
     <!-- if running on real vehicle -->
@@ -15,6 +16,12 @@
         <!-- start keyboard control -->
         <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">
             <arg name="ns" value="$(arg ns)"/>
+        </include>
+        
+        <!-- start camera node -->
+        <include file="$(find camera)/launch/camera_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
         </include>
 
         <!-- start node controlling the motors -->
