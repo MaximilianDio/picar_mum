@@ -16,6 +16,7 @@ add_message_files(
   LanePose.msg
   CarCmd.msg
   Pose2DStamped.msg
+  WheelSpeedStamped.msg
   MsgCurvePoint2D.msg
 )
 
