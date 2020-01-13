@@ -5,7 +5,9 @@ import time
 import pygame
 import rospy
 from picar_msgs.msg import CarCmd
+from picar_msgs.srv import SetValue
 from velocity_controller import *
+from std_msgs.msg import Float32
 
 class VelocityControllerTuning(object):
     """Class to control the vehicle by publishing ROS messages based on keyboard input.
@@ -27,7 +29,6 @@ class VelocityControllerTuning(object):
     K_9 = 13
     SCREEN_SIZE = 640
 
-
     def __init__(self):
         pygame.init()
         # Initialize controller
@@ -35,7 +36,7 @@ class VelocityControllerTuning(object):
 
         vehicle_name = rospy.get_namespace().strip("/")
 
-        self.velocity = 0.3
+        self.velocity = 0.0
         self.angle = 100.0  # absolute value
 
         self.screen = pygame.display.set_mode(
@@ -78,8 +79,8 @@ class VelocityControllerTuning(object):
                                          queue_size=1)
 
         # listen to encoder node
-        self.subscriber = rospy.Subscriber("~encoder_msg",
-                                            Point32,
+        self.subscriber = rospy.Subscriber("~velocity_estimated",
+                                            Float32,
                                             self.update_current_velocity(),
                                             queue_size=1)
 
@@ -97,8 +98,6 @@ class VelocityControllerTuning(object):
         """Main logic loop. Should be called periodically in a loop"""
         running = True
         while running:
-
-
 
             self.screen.blit(self.buttons, (0, 0))
 
@@ -235,7 +234,7 @@ def main():
     """Inits the ROS node and KeyboardController."""
     rospy.init_node("keyboard_control_node")
 
-    node = KeyboardController()
+    node = VelocityControllerTuning()
     try:
         node.run()
     except rospy.ROSInitException as error:
