@@ -14,17 +14,11 @@ import matplotlib.pyplot as plt
 
 
 class CurveDetector:
-    # TODO define rate for picar
-    PUBLISH_RATE = 10
 
     def __init__(self):
-        # set true for testing
-        self.visualize = False
 
         # counts how many messages were send
         self.msg_counter = 0
-        # publish rate
-        self.rate = rospy.Rate(self.PUBLISH_RATE)
 
         # dictionaries for easy access
         self._params = {}
@@ -35,7 +29,7 @@ class CurveDetector:
         # import parameters from config yaml files
         config_file_name = get_param("~config_file_name", "default")
 
-        config_file_path = get_config_file_path("leader_detection",
+        config_file_path = get_config_file_path("curved_line_detection",
                                                 config_file_name)
 
         # shut down node if no config file could be found
@@ -67,11 +61,15 @@ class CurveDetector:
         rospy.loginfo("[{}] Received camera_info message."
                       "".format(rospy.get_name()))
 
+        # publishing rate
+        self.rate = rospy.Rate(self._params["rate"])
+        # set true for testing
+        self.visualize = self._params["visualization"]
+
         # create curve point detector
-        # TODO use values from yaml file
-        hsv_mask_interval = np.matrix([[0, 50, 100], [30, 255, 255]])
-        self.__curve_point_detector = CurvePointExtractor(hsv_mask_interval, 10,
-                                                          [0.7, 0.35, 0.35], self.visualize)
+        hsv_mask_interval = np.matrix([self._params["HSV_low"], self._params["HSV_high"]])
+        self.__curve_point_detector = CurvePointExtractor(hsv_mask_interval, int(self._params["num_points"]),
+                                                          self._params["cropping_factors"], self.visualize)
 
         if camera_info.D[0] == 0.0:
             self.curve_estimator = CurveEstimator(camera_info, H, False)

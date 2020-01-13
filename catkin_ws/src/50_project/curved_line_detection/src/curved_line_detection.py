@@ -3,13 +3,12 @@ import numpy as np
 from world_projection import WorldProjector
 from picar_common.curve import *
 
-
 # Constants for track bar
 MIN_HUE = MIN_SATURATION = MIN_VALUE = 0
 MAX_HUE = 180
 MAX_SATURATION = MAX_VALUE = 255
 
-MIN_NUM_STRIPES = 1
+MIN_NUM_STRIPES = 3
 MAX_NUM_STRIPES = 30
 
 
@@ -94,7 +93,8 @@ class CurvePointExtractor:
                           'Hue_high': [hsv_mask_interval[1, 0], MIN_HUE, MAX_HUE],
                           'Saturation_high': [hsv_mask_interval[1, 1], MIN_SATURATION, MAX_SATURATION],
                           'Value_high': [hsv_mask_interval[1, 2], MIN_VALUE, MAX_VALUE],
-                          'Num_stripes': [self.__num_stripes, MIN_NUM_STRIPES, MAX_NUM_STRIPES]}
+                          'Num_stripes': [min(max(self.__num_stripes, MIN_NUM_STRIPES), MAX_NUM_STRIPES),
+                                          MIN_NUM_STRIPES, MAX_NUM_STRIPES]}
 
             self.trackbar = Trackbar(param_dict)
 
@@ -310,5 +310,3 @@ class CurveEstimator:
             curve_points[curve_id][num_points - 1].circle = curve_points[curve_id][num_points - 2].circle
 
         return curve_points
-
-
