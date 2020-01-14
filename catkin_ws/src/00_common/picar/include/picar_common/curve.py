@@ -65,7 +65,7 @@ class Circle2D:
             p1 = args[0]
             p2 = args[1]
             p3 = args[2]
-            
+
             if isinstance(p1, Point2D) and isinstance(p2, Point2D) and isinstance(p3, Point2D):
                 self.calc_circle(p1, p2, p3)
             else:

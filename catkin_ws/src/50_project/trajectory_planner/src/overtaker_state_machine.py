@@ -13,6 +13,11 @@ class OvertakeStateMachine:
         self.min_dist_obstacle = min_dist_obstacle
         self.dist_overtake = None  # TODO calculate online
 
+        # TODO calculate necessary trajectory time
+        self.t_trajectory = 100
+        # TODO calculate necessary trajectory time
+        self.t_trajectory_star = 100
+
     def state_switcher(self):
 
         if self.current_state == "1":
@@ -63,10 +68,10 @@ class OvertakeStateMachine:
     def state_2(self):
         # run state
         # TODO
+
         # change state if needed
         if not self.switch_params["object_detection"]:
             self.current_state = "1"
-            self.switch_params["cur_dist_obstacle"] = None
             return
         else:
             if self.switch_params["cur_dist_obstacle"] > self.min_dist_obstacle:
@@ -83,11 +88,8 @@ class OvertakeStateMachine:
         # run state
         # TODO
 
-        # TODO calculate necessary trajectory time
-        t_trajectory = 100
-
         # change state if needed
-        if self.switch_params["t"] < t_trajectory:
+        if self.switch_params["t"] < self.t_trajectory:
             # stay in state
             return
         else:
@@ -141,11 +143,9 @@ class OvertakeStateMachine:
             return
 
     def state_5(self):
-        # TODO calculate necessary trajectory time
-        t_trajectory = 100
 
         # TODO decide when to switch to 5*
-        if self.switch_params["t"] <= t_trajectory:
+        if self.switch_params["t"] <= self.t_trajectory_star:
             # stay in state
             return
         else:

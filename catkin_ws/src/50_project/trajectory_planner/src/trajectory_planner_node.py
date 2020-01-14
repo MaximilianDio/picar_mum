@@ -10,7 +10,7 @@ from picar_common.picar_common import get_param, get_config_file_path, set_param
 from overtaker_state_machine import OvertakeStateMachine
 from picar_common.curve import *
 
-DEFAULT_FALSE_VALUE = float("inf")
+DEFAULT_FALSE_FLOAT_VALUE = float("inf")
 
 
 class TrajectoryPlanner:
@@ -46,7 +46,7 @@ class TrajectoryPlanner:
         self.switch_params = {"line_detection": False,
                               "object_detection": False,  # object detected
                               "overtake": False,  # overtaking is allowed
-                              "cur_dist_obstacle": 0.0,
+                              "cur_dist_obstacle": DEFAULT_FALSE_FLOAT_VALUE,
                               "t": 0.0,
                               "cur_dist_overtake": 0.0}
 
@@ -85,12 +85,14 @@ class TrajectoryPlanner:
     def update_obstacle_pos_clb(self, message):
         obstacle = Point2D([message.x, message.y])
 
-        if obstacle.x == DEFAULT_FALSE_VALUE or obstacle.y == DEFAULT_FALSE_VALUE:
+        if obstacle.x == DEFAULT_FALSE_FLOAT_VALUE or obstacle.y == DEFAULT_FALSE_FLOAT_VALUE:
             self.switch_params["object_detection"] = False
-            self.state_machine.obstacle_point = None
+            self.switch_params["cur_dist_obstacle"] = DEFAULT_FALSE_FLOAT_VALUE
         else:
             self.switch_params["object_detection"] = True
-            self.state_machine.obstacle_point = obstacle
+            self.switch_params["cur_dist_obstacle"] = obstacle.x
+
+        # TODO estimate relative velocity of obstacle
 
     def update_curved_point_clb(self, message):
         # message of type MsgCurvePoint2D
@@ -98,7 +100,7 @@ class TrajectoryPlanner:
         curve_point.slope = message.slope
         curve_point.circle = Circle2D(message.cR, Point2D([message.x, message.y]))
 
-        if curve_point.x == DEFAULT_FALSE_VALUE or curve_point.x == DEFAULT_FALSE_VALUE:
+        if curve_point.x == DEFAULT_FALSE_FLOAT_VALUE or curve_point.x == DEFAULT_FALSE_FLOAT_VALUE:
             self.switch_params["line_detection"] = False
             self.state_machine.curve_point = None
         else:
@@ -109,7 +111,6 @@ class TrajectoryPlanner:
         time = time.data
         # update values of switching parameters
         self.switch_params["overtake"] = False  # TODO
-        self.switch_params["cur_dist_obstacle"] = 0.0  # TODO
         self.switch_params["t"] = 0.0  # TODO
         self.switch_params["cur_dist_overtake"] = 0.0  # TODO
 
