@@ -15,7 +15,7 @@ xBnd = [-5, 5];
 yBnd = [-10, 10];
 
 startPoint = [0; 0; 0];   %Start here
-finishPoint = [0.8; 0.3; 0];   %Finish here
+finishPoint = [1.5; 0; 0];   %Finish here
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
@@ -23,7 +23,7 @@ finishPoint = [0.8; 0.3; 0];   %Finish here
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 
 problem.func.dynamics = @(t,x,u)( BycicleModel(t,x,u) );
-problem.func.pathObj = @(t,x,u)(sum([u(1,:); 100 * u(2,:)].^2,1));
+problem.func.pathObj = @(t,x,u)(sum([ u(1,:); 100 * u(2,:)].^2,1));
 problem.func.pathCst = @(t,x,u)( pathConstraint(t,x,u) );
 problem.func.bndCst = @(t0,x0,tF,xF,u0,uF)( boundaryConstraint(t0, x0, tF, xF,u0,uF) );
 
@@ -34,8 +34,8 @@ problem.func.bndCst = @(t0,x0,tF,xF,u0,uF)( boundaryConstraint(t0, x0, tF, xF,u0
 
 problem.bounds.initialTime.low = 0;
 problem.bounds.initialTime.upp = 0;
-problem.bounds.finalTime.low = 1;
-problem.bounds.finalTime.upp = 5;
+problem.bounds.finalTime.low = 1.5;
+problem.bounds.finalTime.upp = 4;
 
 problem.bounds.state.low = [xBnd(1); yBnd(1); -2*pi];
 problem.bounds.state.upp = [xBnd(2); yBnd(2);  2*pi];
@@ -47,7 +47,7 @@ problem.bounds.finalState.low = finishPoint;
 problem.bounds.finalState.upp = finishPoint;
 
 problem.bounds.control.low = [0; - deg2rad(25)];
-problem.bounds.control.upp = [0.4; deg2rad(25)];
+problem.bounds.control.upp = [1.2; deg2rad(25)];
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
@@ -70,13 +70,13 @@ problem.options.nlpOpt = optimset(...
     'MaxFunEval',1e5,...
     'tolFun',1e-6);
 
-problem.options.method = 'hermiteSimpson';
+% problem.options.method = 'hermiteSimpson';
 % problem.options.hermiteSimpson.nSegment = 25;
 
 % problem.options.method = 'gpops';
 
-% problem.options.method = 'trapezoid';
-problem.options.trapezoid.nGrid = 60;
+problem.options.method = 'trapezoid';
+problem.options.trapezoid.nGrid = 30;
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 %                            Solve!                                       %
