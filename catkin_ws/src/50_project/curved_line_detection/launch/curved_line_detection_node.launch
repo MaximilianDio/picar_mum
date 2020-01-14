@@ -1,0 +1,31 @@
+<launch>
+    <arg name="ns"/>
+    <arg name="local"/>
+    <arg name="machine"/>
+
+    <arg name="config_file_name" default="$(arg ns)"/>
+
+    <!-- launch line_detection_node -->
+    <group if="$(arg local)">
+        <group ns="$(arg ns)">
+            <node pkg="curved_line_detection" type="curved_line_detection_node.py" name="curved_line_detection_node" output="screen">
+                <param name="config_file_name" value="$(arg config_file_name)"/>
+            </node>
+
+        </group>
+    </group>
+
+    <group unless="$(arg local)">
+        <group ns="$(arg ns)">
+            <node machine="$(arg machine)" pkg="curved_line_detection" type="curved_line_detection_node.py" name="curved_line_detection_node" output="screen"/>
+            <param name="config_file_name" value="$(arg config_file_name)"/>
+        </group>
+    </group>
+
+    <!-- Subscriptions -->
+    <!-- "~input_image/raw": sensor_msgs/Image -->
+
+    <!-- Publications -->
+    <!-- "~world:curve_point_x": std_msgs/Float32MultiArray -->
+
+</launch>
