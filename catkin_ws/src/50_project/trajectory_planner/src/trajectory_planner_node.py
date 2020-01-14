@@ -17,19 +17,19 @@ class TrajectoryPlanner:
         self.subscribers = {}
         self.services = {}
 
-        # # import parameters from config yaml files
-        # config_file_name = get_param("~config_file_name", "default")
-        #
-        # config_file_path = get_config_file_path("trajectory_planner",
-        #                                         config_file_name)
-        #
-        # # shut down node if no config file could be found
-        # if config_file_path is None:
-        #     rospy.signal_shutdown("Could not find any config file... "
-        #                           "Shutting down!")
-        #
-        # # read the config parameters form .yaml file
-        # self.setup_params(config_file_path)
+        # import parameters from config yaml files
+        config_file_name = get_param("~config_file_name", "default")
+
+        config_file_path = get_config_file_path("trajection_planner",
+                                                config_file_name)
+
+        # shut down node if no config file could be found
+        if config_file_path is None:
+            rospy.signal_shutdown("Could not find any config file... "
+                                  "Shutting down!")
+
+        # read the config parameters form .yaml file
+        self.setup_params(config_file_path)
 
         # register all publishers
         self.init_publishers()
@@ -47,9 +47,12 @@ class TrajectoryPlanner:
                               "t": 0.0,
                               "cur_dist_overtake": 0.0}
 
-        min_dist_obstacle = 0.5  # TODO get from yaml file
         # create state machine
-        self.state_machine = OvertakeStateMachine(self.switch_params, min_dist_obstacle)
+        self.state_machine = OvertakeStateMachine(self.switch_params, self._params["min_dist_obstacle"])
+
+    # --------------------------------------------------------------------
+    # ----------------------- initialization -----------------------------
+    # --------------------------------------------------------------------
 
     def setup_params(self, config_file_path):
         with open(config_file_path, "r") as file_handle:

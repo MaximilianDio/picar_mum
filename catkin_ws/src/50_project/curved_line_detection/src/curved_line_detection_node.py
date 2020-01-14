@@ -37,7 +37,7 @@ class CurveDetector:
         # import parameters from config yaml files
         config_file_name = get_param("~config_file_name", "default")
 
-        config_file_path = get_config_file_path("leader_detection",
+        config_file_path = get_config_file_path("curved_line_detection",
                                                 config_file_name)
 
         # shut down node if no config file could be found
