@@ -18,17 +18,22 @@ class VelocityController(object):
         self.cur_time = self.cur_time.secs + float(self.cur_time.nsecs * 1e-9)
         self.last_time = self.cur_time
         self.error = 0.0
-        self.last_error = 0.0
+        self.error_integral = 0.0
 
     def get_velocity_output(self, meas, des_vel):
         self.current_vel = meas
         self.desired_vel = des_vel
+
         self.cur_time = rospy.get_rostime()
         self.cur_time = self.cur_time.secs + float(self.cur_time.nsecs * 1e-9)
         dt = self.cur_time - self.last_time
+
         self.error = self.current_vel - self.desired_vel
-        vel_output = -self.ki * (self.last_error+self.error*dt) - self.kp * self.error
-        self.last_error = self.last_error+self.error*dt
+        self.error_integral = self.error_integral + self.error * dt
+        
+        vel_output = -self.ki * self.error_integral - self.kp * self.error
+
+        #self.last_error = self.last_error+self.error*dt
         self.last_time = self.cur_time
         print((self.current_vel - self.desired_vel))
         self.last_vel = self.current_vel
