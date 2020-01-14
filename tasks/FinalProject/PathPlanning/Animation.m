@@ -40,7 +40,7 @@ RATE = 100;
 [t, y] = even_sample(t_.',y, RATE);
 
 %% Car Dimensions
-carLength=L;
+carLength=0.8 * L;
 carWidth=carLength/2;
 wheelWidth=carLength/4;
 wheelLength=carLength/2;

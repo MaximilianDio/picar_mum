@@ -4,19 +4,19 @@ function [c, ceq, cGrad, ceqGrad] = pathConstraint(t, x, u)
 c = [];
 
 for i = 1:length(u)-1
-    c = [c; (u(:,i+1) - u(:,i)) - [0.05;pi/40]];
+    c = [c; abs(u(:,i+1) - u(:,i)) - [0.3;pi/10]];
 end
 
 % Box on the road
 
 % Length
-L = 0.1;
+L = 0.15;
 
 % width
-w = 0.1;
+w = 0.15;
 
 % Position of the box
-p = [1; 0];
+p = [0.75; 0];
 % Circle around box with radius
 r = sqrt(L^2 + w^2);
 % 
