@@ -96,7 +96,7 @@ class VelocityControllerTuning(object):
 
 
     def update_current_velocity(self, message):
-        self.cur_vel = message.data  # TODO how does the message look like?
+        self.cur_vel = message.data
 
     def set_p_gain(self, message):
         self.controller.kp = message.value
