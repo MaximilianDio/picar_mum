@@ -4,9 +4,13 @@ import yaml
 from geometry_msgs.msg import Point32
 from sensor_msgs.msg import Image
 from picar_msgs.srv import SetValue
+from std_msgs.msg import Float32
 from picar_msgs.msg import CarCmd, MsgCurvePoint2D
 from picar_common.picar_common import get_param, get_config_file_path, set_param
 from overtaker_state_machine import OvertakeStateMachine
+from picar_common.curve import *
+
+DEFAULT_FALSE_VALUE = float("inf")
 
 
 class TrajectoryPlanner:
@@ -71,23 +75,39 @@ class TrajectoryPlanner:
 
     def init_subscribers(self):
         """ initialize ROS subscribers and stores them in a dictionary"""
+        # pacemaker
+        rospy.Subscriber("~pacemaker", Float32, self.run_node)
         # position of detected obstacle
-        rospy.Subscriber("~obstacle_pos", Point32, self.update_obstacle_pos_clb)
+        rospy.Subscriber("~obstacle_position", Point32, self.update_obstacle_pos_clb)
         # point on curve with position and circle
         rospy.Subscriber("~curve_point", MsgCurvePoint2D, self.update_curved_point_clb)
 
     def update_obstacle_pos_clb(self, message):
-        print "message received"
-        # TODO
+        obstacle = Point2D([message.x, message.y])
+
+        if obstacle.x == DEFAULT_FALSE_VALUE or obstacle.y == DEFAULT_FALSE_VALUE:
+            self.switch_params["object_detection"] = False
+            self.state_machine.obstacle_point = None
+        else:
+            self.switch_params["object_detection"] = True
+            self.state_machine.obstacle_point = obstacle
 
     def update_curved_point_clb(self, message):
-        print "message received"
-        # TODO
+        # message of type MsgCurvePoint2D
+        curve_point = CurvePoint2D([message.x, message.y])
+        curve_point.slope = message.slope
+        curve_point.circle = Circle2D(message.cR, Point2D([message.x, message.y]))
 
-    def clb(self):
+        if curve_point.x == DEFAULT_FALSE_VALUE or curve_point.x == DEFAULT_FALSE_VALUE:
+            self.switch_params["line_detection"] = False
+            self.state_machine.curve_point = None
+        else:
+            self.switch_params["line_detection"] = True
+            self.state_machine.curve_point = curve_point
+
+    def run_node(self, time):
+        time = time.data
         # update values of switching parameters
-        self.switch_params["line_detection"] = False  # TODO
-        self.switch_params["object_detection"] = False  # TODO
         self.switch_params["overtake"] = False  # TODO
         self.switch_params["cur_dist_obstacle"] = 0.0  # TODO
         self.switch_params["t"] = 0.0  # TODO
@@ -96,6 +116,8 @@ class TrajectoryPlanner:
         # update switching parameters in state machine
         self.state_machine.switch_params = self.switch_params
         self.state_machine.state_switcher()
+
+        rospy.loginfo("internal state clock: %f State: %s", time, self.state_machine.current_state)
 
 
 if __name__ == "__main__":

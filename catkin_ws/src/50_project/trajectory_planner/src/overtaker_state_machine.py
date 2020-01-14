@@ -7,6 +7,9 @@ class OvertakeStateMachine:
         # have to be provided by node e.g. sensor data or calculations !
         self.switch_params = switch_params
 
+        self.curve_point = None
+        self.obstacle_point = None
+
         self.min_dist_obstacle = min_dist_obstacle
         self.dist_overtake = None  # TODO calculate online
 

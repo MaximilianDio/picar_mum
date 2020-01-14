@@ -5,7 +5,7 @@
     
     <group ns="$(arg ns)">
         <group if="$(arg local)">
-            <node pkg="trajectory_planner" type="trajectory_planner_node.py" name="trajectory_planner" output="screen"/>
+            <node pkg="trajectory_planner" type="trajectory_planner_node.py" name="trajectory_planner_node" output="screen"/>
         </group>
 
         <group unless="$(arg local)">
@@ -14,7 +14,8 @@
     </group>
 
     <!-- Subscriptions -->
-    <!-- "~obstacle_pos": geometry_msgs/Point32 -->
+    <!-- "~pacemaker": std_msgs/Float32 -->
+    <!-- "~obstacle_position": geometry_msgs/Point32 -->
     <!-- "~curve_point": picar_msgs/MsgCurvePoint2D -->
 
     <!-- Publications -->

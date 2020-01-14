@@ -1,0 +1,21 @@
+<launch>
+    <arg name="ns"/>
+    <arg name="local"/>
+    <arg name="machine"/>
+    
+    <group ns="$(arg ns)">
+        <group if="$(arg local)">
+            <node pkg="pacemaker_trajectory_planner" type="pacemaker_trajectory_planner_node.py" name="pacemaker_trajectory_planner_node" output="screen"/>
+        </group>
+
+        <group unless="$(arg local)">
+            <node machine="$(arg machine)" pkg="pacemaker_trajectory_planner" type="pacemaker_trajectory_planner_node.py" name="pacemaker_trajectory_planner_node" output="screen"/>
+        </group>
+    </group>
+
+    <!-- Subscriptions -->
+
+    <!-- Publications -->
+    <!-- "~clock": std_msgs/Float32 -->
+
+</launch>
