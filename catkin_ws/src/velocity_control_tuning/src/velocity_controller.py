@@ -35,7 +35,8 @@ class VelocityController(object):
         dt = self.cur_time - self.last_time
 
         self.error = self.current_vel - self.desired_vel
-        vel_output = -self.ki * self.error_integral - self.kp * self.error + self.last_control
+        #vel_output = -self.ki * self.error_integral - self.kp * self.error + self.last_control
+        vel_output = -self.kp * self.error + self.last_control
         self.last_control = vel_output
         if abs(vel_output) > self.sat:
             pass
