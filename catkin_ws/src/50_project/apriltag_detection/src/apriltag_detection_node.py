@@ -121,7 +121,7 @@ class ApriltagDetectionNode:
         if self.DEBUG:
             self.tag_detector.draw_tag(img_bgr)
             # Display the resulting frame
-        cv2.imshow('frame', img_bgr)
+        cv2.imshow('apriltags', img_bgr)
         cv2.waitKey(1)
 
         if tvec is not None:
@@ -132,9 +132,6 @@ class ApriltagDetectionNode:
             tag_position.x = float("inf")
             tag_position.y = float("inf")
             tag_position.z = float("inf")
-
-        rospy.logdebug("position of Apriltag: x: %f, y: %f z: %f",
-                       tag_position.x, tag_position.y, tag_position.z)
 
         self.publishers["apriltag_position"].publish(tag_position)
 

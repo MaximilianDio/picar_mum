@@ -30,12 +30,11 @@
 
     <!-- If running in simulation-->
     <group if="$(arg sim)">
-        <include
-                file="$(find simulation)/launch/simple_loop_cw.launch">
+        <!-- simulation environment -->
+        <include file="$(find simulation)/launch/null_loop.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="paused" value="$(arg paused)"/>
             <arg name="gui" value="$(arg gui)"/>
-            <arg name="verbose" value="true"/>
         </include>
     </group>
 
@@ -49,7 +48,39 @@
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
     </include>
 
+    <!-- perception nodes -->
+    <!-- launch aprlitag_detection_node -->
+    <remap from="apriltag_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
+    <group if="$(arg sim)">
+        <include file="$(find apriltag_detection)/launch/apriltag_detection_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
+            <arg name="distorted_input" value="false"/>
+        </include>
+    </group>
+    <group unless="$(arg sim)">
+        <include file="$(find apriltag_detection)/launch/apriltag_detection_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
+            <arg name="distorted_input" value="true"/>
+        </include>
+    </group>
+
+    <!-- start curve_detection_node -->
+    <remap from="curved_line_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
+    <include file="$(find curved_line_detection)/launch/curved_line_detection_node.launch">
+        <arg name="ns" value="$(arg ns)"/>
+        <arg name="machine" value="$(arg machine)"/>
+        <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
+    </include>
+
+    <!-- Trajectory planner -->
+
     <!-- start state machine (trajecory planner) -->
+    <remap from="trajectory_planner_node/obstacle_pos" to="apriltag_detection_node/apriltag_position"/>
+    <remap from="trajectory_planner_node/curve_point" to="curved_line_detection_node/curve_point"/>
     <include file="$(find trajectory_planner)/launch/trajectory_planner_node.launch">
         <arg name="ns" value="$(arg ns)"/>
         <arg name="machine" value="$(arg machine)"/>

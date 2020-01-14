@@ -14,7 +14,6 @@ class TrajectoryPlanner:
     def __init__(self):
         self._params = {}
         self.publishers = {}
-        self.subscribers = {}
         self.services = {}
 
         # import parameters from config yaml files
@@ -32,10 +31,10 @@ class TrajectoryPlanner:
         self.setup_params(config_file_path)
 
         # register all publishers
-        self.init_publishers()
+        self.init_subscribers()
 
         # register all publishers
-        self.init_subscribers()
+        self.init_publishers()
 
         # create all services
         self.init_services()
@@ -75,14 +74,14 @@ class TrajectoryPlanner:
         # position of detected obstacle
         rospy.Subscriber("~obstacle_pos", Point32, self.update_obstacle_pos_clb)
         # point on curve with position and circle
-        rospy.Subscriber("~curved_point", MsgCurvePoint2D, self.update_curved_point_clb)
+        rospy.Subscriber("~curve_point", MsgCurvePoint2D, self.update_curved_point_clb)
 
     def update_obstacle_pos_clb(self, message):
-        pass
+        print "message received"
         # TODO
 
     def update_curved_point_clb(self, message):
-        pass
+        print "message received"
         # TODO
 
     def clb(self):

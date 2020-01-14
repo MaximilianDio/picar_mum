@@ -15,7 +15,7 @@
 
     <!-- Subscriptions -->
     <!-- "~obstacle_pos": geometry_msgs/Point32 -->
-    <!-- "~curved_point": picar_msgs/MsgCurvePoint2D -->
+    <!-- "~curve_point": picar_msgs/MsgCurvePoint2D -->
 
     <!-- Publications -->
     <!-- "~desired_car_command": picar_msgs/CarCmd -->
