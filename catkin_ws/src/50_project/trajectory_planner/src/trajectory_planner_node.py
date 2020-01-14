@@ -12,12 +12,11 @@ from overtaker_state_machine import OvertakeStateMachine
 class TrajectoryPlanner:
 
     def __init__(self):
-        pass
-        # self._params = {}
-        # self.publishers = {}
-        # self.subscribers = {}
-        # self.services = {}
-        #
+        self._params = {}
+        self.publishers = {}
+        self.subscribers = {}
+        self.services = {}
+
         # # import parameters from config yaml files
         # config_file_name = get_param("~config_file_name", "default")
         #
@@ -29,28 +28,28 @@ class TrajectoryPlanner:
         #     rospy.signal_shutdown("Could not find any config file... "
         #                           "Shutting down!")
         #
-        # # read the cofig parameters form .yaml file
+        # # read the config parameters form .yaml file
         # self.setup_params(config_file_path)
-        #
-        # # register all publishers
-        # self.init_publishers()
-        #
-        # # register all publishers
-        # self.init_subscribers()
-        #
-        # # create all services
-        # self.init_services()
-        #
-        # self.switch_params = {"line_detection": False,
-        #                       "object_detection": False,  # object detected
-        #                       "overtake": False,  # overtaking is allowed
-        #                       "cur_dist_obstacle": 0.0,
-        #                       "t": 0.0,
-        #                       "cur_dist_overtake": 0.0}
-        #
-        # min_dist_obstacle = 0.5  # TODO get from yaml file
-        # # create state machine
-        # self.state_machine = OvertakeStateMachine(self.switch_params, min_dist_obstacle)
+
+        # register all publishers
+        self.init_publishers()
+
+        # register all publishers
+        self.init_subscribers()
+
+        # create all services
+        self.init_services()
+
+        self.switch_params = {"line_detection": False,
+                              "object_detection": False,  # object detected
+                              "overtake": False,  # overtaking is allowed
+                              "cur_dist_obstacle": 0.0,
+                              "t": 0.0,
+                              "cur_dist_overtake": 0.0}
+
+        min_dist_obstacle = 0.5  # TODO get from yaml file
+        # create state machine
+        self.state_machine = OvertakeStateMachine(self.switch_params, min_dist_obstacle)
 
     def setup_params(self, config_file_path):
         with open(config_file_path, "r") as file_handle:
@@ -73,13 +72,13 @@ class TrajectoryPlanner:
         # position of detected obstacle
         rospy.Subscriber("~obstacle_pos", Point32, self.update_obstacle_pos_clb)
         # point on curve with position and circle
-        rospy.Subscriber("~curved_point", MsgCurvePoint2D, self.update_curved_point_cbl())
+        rospy.Subscriber("~curved_point", MsgCurvePoint2D, self.update_curved_point_clb)
 
     def update_obstacle_pos_clb(self, message):
         pass
         # TODO
 
-    def update_curved_point_cbl(self, message):
+    def update_curved_point_clb(self, message):
         pass
         # TODO
 

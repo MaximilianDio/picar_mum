@@ -1,0 +1,60 @@
+<launch>
+    <arg name="ns"/>
+    <arg name="machine" default="$(arg ns)"/>
+    <arg name="sim" default="false"/>
+    <arg name="paused" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="compute_on_pi" default="false"/>
+
+
+    <machine
+            name="$(arg machine)"
+            address="$(arg machine).local"
+            user="pi"
+            env-loader="/home/pi/picar_mum/catkin_ws/env.sh"
+    />
+
+    <group unless="$(arg sim)">
+        <!-- start camera node -->
+        <include file="$(find camera)/launch/camera_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+        </include>
+
+        <include file="$(find motor)/launch/motor_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+        </include>
+
+    </group>
+
+    <!-- If running in simulation-->
+    <group if="$(arg sim)">
+        <include
+                file="$(find simulation)/launch/simple_loop_cw.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="paused" value="$(arg paused)"/>
+            <arg name="gui" value="$(arg gui)"/>
+            <arg name="verbose" value="true"/>
+        </include>
+    </group>
+
+    <!-- Running always-->
+
+    <!--start color_normalization_node -->
+    <remap from="color_normalization_node/input_image/compressed" to="camera_node/image/compressed"/>
+    <include file="$(find color_normalization)/launch/color_normalization_node.launch">
+        <arg name="ns" value="$(arg ns)"/>
+        <arg name="machine" value="$(arg machine)"/>
+        <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
+    </include>
+
+    <!-- start state machine (trajecory planner) -->
+    <include file="$(find trajectory_planner)/launch/trajectory_planner_node.launch">
+        <arg name="ns" value="$(arg ns)"/>
+        <arg name="machine" value="$(arg machine)"/>
+        <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
+    </include>
+
+
+</launch>
