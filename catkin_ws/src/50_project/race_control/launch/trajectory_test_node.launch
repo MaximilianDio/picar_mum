@@ -5,7 +5,7 @@
 
     <arg name="config_file_name" default="$(arg ns)"/>
 
-    <!-- launch line_detection_node -->
+    <!-- launch trajectory_test_node -->
     <group if="$(arg local)">
         <group ns="$(arg ns)">
             <node pkg="race_control" type="trajectory_test_node.py" name="trajectory_test_node" output="screen">
