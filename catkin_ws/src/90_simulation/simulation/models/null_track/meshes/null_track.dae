@@ -60,10 +60,10 @@
               <color sid="emission">0 0 0 1</color>
             </emission>
             <ambient>
-              <color sid="ambient">0 0 0.8 1</color>
+              <color sid="ambient">1 0.92156 0.5843 1</color>
             </ambient>
             <diffuse>
-              <color sid="diffuse">0 0 0.8 1</color>
+              <color sid="diffuse">0 0 0 1</color>
             </diffuse>
             <specular>
               <color sid="specular">0.5 0.5 0.5 1</color>
