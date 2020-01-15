@@ -3,6 +3,7 @@ import rospy
 from picar_msgs.msg import CarCmd
 from trajectoryplanner import OvertakingTrajectory
 from velocity_controller import *
+from std_msgs.msg import Float32
 
 class TrajectoryTestNode(object):
     """Race controller ROS node."""
@@ -14,7 +15,7 @@ class TrajectoryTestNode(object):
         self.init_publishers()
         self.overtaker = OvertakingTrajectory()
         self.start_time = rospy.Time.now()
-        self.velocity_controller = VelocityController(0.8, 0.2)
+        self.velocity_controller = VelocityController(0.05, 0.01)
         self.cur_vel = 0.0
         self.subscriber = rospy.Subscriber("~velocity_estimated",
                                            Float32,
@@ -41,7 +42,7 @@ class TrajectoryTestNode(object):
             print "Time: " + str(curTime)
             if curTime > 10:
                 velocity_des, message.angle = self.overtaker.get_feedforward_control(curTime-10)
-                message.velocity = self.velocity_controller.get_velocity_output(self.cur_vel, velocity_des)
+                message.velocity = velocity_des  #self.velocity_controller.get_velocity_output(self.cur_vel, velocity_des)
             else:
                 message.velocity = 0.0
                 message.angle = 0.0

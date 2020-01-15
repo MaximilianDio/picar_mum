@@ -9,4 +9,10 @@
 
 
 
+    <!-- Subscriptions -->
+    <!-- "~velocity_estimated": std_msgs/Float32 -->
+
+    <!-- Publications -->
+    <!-- "motor_node/car_cmd": picar_msgs/CarCmd -->
+
 </launch>

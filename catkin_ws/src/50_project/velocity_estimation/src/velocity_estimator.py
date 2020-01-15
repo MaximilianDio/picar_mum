@@ -1,3 +1,5 @@
+import numpy as np
+
 class VelocityEstimator(object):
     """
     Converts Encoderdata to COM Velocity
@@ -5,6 +7,7 @@ class VelocityEstimator(object):
 
     def __init__(self, radius):
         self.radius_wheel = radius
+
 
     def getVelocity(self, rawdata):
         return [x*self.radius_wheel for x in rawdata]

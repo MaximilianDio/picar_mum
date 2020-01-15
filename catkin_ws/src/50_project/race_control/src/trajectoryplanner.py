@@ -4,7 +4,7 @@ from scipy.interpolate import interp1d
 import rospkg
 import os
 from picar import Picar
-from discrete_integrator import *
+#from discrete_integrator import *
 
 class OvertakingTrajectory(object):
 
@@ -17,7 +17,7 @@ class OvertakingTrajectory(object):
         self.velocity = traj[1, :]
         self.delta = traj[2, :]
         self.helper_function = Picar()
-        self.integrator = DiscreteIntegrator(0.0, 0.0)
+        #self.integrator = DiscreteIntegrator(0.0, 0.0)
         self.cur_yaw = 0.0
 
 
@@ -36,17 +36,4 @@ class OvertakingTrajectory(object):
 
 
 
-
-test = OvertakingTrajectory()
-#
-curTime = 0.1
-curVel, curDelta = test.get_feedforward_control(curTime)
-#
-fig, ax = plt.subplots()
-ax.plot(test.time, test.velocity)
-ax.plot(test.time, test.delta)
-ax.plot(curTime, curVel, marker='o')
-ax.plot(curTime, curDelta, marker='o')
-ax.grid()
-plt.show()
 
