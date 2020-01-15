@@ -1,5 +1,5 @@
 from curve import *
-from speed_planner import *
+from race_control.speed_planner import import *
 from picar.parameters import Picar
 
 
