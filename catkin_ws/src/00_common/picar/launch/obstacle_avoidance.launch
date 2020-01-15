@@ -5,6 +5,7 @@
     <arg name="paused" default="true"/>
     <arg name="gui" default="true"/>
     <arg name="compute_on_pi" default="false"/>
+    <arg name="local" default="true"/>
 
 
     <machine
@@ -16,6 +17,7 @@
 
     <group unless="$(arg sim)">
         <!-- keyboard control for debugging -->
+        <!-- TODO remove when ready -->
         <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">
             <arg name="ns" value="$(arg ns)"/>
         </include>
@@ -85,6 +87,33 @@
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
     </include>
 
+
+    <!-- velocity estimator -->
+    <group unless="$(arg sim)">
+        <!-- start encoder node -->
+        <include file="$(find encoder)/launch/encoder_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+        </include>
+
+        <!-- start velocity_estimation node -->
+        <remap from="velocity_estimation_node/input_encoder_data" to="encoder_node/wheel_speed"/>
+        <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(arg local)"/>
+        </include>
+    </group>
+    <group if="$(arg sim)">
+        <!-- start velocity_estimation node -->
+        <remap from="velocity_estimation_node/input_encoder_data" to="wheel_speed"/>
+        <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(arg local)"/>
+        </include>
+    </group>
+
     <!-- Trajectory planner -->
     <!-- pacemaker -->
     <include file="$(find pacemaker_trajectory_planner)/launch/pacemaker_trajectory_planner_node.launch">
@@ -96,6 +125,7 @@
     <remap from="trajectory_planner_node/pacemaker" to="pacemaker_trajectory_planner_node/clock"/>
     <remap from="trajectory_planner_node/obstacle_position" to="apriltag_detection_node/apriltag_position"/>
     <remap from="trajectory_planner_node/curve_point" to="curved_line_detection_node/curve_point"/>
+    <remap from="trajectory_planner_node/own_velocity" to="velocity_estimation_node/velocity_estimated"/>
     <include file="$(find trajectory_planner)/launch/trajectory_planner_node.launch">
         <arg name="ns" value="$(arg ns)"/>
         <arg name="machine" value="$(arg machine)"/>

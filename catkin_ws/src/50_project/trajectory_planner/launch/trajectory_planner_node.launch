@@ -17,6 +17,7 @@
     <!-- "~pacemaker": std_msgs/Float32 -->
     <!-- "~obstacle_position": geometry_msgs/Point32 -->
     <!-- "~curve_point": picar_msgs/MsgCurvePoint2D -->
+    <!-- "~own_velocity": std_msgs/Float32 -->
 
     <!-- Publications -->
     <!-- "~desired_car_command": picar_msgs/CarCmd -->
