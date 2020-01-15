@@ -17,6 +17,7 @@ add_message_files(
   CarCmd.msg
   Pose2DStamped.msg
   WheelSpeedStamped.msg
+  MsgCurvePoint2D.msg
 )
 
 add_service_files(
