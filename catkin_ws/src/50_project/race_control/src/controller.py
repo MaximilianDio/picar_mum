@@ -1,6 +1,6 @@
 from curve import *
 from speed_planner import *
-from picar import Picar
+from picar.parameters import Picar
 
 
 class Controller(object):
