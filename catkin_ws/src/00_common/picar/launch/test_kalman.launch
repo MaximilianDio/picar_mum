@@ -38,6 +38,7 @@
         </include>
 
         <!-- start velocity_estimation node -->
+        <remap from="velocity_estimation_node/imu" to="imu_node/imu"/>
         <remap from="velocity_estimation_node/input_encoder_data" to="encoder_node/wheel_speed"/>
         <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
             <arg name="ns" value="$(arg ns)"/>
@@ -55,6 +56,7 @@
         </include>
 
                 <!-- start velocity_estimation node -->
+        <remap from="velocity_estimation_node/imu" to="imu"/>
         <remap from="velocity_estimation_node/input_encoder_data" to="wheel_speed"/>
         <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
             <arg name="ns" value="$(arg ns)"/>

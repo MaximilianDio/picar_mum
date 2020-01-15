@@ -62,6 +62,7 @@ class Node:
             imu_message.angular_velocity.y = gyro[1]
             imu_message.angular_velocity.z = gyro[2]
 
+            # TODO genaues mapping auf tatsaechliche Beschl
             imu_message.linear_acceleration.x = accel[0]
             imu_message.linear_acceleration.y = accel[1]
             imu_message.linear_acceleration.z = accel[2]

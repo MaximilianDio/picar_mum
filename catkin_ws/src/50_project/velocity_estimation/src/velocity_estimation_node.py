@@ -4,6 +4,7 @@ from picar_msgs.msg import WheelSpeedStamped
 from std_msgs.msg import Float32
 from velocity_estimator import VelocityEstimator
 from picar.parameters import Wheel
+from sensor_msgs.msg import Imu
 
 
 class VelocityEstimation(object):
@@ -19,7 +20,7 @@ class VelocityEstimation(object):
         self.init_publishers()
 
     def encoder_callback(self, input_msg):
-        self.encoder_data = input_msg
+        self.encoder_data = [input_msg.rear_left, input_msg.rear_right]
         #velocity = Float32()
 
         #velocity.data = self.velocity_estimator.getCOMvel([input_msg.rear_left, input_msg.rear_right])
@@ -31,7 +32,7 @@ class VelocityEstimation(object):
     def estimate_velocity(self, imudata):
         velocity_est = Float32()
         velocity_est.data = self.velocity_estimator.getCOMvel(self.encoder_data, imudata)
-        velocity_est.header.stamp = rospy.Time.now()
+        #velocity_est.header.stamp = rospy.Time.now()
         self.publishers["velocity_estimated"].publish(velocity_est)
 
     def init_subscribers(self):
