@@ -54,7 +54,8 @@ class TrajectoryPlanner:
                               }
 
         # create state machine
-        self.state_machine = OvertakeStateMachine(self.switch_params, self._params["min_dist_obstacle"]) # TODO input controller parameters
+        self.state_machine = OvertakeStateMachine(self.switch_params,
+                                                  self._params["min_dist_obstacle"])  # TODO input controller parameters
 
     # --------------------------------------------------------------------
     # ----------------------- initialization -----------------------------
@@ -119,12 +120,16 @@ class TrajectoryPlanner:
         self.state_machine.own_velocity = message.data
 
     def run_node(self, time):
+        """ main callback which will be called by pacemaker node, updates all necessary data to state machine and runs
+        it state machine calls corresponding trajectory planner which updates desired velocity and angle!"""
 
         self.time = time.data
+
+        # update time in state machine
         self.state_machine.time = self.time
 
         # update values of switching parameters
-        self.switch_params["overtake"] = False  # TODO use service!!!
+        self.switch_params["overtake"] = True  # TODO use service!!!
 
         # update switching parameters in state machine
         self.state_machine.switch_params = self.switch_params
@@ -161,11 +166,11 @@ class TrajectoryPlanner:
 
         self.publishers["des_car_command"].publish(des_car_command)
 
-
     def estimate_rel_obstacle_velocity(self, point):
 
         # FIXME check if velocity is right, seems wrong!
         velocity = None
+        # use old and new position (and time) to calculate velocity
         if self.obstacle_old_pos is not None and self.time != 0.0:
             # calculate differences
             delta_x = point.x - self.obstacle_old_pos.x
