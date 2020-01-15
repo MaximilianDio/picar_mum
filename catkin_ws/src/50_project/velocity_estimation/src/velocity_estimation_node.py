@@ -10,7 +10,8 @@ class VelocityEstimation(object):
     def __init__(self):
         self.rate = rospy.Rate(100)  # TODO publish hertz rate anpassen
         self.publishers = {}
-        self.velocity_estimator = VelocityEstimator(radius=Wheel.wheel_diameter/2)
+        self.velocity_estimator = VelocityEstimator(Wheel.wheel_diameter/2)
+        self.encoder_data = [0.0, 0.0]
 
         # register all publishers
         self.init_subscribers()
@@ -18,19 +19,27 @@ class VelocityEstimation(object):
         self.init_publishers()
 
     def encoder_callback(self, input_msg):
-        velocity = Float32()
+        self.encoder_data = input_msg
+        #velocity = Float32()
 
-        velocity.data = self.velocity_estimator.getCOMvel([input_msg.rear_left, input_msg.rear_right])
+        #velocity.data = self.velocity_estimator.getCOMvel([input_msg.rear_left, input_msg.rear_right])
 
         # velocity.header.stamp = rospy.Time.now()
-        self.publishers["velocity_estimated"].publish(velocity)
-        self.rate.sleep()
+        #self.publishers["velocity_estimated"].publish(velocity)
+        #self.rate.sleep()
+
+    def estimate_velocity(self, imudata):
+        velocity_est = Float32()
+        velocity_est.data = self.velocity_estimator.getCOMvel(self.encoder_data, imudata)
+        velocity_est.header.stamp = rospy.Time.now()
+        self.publishers["velocity_estimated"].publish(velocity_est)
 
     def init_subscribers(self):
         """ initialize ROS subscribers and stores them in a dictionary"""
         # Subscription to encoder data - angular velocity
 
         rospy.Subscriber("~input_encoder_data", WheelSpeedStamped, self.encoder_callback)
+        rospy.Subscriber("~imu", Imu, self.estimate_velocity)
 
 
     def init_publishers(self):
