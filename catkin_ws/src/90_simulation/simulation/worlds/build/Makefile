@@ -111,19 +111,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named animated_box
-
-# Build rule for target.
-animated_box: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 animated_box
-.PHONY : animated_box
-
-# fast build rule for target.
-animated_box/fast:
-	$(MAKE) -f CMakeFiles/animated_box.dir/build.make CMakeFiles/animated_box.dir/build
-.PHONY : animated_box/fast
-
-#=============================================================================
 # Target rules for targets named independent_listener
 
 # Build rule for target.
@@ -137,6 +124,19 @@ independent_listener/fast:
 .PHONY : independent_listener/fast
 
 #=============================================================================
+# Target rules for targets named null_loop
+
+# Build rule for target.
+null_loop: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 null_loop
+.PHONY : null_loop
+
+# fast build rule for target.
+null_loop/fast:
+	$(MAKE) -f CMakeFiles/null_loop.dir/build.make CMakeFiles/null_loop.dir/build
+.PHONY : null_loop/fast
+
+#=============================================================================
 # Target rules for targets named integrated_main
 
 # Build rule for target.
@@ -148,33 +148,6 @@ integrated_main: cmake_check_build_system
 integrated_main/fast:
 	$(MAKE) -f CMakeFiles/integrated_main.dir/build.make CMakeFiles/integrated_main.dir/build
 .PHONY : integrated_main/fast
-
-animated_box.o: animated_box.cc.o
-
-.PHONY : animated_box.o
-
-# target to build an object file
-animated_box.cc.o:
-	$(MAKE) -f CMakeFiles/animated_box.dir/build.make CMakeFiles/animated_box.dir/animated_box.cc.o
-.PHONY : animated_box.cc.o
-
-animated_box.i: animated_box.cc.i
-
-.PHONY : animated_box.i
-
-# target to preprocess a source file
-animated_box.cc.i:
-	$(MAKE) -f CMakeFiles/animated_box.dir/build.make CMakeFiles/animated_box.dir/animated_box.cc.i
-.PHONY : animated_box.cc.i
-
-animated_box.s: animated_box.cc.s
-
-.PHONY : animated_box.s
-
-# target to generate assembly for a file
-animated_box.cc.s:
-	$(MAKE) -f CMakeFiles/animated_box.dir/build.make CMakeFiles/animated_box.dir/animated_box.cc.s
-.PHONY : animated_box.cc.s
 
 independent_listener.o: independent_listener.cc.o
 
@@ -230,6 +203,33 @@ integrated_main.cc.s:
 	$(MAKE) -f CMakeFiles/integrated_main.dir/build.make CMakeFiles/integrated_main.dir/integrated_main.cc.s
 .PHONY : integrated_main.cc.s
 
+null_loop.o: null_loop.cc.o
+
+.PHONY : null_loop.o
+
+# target to build an object file
+null_loop.cc.o:
+	$(MAKE) -f CMakeFiles/null_loop.dir/build.make CMakeFiles/null_loop.dir/null_loop.cc.o
+.PHONY : null_loop.cc.o
+
+null_loop.i: null_loop.cc.i
+
+.PHONY : null_loop.i
+
+# target to preprocess a source file
+null_loop.cc.i:
+	$(MAKE) -f CMakeFiles/null_loop.dir/build.make CMakeFiles/null_loop.dir/null_loop.cc.i
+.PHONY : null_loop.cc.i
+
+null_loop.s: null_loop.cc.s
+
+.PHONY : null_loop.s
+
+# target to generate assembly for a file
+null_loop.cc.s:
+	$(MAKE) -f CMakeFiles/null_loop.dir/build.make CMakeFiles/null_loop.dir/null_loop.cc.s
+.PHONY : null_loop.cc.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -237,19 +237,19 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
-	@echo "... animated_box"
 	@echo "... rebuild_cache"
 	@echo "... independent_listener"
+	@echo "... null_loop"
 	@echo "... integrated_main"
-	@echo "... animated_box.o"
-	@echo "... animated_box.i"
-	@echo "... animated_box.s"
 	@echo "... independent_listener.o"
 	@echo "... independent_listener.i"
 	@echo "... independent_listener.s"
 	@echo "... integrated_main.o"
 	@echo "... integrated_main.i"
 	@echo "... integrated_main.s"
+	@echo "... null_loop.o"
+	@echo "... null_loop.i"
+	@echo "... null_loop.s"
 .PHONY : help
 
 

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
-project(animated_box)
+project(null_loop)
 
 # Find packages
 
@@ -14,8 +14,8 @@ link_directories(${GAZEBO_LIBRARY_DIRS})
 
 # Create libraries and executables
 
-add_library(animated_box SHARED animated_box.cc)
-target_link_libraries(animated_box ${GAZEBO_LIBRARIES})
+add_library(null_loop SHARED null_loop.cc)
+target_link_libraries(null_loop ${GAZEBO_LIBRARIES})
 
 add_executable(integrated_main integrated_main.cc)
 target_link_libraries(integrated_main ${GAZEBO_LIBRARIES} pthread)
