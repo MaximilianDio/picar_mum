@@ -29,6 +29,7 @@
         </include>
 
         <!-- start trajectory_test_node -->
+        <remap from="trajectory_test_node/velocity_estimated" to="velocity_estimation_node/velocity_estimated"/>
         <include file="$(find race_control)/launch/trajectory_test_node.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
@@ -36,6 +37,7 @@
         </include>
 
         <!-- start node controlling the motors -->
+        <remap from="motor_node/car_cmd" to="trajectory_test_node/car_cmd"/>
         <include file="$(find motor)/launch/motor_node.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
@@ -44,13 +46,8 @@
 
     <!-- if running on simulated vehicle -->
     <group if="$(arg sim)">
-        <!-- start velocity control tunning -->
-        <remap from="velocity_control_node/velocity_estimated" to="velocity_estimation_node/velocity_estimated"/>
-        <include file="$(find velocity_control_tuning)/launch/velocity_control_node.launch">
-            <arg name="ns" value="simcar"/>
-        </include>
 
-                <!-- start velocity_estimation node -->
+        <!-- start velocity_estimation node -->
         <remap from="velocity_estimation_node/input_encoder_data" to="wheel_speed"/>
         <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
             <arg name="ns" value="$(arg ns)"/>
@@ -58,6 +55,13 @@
             <arg name="local" value="$(arg local)"/>
         </include>
 
+        <!-- start trajectory_test_node -->
+        <remap from="trajectory_test_node/car_cmd" to="motor_node/car_cmd" />
+        <include file="$(find race_control)/launch/trajectory_test_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(arg local)"/>
+        </include>
 
         <include file="$(find simulation)/launch/simple_loop_ccw.launch">
             <arg name="ns" value="simcar"/>

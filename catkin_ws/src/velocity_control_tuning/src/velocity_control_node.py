@@ -24,7 +24,7 @@ class VelocityControllerTuning(object):
     K_3 = 7
     K_4 = 8
     K_5 = 9
-    K_6 = 10
+    K_6 = 10https://docs.scipy.org/doc/numpy/rnumpy eference/generated/numpy.dot.html
     K_7 = 11
     K_8 = 12
     K_9 = 13
@@ -33,7 +33,7 @@ class VelocityControllerTuning(object):
     def __init__(self):
         pygame.init()
         # Initialize controller
-        self.controller = VelocityController(0.01, 0.01)
+        self.controller = VelocityController(0.08, 0.01)
 
         vehicle_name = rospy.get_namespace().strip("/")
 
@@ -46,7 +46,8 @@ class VelocityControllerTuning(object):
         )
         pygame.display.set_caption("Keyboard Control of {}"
                                    "".format(vehicle_name))
-        # font = pygame.font.Font(None, 24)
+        # font = pygame.font.Font(None, 24)bash: /home/mattivahs/.bashrc: line 125: syntax error near unexpected token `('
+
 
         file_path = os.path.dirname(__file__)
         file_path = os.path.join(file_path, "..", "images")
@@ -90,9 +91,9 @@ class VelocityControllerTuning(object):
                                      SetValue,
                                      self.set_p_gain)
 
-        self.service = rospy.Service("~set_i_gain",
+        self.service = rospy.Service("~set_d_gain",
                                      SetValue,
-                                     self.set_i_gain)
+                                     self.set_d_gain)
 
 
     def update_current_velocity(self, message):
@@ -102,8 +103,8 @@ class VelocityControllerTuning(object):
         self.controller.kp = message.value
         return 1
 
-    def set_i_gain(self, message):
-        self.controller.ki = message.value
+    def set_d_gain(self, message):
+        self.controller.kd = message.value
         return 1
 
     def run(self):
