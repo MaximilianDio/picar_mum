@@ -220,7 +220,7 @@ class OvertakeStateMachine:
         self.des_angle = 0.0
 
         # change state if needed
-        if self.switch_params["cur_overtake_time"] < self.overtake_time:
+        if state_time < self.overtake_time:
             if self.switch_params["line_detection"]:
                 self.current_state = "4"
                 return
