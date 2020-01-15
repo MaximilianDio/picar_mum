@@ -1,4 +1,4 @@
-# Install script for directory: /home/timo/picar_mum/catkin_ws/src/90_simulation/simulation/worlds
+# Install script for directory: /home/paul/picar_mum/catkin_ws/src/90_simulation/simulation/worlds
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/timo/picar_mum/catkin_ws/src/90_simulation/simulation/worlds/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/paul/picar_mum/catkin_ws/src/90_simulation/simulation/worlds/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
