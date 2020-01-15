@@ -7,7 +7,7 @@ import rospy
 
 F_CPU = 16000000.0
 PRESCALER = 256.0
-BAUD = 57600
+BAUD = 250000
 
 ticks_per_sec = F_CPU/PRESCALER
 pulses_per_rev = 10
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     data = n.serial.read()
     print(len(data))
     while not rospy.is_shutdown():
-        time.sleep(0.02)  #default is 0.1 -> 10 hz , changed to 0.02 50Hz
+        time.sleep(0.01)  #default is 0.1 -> 10 hz , changed to 0.01 100Hz
         n.serial.write(b"\x01")
         data = n.serial.read(8)
         print(len(data))
