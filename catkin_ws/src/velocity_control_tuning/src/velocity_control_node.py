@@ -24,7 +24,7 @@ class VelocityControllerTuning(object):
     K_3 = 7
     K_4 = 8
     K_5 = 9
-    K_6 = 10https://docs.scipy.org/doc/numpy/rnumpy eference/generated/numpy.dot.html
+    K_6 = 10
     K_7 = 11
     K_8 = 12
     K_9 = 13
