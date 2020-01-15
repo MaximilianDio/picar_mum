@@ -31,7 +31,7 @@ if __name__ == "__main__":
     data = n.serial.read()
     print(len(data))
     while not rospy.is_shutdown():
-        time.sleep(0.01)  #default is 0.1 -> 10 hz , changed to 0.01 100Hz
+        time.sleep(0.02)  #default is 0.1 -> 10 hz , changed to 0.02 50Hz
         n.serial.write(b"\x01")
         data = n.serial.read(8)
         print(len(data))
