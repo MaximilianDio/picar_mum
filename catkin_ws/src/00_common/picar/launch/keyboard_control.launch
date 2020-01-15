@@ -18,7 +18,13 @@
         <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">
             <arg name="ns" value="$(arg ns)"/>
         </include>
-        
+
+        <!-- start node controlling the imu -->
+        <include file="$(find imu)/launch/imu_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+        </include>
+
         <!-- start camera node -->
         <include file="$(find camera)/launch/camera_node.launch">
             <arg name="ns" value="$(arg ns)"/>
