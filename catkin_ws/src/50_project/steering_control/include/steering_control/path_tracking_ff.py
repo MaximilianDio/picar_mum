@@ -38,7 +38,7 @@ class PathTrackingFF(object):
         u_x = inputdata.u_x
         error = inputdata.error
         delta_psi = inputdata.delta_psi
-        kappa = 0 # inputdata.kappa
+        kappa = inputdata.kappa
 
         # feedback steering angle
         delta_fb = - self.Kp * error - self.Kp * self.xLA * delta_psi
