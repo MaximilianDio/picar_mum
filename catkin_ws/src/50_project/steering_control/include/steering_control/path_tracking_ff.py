@@ -6,10 +6,10 @@ from picar.parameters import Picar, Wheel
 
 class PathTrackingFF(object):
 
-    def __init__(self):
+    def __init__(self, Kp ,xLA):
 
-        self.xLA = 1  # look a head error
-        self.Kp = 1  # init Kp
+        self.xLA = xLA  # look a head error
+        self.Kp = Kp  # init Kp
 
         # Model based params
         self.mass = Picar.mass
