@@ -3,33 +3,11 @@ import numpy as np
 from picar.parameters import Picar, Wheel
 
 
-
-class ControllerValues(object):
-    """Object that holds desired/actual values for the controller."""
-
-    def __init__(self, distance_x, distance_y):
-        """
-
-        Args:
-            distance_x (float): Vehicle's distance to the center line of the track in x.
-            distance_y (float): Vehicle's distance to the center line of the track in y.
-            phi (float): Vehicle's angle relative to the center line of the track.
-        """
-
-        # TODO if integrator time is needed
-        self.distance_x = distance_x
-        self.distance_y = distance_y
-        self.distance = np.sqrt(distance_x * distance_x + distance_y * distance_y)  # Additional Distance
-
-
-
-class PathTrackingFF:
+class PathTrackingFF(object):
 
     def __init__(self):
 
-        self.kappa = 0.0 # Curvature
         self.xLA = 1  # look a head error
-
         self.Kp = 1 # init Kp
 
         #Model based params
@@ -49,51 +27,56 @@ class PathTrackingFF:
         self.C2 = self.a**2*self.C_f - self.b**2*self.C_r
 
 
-
-
     def get_control_output(self):
         #discrete form of controller
-
+        U_x =                   
         error=
         delta_phi=
+        kappa=
+        # feedback steering angle
+        delta_fb = - self.Kp * error-self.Kp*self.xLA*delta_phi
+        
+        # feedforward steering angle due to curvature and longitudinal velocity
+        g_ff = self.mass * U_x **2 / self.l * ((self.b * self.C_r + self.a * self.C_f * (self.Kp * self.xLA - 1)) / (
+                    self.C_r * self.C_f)) + self.l - self.b * self.Kp * self.xLA
+        delta_ff = g_ff * kappa
 
+        # total steering angle
+        delta =  delta_ff + delta_fb
 
-        delta_fb = - self.Kp * error-Kp*self.xLA*delta_phi
+        return delta
 
-        delta_ff =
+    def format_control_inputs(self,curve_point, velocity_estimated):
+        # input for controller
+        output_data = ControllerValues()
 
-        self.delta =  delta_ff + delta_fb
+        output_data.error = curve_point.y
+        output_data.delta_psi = np.arctan(curve_point.slope)
+        output_data.kappa = 1/curve_point.cR
 
-        return self.delta
+        # data from encoders
+        output_data.u_x = velocity_estimated
 
+        return output_data
 
-
-
-    def update_parameters(self, k_pvel=None, k_psteer=None,
-                          k_dvel=None, k_dsteer=None):
-
-        """Updates the controller picar.
-
-        Args:
-             k_pvel (float): The proportional gain of the controller.
-
-            k_psteer (float): Proportional Gain steering
-
-            k_dvel (float): D gain
-
-            k_dsteer (float): D gain
+    def update_parameters(self, xLa, Kp):
 
         """
+        :param xLa: float32 lookahead distance
+        :param Kp: float32 P gain of Controller
+        :return:
+        """
+        if xLa is not None:
+            self.xLA = xLa
 
-        if k_pvel is not None:
-            self.K_p["vel"] = k_pvel
+        if Kp is not None:
+            self.Kp = Kp
 
-        if k_psteer is not None:
-            self.K_p["steer"] = k_psteer
+class ControllerValues(object):
+    def __init__(self,):
 
-        if k_dvel is not None:
-            self.K_d["vel"] = k_dvel
+        self.error = 0.0        # lateral error
+        self.delta_psi = 0.0    # relative orientation error
 
-        if k_dsteer is not None:
-            self.K_d["steer"] = k_dsteer
-
+        self.u_x = 0.0          # current longitudinal velocity
+        self.kappa = 0.0        # current curvature
