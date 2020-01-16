@@ -65,15 +65,15 @@ class PathTrackingFF(object):
 
         return output_data
 
-    def update_parameters(self, xLa, Kp):
+    def update_parameters(self, Kp, xLA):
 
         """
         :param xLa: float32 lookahead distance
         :param Kp: float32 P gain of Controller
         :return:
         """
-        if xLa is not None:
-            self.xLA = xLa
+        if xLA is not None:
+            self.xLA = xLA
 
         if Kp is not None:
             self.Kp = Kp
