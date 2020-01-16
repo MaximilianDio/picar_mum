@@ -35,7 +35,6 @@ class Picar(object):
 
     # Inertia of Mass
     inertia_z = 0.0379
-
     ########Functions
 
     # velocity transform

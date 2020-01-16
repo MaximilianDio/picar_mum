@@ -1,114 +1,93 @@
 #! /usr/bin/env python
 import numpy as np
-from picar.parameters import Picar
+from picar.parameters import Picar, Wheel
+
+
+
+class ControllerValues(object):
+    """Object that holds desired/actual values for the controller."""
+
+    def __init__(self, distance_x, distance_y):
+        """
+
+        Args:
+            distance_x (float): Vehicle's distance to the center line of the track in x.
+            distance_y (float): Vehicle's distance to the center line of the track in y.
+            phi (float): Vehicle's angle relative to the center line of the track.
+        """
+
+        # TODO if integrator time is needed
+        self.distance_x = distance_x
+        self.distance_y = distance_y
+        self.distance = np.sqrt(distance_x * distance_x + distance_y * distance_y)  # Additional Distance
+
+
+
 class PathTrackingFF:
-    ""
+
     def __init__(self):
-        self.kappa = 0.0
-        self.xLA = 1
 
+        self.kappa = 0.0 # Curvature
+        self.xLA = 1  # look a head error
 
+        self.Kp = 1 # init Kp
+
+        #Model based params
         self.mass = Picar.mass
         self.Inertia = Picar.inertia_z
+        self.a = Picar.length - Picar.cog_x   # a is length front <- cog
+        self.b = Picar.cog_x  # b is length rear <- cog COS in rear axis
+
         # cornering stiffness parameter
-        self.C_f
-        self.C_r
+        self.C_f = Wheel.ksv  # N/rad
+        self.C_r = Wheel.ksh  # N/rad
+
         # constants
-        self.C0
-        self.C1
-        self.C2
+        self.C0 = self.C_f + self.C_r
+        self.C1 = self.a*self.C_f - self.b*self.C_r
+        self.C2 = self.a**2*self.C_f - self.b**2*self.C_r
 
 
-class VelocityPlanner:
-    """SpeedPlanner allows to specify a specific velocity profile for a given time interval (constant, linear,
-     quadratic (progressive), quadratic(digressive)) with given start and end velocities while ensuring, that
-    the maximum acceleration limit is kept."""
-    def __init__(self, velocity_profile, T, (v0, v1), a_max=0.5):
-        self.set_max_acceleration(a_max)
-        self.set_velocity_profile(velocity_profile)
-        self.set_duration(T)
-        self.set_velocity((v0, v1))
 
-    # use function mapping by dictionary speed_profiles
-    def constant_velocity(self, time):
-        return self.v1
 
-    def linear_velocity(self, time):
-        # clip acceleration
-        a = min(self.a_max, np.abs((self.v1 - self.v0) / self.T))
-        # calculate sign of clipped acceleration
-        a = a * np.sign((self.v1 - self.v0))
-        return self.v0 + a * time
+    def get_control_output(self):
+        #discrete form of controller
 
-    def progressive_velocity(self, time):
-        # scenario 1 (a1 < a_max)
-        a = (self.v1 - self.v0) / np.square(self.T)
-        b = 0
-        c = self.v0
-        # scenario 2 (a1 = v'(T) = 2ab > a_max)
-        if np.abs(2 * a * self.T) >= self.a_max:
-            a_max = self.a_max * np.sign(self.v1 - self.v0)
-            a = a_max / (2 * self.T)
-            b = 0
-            c = self.v0
+    error=
+    delta_phi=
 
-        return a * np.square(time - b) + c
 
-    def digressive_velocity(self, time):
-        # scenario 1 (a0 < a_max)
-        a = (self.v0 - self.v1) / np.square(self.T)
-        b = self.T
-        c = self.v1
-        # scenario 2 (a0 = v'(0) = -2ab > a_max)
-        if np.abs(2 * a * b) >= self.a_max:
-            a_max = self.a_max * np.sign(self.v1 - self.v0)
-            a = - a_max / (2 * self.T)
-            b = self.T
-            c = self.v0 + a_max / 2 * self.T
+    delta_fb = -Kp*error-Kp*self.xLA*delta_phi
 
-        return a * np.square(time - b) + c
+    delta_ff =
 
-    velocity_profiles_dict = {
-        "constant": constant_velocity,
-        "linear": linear_velocity,
-        "progressive": progressive_velocity,
-        "digressive": digressive_velocity
-    }
+    self.delta =  delta_ff + delta_fb
 
-    # max acceleration will be used to determine the acceleration at end or beginning of quadratic acceleration/
-    # deceleration in m/s
-    def set_max_acceleration(self, a_max):
-        self.a_max = np.abs(float(a_max))
+    def update_parameters(self, k_pvel=None, k_psteer=None,
+                          k_dvel=None, k_dsteer=None):
 
-    # define speed profile from dictionary speed_profiles
-    def set_velocity_profile(self, velocity_profile):
-        if velocity_profile in self.velocity_profiles_dict:
-            self.velocity_profile = velocity_profile
-        else:
-            print "error: speed_profile" + velocity_profile + "does not exist, it will be set to linear"
-            self.velocity_profile = "linear"
+        """Updates the controller picar.
 
-    # set duration to absolute time
-    def set_duration(self, T):
-        if T <= 0:
-            print "error: duration can not be smaller than 0!, it will be set to 1 sec"
-            T = 1.0
+        Args:
+             k_pvel (float): The proportional gain of the controller.
 
-        self.T = float(T)
+            k_psteer (float): Proportional Gain steering
 
-    # set speed interval for which the speed curve will be calculated
-    def set_velocity(self, (v0, v1)):
-        self.v0 = float(v0)
-        self.v1 = float(v1)
+            k_dvel (float): D gain
 
-    # return speed
-    def get_velocity(self, t):
-        """ use get_velocity to get the velocity value for a given time in the interval of T """
-        if t <= 0:
-            return self.v0
-        if t >= self.T:
-            t = self.T
-        # map function via dictionary
-        velocity_profile_func = self.velocity_profiles_dict[self.velocity_profile]
+            k_dsteer (float): D gain
 
-        return velocity_profile_func(self, t)
+        """
+
+        if k_pvel is not None:
+            self.K_p["vel"] = k_pvel
+
+        if k_psteer is not None:
+            self.K_p["steer"] = k_psteer
+
+        if k_dvel is not None:
+            self.K_d["vel"] = k_dvel
+
+        if k_dsteer is not None:
+            self.K_d["steer"] = k_dsteer
+

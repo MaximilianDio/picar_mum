@@ -5,7 +5,6 @@ from std_msgs.msg import Float32
 from velocity_estimator import VelocityEstimator
 from picar.parameters import Wheel
 
-
 class VelocityEstimation(object):
     def __init__(self):
         self.rate = rospy.Rate(100)  # TODO publish hertz rate anpassen
