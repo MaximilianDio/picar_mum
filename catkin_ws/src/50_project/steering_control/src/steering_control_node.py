@@ -20,6 +20,7 @@ class SteeringControlNode(object):
         # initialize timestamp
         self.timestamp = rospy.get_rostime()
         self.last_time = 0.0
+        self.velocity_est = 0.0
 
         config_file_name = get_param("~config_file_name", "default")
 
@@ -42,7 +43,7 @@ class SteeringControlNode(object):
 
         self.sub_velocity_est = rospy.Subscriber("~velocity_estimated",
                                                  Float32,
-                                                 self.steering_control,
+                                                 self.update_velocity_estimation,
                                                  queue_size=1)
 
         self.sub_curved_points = rospy.Subscriber("~curve_point",
@@ -68,8 +69,8 @@ class SteeringControlNode(object):
 
         """
 
-        self.publishers["car_cmd"] = rospy.Publisher(
-            "~car_cmd",
+        self.publishers["motor_node/car_cmd"] = rospy.Publisher(
+            "motor_node/car_cmd",
             CarCmd,
             queue_size=1)
 
@@ -105,14 +106,17 @@ class SteeringControlNode(object):
             self._params["kp"],
             self._params["xLA"])
 
+    def update_velocity_estimation(self,message):
+        self.velocity_est = message.data
+
     def steering_control(self, message):
 
-        controller_values = self.controller.format_control_inputs(message, self.sub_velocity_est)
+        controller_values = self.controller.format_control_inputs(message, self.velocity_est)
         delta = self.controller.get_control_output(controller_values)
 
         # self.timestamp = rospy.get_rostime()
 
-        self.publish_car_cmd(delta, 0.2)
+        self.publish_car_cmd(delta, 0.1)
 
 
     def publish_car_cmd(self, steering_angle, velocity):

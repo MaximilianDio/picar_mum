@@ -1,4 +1,4 @@
-kp: 1 # p_gain of controller
+kp: 10 #p_gain of controller
 xLA: 0.5 # Look ahead distance in m of steering control
 
 

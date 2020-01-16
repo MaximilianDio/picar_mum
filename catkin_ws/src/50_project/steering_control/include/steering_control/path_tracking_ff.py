@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 import numpy as np
-
 from picar.parameters import Picar, Wheel
 
 
@@ -27,6 +26,8 @@ class PathTrackingFF(object):
         self.C1 = self.a * self.C_f - self.b * self.C_r
         self.C2 = self.a ** 2 * self.C_f - self.b ** 2 * self.C_r
 
+        self.picarfun= Picar()
+
     def get_control_output(self, inputdata):
         """
 
@@ -37,7 +38,7 @@ class PathTrackingFF(object):
         u_x = inputdata.u_x
         error = inputdata.error
         delta_psi = inputdata.delta_psi
-        kappa = inputdata.kappa
+        kappa = 0 # inputdata.kappa
 
         # feedback steering angle
         delta_fb = - self.Kp * error - self.Kp * self.xLA * delta_psi
@@ -49,6 +50,13 @@ class PathTrackingFF(object):
 
         # total steering angle
         delta = delta_ff + delta_fb
+
+        delta = self.picarfun.get_angle(delta/np.pi*180)
+
+        print('error: ' + str(error) + '\n')
+        print('psi: ' + str(delta_psi) + '\n')
+        print('delta_fb: ' + str(delta_fb/np.pi*180) + '\n')
+        print('delta_ff: ' + str(delta_ff/np.pi*180) + '\n ------------------ \n')
 
         return delta
 
