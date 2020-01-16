@@ -37,6 +37,7 @@ class PathTrackingFF:
         self.Inertia = Picar.inertia_z
         self.a = Picar.length - Picar.cog_x   # a is length front <- cog
         self.b = Picar.cog_x  # b is length rear <- cog COS in rear axis
+        self.l = Picar.length
 
         # cornering stiffness parameter
         self.C_f = Wheel.ksv  # N/rad
@@ -53,15 +54,20 @@ class PathTrackingFF:
     def get_control_output(self):
         #discrete form of controller
 
-    error=
-    delta_phi=
+        error=
+        delta_phi=
 
 
-    delta_fb = -Kp*error-Kp*self.xLA*delta_phi
+        delta_fb = - self.Kp * error-Kp*self.xLA*delta_phi
 
-    delta_ff =
+        delta_ff =
 
-    self.delta =  delta_ff + delta_fb
+        self.delta =  delta_ff + delta_fb
+
+        return self.delta
+
+
+
 
     def update_parameters(self, k_pvel=None, k_psteer=None,
                           k_dvel=None, k_dsteer=None):
