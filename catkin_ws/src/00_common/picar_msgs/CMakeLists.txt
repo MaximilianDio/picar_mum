@@ -22,6 +22,7 @@ add_message_files(
 add_service_files(
   FILES
   SetValue.srv
+  SetBool.srv
 )
 
 generate_messages(

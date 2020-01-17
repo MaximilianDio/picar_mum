@@ -3,7 +3,7 @@ import rospy
 import yaml
 from geometry_msgs.msg import Point32
 from sensor_msgs.msg import Image
-from picar_msgs.srv import SetValue
+from picar_msgs.srv import SetBool
 from std_msgs.msg import Float32
 from picar_msgs.msg import CarCmd, MsgCurvePoint2D
 from picar_common.picar_common import get_param, get_config_file_path, set_param
@@ -69,7 +69,10 @@ class TrajectoryPlanner:
             set_param("~" + param_name, self._params[param_name])
 
     def init_services(self):
-        pass
+        self.services["overtake_command"] = rospy.Service(
+            "~overtake_command",
+            SetBool,
+            self.service_overtake_clb)
 
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
@@ -89,7 +92,17 @@ class TrajectoryPlanner:
         rospy.Subscriber("~own_velocity", Float32, self.update_own_velocity_clb)
 
     # --------------------------------------------------------------------
-    # ---------------------------- Callbacks -----------------------------
+    # --------------------- Service Callbacks ----------------------------
+    # --------------------------------------------------------------------
+
+    def service_overtake_clb(self, request):
+        """Sets values via service"""
+        self.switch_params["overtake"] = request.value
+        
+        return 1
+
+    # --------------------------------------------------------------------
+    # ---------------------- Topic Callbacks -----------------------------
     # --------------------------------------------------------------------
 
     def update_obstacle_pos_clb(self, message):
@@ -131,9 +144,6 @@ class TrajectoryPlanner:
 
         # update time in state machine
         self.state_machine.time = self.time
-
-        # update values of switching parameters
-        self.switch_params["overtake"] = True  # TODO use service!!!
 
         # update switching parameters in state machine
         self.state_machine.switch_params = self.switch_params
