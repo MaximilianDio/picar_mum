@@ -49,7 +49,7 @@ class PathTrackingFF(object):
         delta_ff = g_ff * kappa
 
         # total steering angle
-        delta = delta_ff + delta_fb
+        delta = delta_fb #+ delta_ff
 
         delta = self.picarfun.get_angle(delta/np.pi*180)
 
