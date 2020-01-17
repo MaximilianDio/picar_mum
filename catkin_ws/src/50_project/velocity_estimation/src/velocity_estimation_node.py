@@ -9,7 +9,7 @@ from sensor_msgs.msg import Imu
 
 class VelocityEstimation(object):
     def __init__(self):
-        self.rate = rospy.Rate(100)  # TODO publish hertz rate anpassen
+        self.rate = rospy.Rate(100)
         self.publishers = {}
         self.velocity_estimator = VelocityEstimator(Wheel.wheel_diameter/2)
         self.encoder_data = [0.0, 0.0]

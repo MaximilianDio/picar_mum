@@ -26,13 +26,20 @@
             <arg name="machine" value="$(arg machine)"/>
         </include>
 
-         <!-- start encoder node -->
+                  <!-- start encoder node -->
         <include file="$(find encoder)/launch/encoder_node.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
         </include>
 
+        <!-- start node controlling the imu -->
+        <include file="$(find imu)/launch/imu_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+        </include>
+
         <!-- start velocity_estimation node -->
+        <remap from="velocity_estimation_node/imu" to="imu_node/imu"/>
         <remap from="velocity_estimation_node/input_encoder_data" to="encoder_node/wheel_speed"/>
         <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
             <arg name="ns" value="$(arg ns)"/>
@@ -51,12 +58,14 @@
         </include>
 
                 <!-- start velocity_estimation node -->
+        <remap from="velocity_estimation_node/imu" to="imu"/>
         <remap from="velocity_estimation_node/input_encoder_data" to="wheel_speed"/>
         <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
             <arg name="local" value="$(arg local)"/>
         </include>
+
 
 
         <include file="$(find simulation)/launch/simple_loop_ccw.launch">

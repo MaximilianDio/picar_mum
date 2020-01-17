@@ -20,7 +20,7 @@ class VelocityEstimator(object):
         self.last_time = self.cur_time
         self.vel_com_last = 0.0
         self.H = np.array([1, 0])
-        self.avg_list = [0.0] * 5
+        self.avg_list = [0.0] * 10
 
     def getVelocity(self, rawdata):
         return [x*self.radius_wheel for x in rawdata]
@@ -69,5 +69,4 @@ class VelocityEstimator(object):
     def moving_average(self, new_val):
         self.avg_list.append(new_val)
         self.avg_list.pop(0)
-        print(self.avg_list)
         return sum(self.avg_list)/len(self.avg_list)
