@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <sdf version="1.6">
-    <world name="default">
+    <world name="null_loop_world">
         <light name="sun" type="directional">
             <pose>0 0 30 0.5 0 0 0</pose>
             <cast_shadows>1</cast_shadows>
@@ -40,10 +40,9 @@
             <uri>model://null_track</uri>
         </include>
 
-<model name="Tag0">
+        <model name="Tag0">
             <pose>0 0 0.1 0 0 0</pose>
-            <link name="Tag1">
-            <pose>-1 -1 0 0 0 0</pose>
+            <link name="Tag-0">
             <collision name="collision">
                 <geometry>
                 <box>
@@ -67,7 +66,7 @@
             </visual>
             </link>
             
-            <link name="box">
+            <!-- <link name="box">
             <pose>-1 0 0 0 0 0</pose>
             <collision name="collision">
                 <geometry>
@@ -90,7 +89,8 @@
                 </script>
                 </material>
             </visual>
-            </link>
+            </link> -->
+            <plugin name="push_animate" filename="libnull_loop.so"/>
         </model> 
     </world>
 </sdf>

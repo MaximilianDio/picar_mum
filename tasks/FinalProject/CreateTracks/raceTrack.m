@@ -15,7 +15,7 @@ curve4= getCircle(0.75,[0;90],[1;1.25;0]);
 curve5= getCircle(1,[90;270],[1;1;0]);
 %% create track
 racetrack = [line1;curve1;curve2;curve3;curve4;curve5];
-testtrack = [line1;curve1;line2;curve5];
+testtrack = [line1;curve1;line2;curve5] -[2.5,0,0];
 
 %% plot track
 figure
@@ -31,5 +31,5 @@ title('testtrack')
 
 
 %% save tracks in txt files
-writematrix(reshape(racetrack',[1,prod(size(racetrack))]),'race_track.txt','Delimiter','space')
-writematrix(reshape(testtrack',[1,prod(size(testtrack))]),'test_track.txt','Delimiter','space')
+% writematrix(reshape(racetrack',[1,prod(size(racetrack))]),'race_track.txt')
+writematrix(testtrack,'test_track.csv')
