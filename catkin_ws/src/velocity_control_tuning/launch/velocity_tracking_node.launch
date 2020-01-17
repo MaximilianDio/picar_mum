@@ -1,0 +1,19 @@
+<launch>
+    <!-- the hostname of the car to control -->
+    <arg name="ns"/>
+
+    <!-- launch keyboard control node -->
+    <node ns="$(arg ns)" name="velocity_tracking_node" pkg="velocity_control_tuning"
+          type="velocity_tracking_node.py" required="true"
+          output="screen"/>
+
+
+
+    <!-- Subscriptions -->
+    <!-- "~velocity_estimated": std_msgs/Float32 -->
+    <!-- "~trajectory_data": picar_msgs/CarCmd -->
+
+    <!-- Publications -->
+    <!-- "car_cmd": picar_msgs/CarCmd -->
+
+</launch>

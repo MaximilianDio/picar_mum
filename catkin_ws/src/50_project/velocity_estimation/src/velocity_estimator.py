@@ -43,8 +43,6 @@ class VelocityEstimator(object):
         self.P = np.matmul(np.matmul(A, self.P), A.T) + self.Q
         self.last_time = self.cur_time
 
-        print("bias: " + str(self.x_hat[1]))
-
         return self.moving_average(self.x_hat[0])
 
     def correction_step(self, rawdata):
