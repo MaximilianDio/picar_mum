@@ -88,6 +88,10 @@ class TrajectoryPlanner:
         # point on curve with position and circle
         rospy.Subscriber("~own_velocity", Float32, self.update_own_velocity_clb)
 
+    # --------------------------------------------------------------------
+    # ---------------------------- Callbacks -----------------------------
+    # --------------------------------------------------------------------
+
     def update_obstacle_pos_clb(self, message):
         obstacle = Point2D([message.x, message.y])
 
