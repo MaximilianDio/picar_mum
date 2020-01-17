@@ -127,9 +127,7 @@ class SteeringControlNode(object):
         controller_values = self.controller.format_control_inputs(message, self.velocity_est)
         delta = self.controller.get_control_output(controller_values)
 
-        # self.timestamp = rospy.get_rostime()
-
-        self.publish_car_cmd(delta, 0.4)
+        self.publish_car_cmd(delta, 2)
 
 
     def publish_car_cmd(self, steering_angle, velocity):
