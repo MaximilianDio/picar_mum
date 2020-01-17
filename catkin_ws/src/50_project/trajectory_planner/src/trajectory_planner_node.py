@@ -57,9 +57,7 @@ class TrajectoryPlanner:
         self.state_machine = OvertakeStateMachine(self.switch_params,
                                                   self._params["min_dist_obstacle"])  # TODO input controller parameters
 
-    # --------------------------------------------------------------------
     # ----------------------- initialization -----------------------------
-    # --------------------------------------------------------------------
 
     def setup_params(self, config_file_path):
         with open(config_file_path, "r") as file_handle:
@@ -91,19 +89,15 @@ class TrajectoryPlanner:
         # point on curve with position and circle
         rospy.Subscriber("~own_velocity", Float32, self.update_own_velocity_clb)
 
-    # --------------------------------------------------------------------
     # --------------------- Service Callbacks ----------------------------
-    # --------------------------------------------------------------------
 
     def service_overtake_clb(self, request):
         """Sets values via service"""
         self.switch_params["overtake"] = request.value
-        
+
         return 1
 
-    # --------------------------------------------------------------------
     # ---------------------- Topic Callbacks -----------------------------
-    # --------------------------------------------------------------------
 
     def update_obstacle_pos_clb(self, message):
         obstacle = Point2D([message.x, message.y])
