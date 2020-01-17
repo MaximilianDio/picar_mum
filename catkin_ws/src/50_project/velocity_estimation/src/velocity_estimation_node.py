@@ -28,7 +28,7 @@ class VelocityEstimation(object):
 
     def prediction_step(self, imudata):
         self.velocity_est.data = self.velocity_estimator.prediction_step(imudata)
-        #velocity_est.header.stamp = rospy.Time.now()
+
         self.publishers["velocity_estimated"].publish(self.velocity_est)
 
     def init_subscribers(self):
