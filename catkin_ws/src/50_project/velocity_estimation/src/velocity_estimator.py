@@ -13,12 +13,13 @@ class VelocityEstimator(object):
         self.Q = np.array([[0.04, 0.0], [0.0, 0.04]])
         self.R = 0.1  # 0.03
 
-        self.x_hat = np.array([0, 0]).T
+        self.x_hat = np.array([0, 0.05]).T
         self.P = np.zeros((2, 2))
         self.cur_time = rospy.get_rostime()
         self.cur_time = self.cur_time.secs + float(self.cur_time.nsecs * 1e-9)
         self.last_time = self.cur_time
         self.vel_com_last = 0.0
+        self.H = np.array([1, 0])
 
     def getVelocity(self, rawdata):
         return [x*self.radius_wheel for x in rawdata]
@@ -33,7 +34,7 @@ class VelocityEstimator(object):
         dt = self.cur_time - self.last_time
         # Prediction step
         A = np.array([[1, -dt], [0, 1]])
-        self.x_hat = np.dot(A, self.x_hat) + np.dot(np.array([1, 0]).T, ax)
+        self.x_hat = np.dot(A, self.x_hat) + np.dot(np.array([dt, 0]).T, ax)
 
         # New covariance matrix
         self.P = A * self.P * A.T + self.Q
@@ -78,5 +79,7 @@ class VelocityEstimator(object):
         # Kalman Gain
         K = np.dot(self.P, np.array([1, 0]).T) / (np.dot(np.array([1, 0]), np.dot(self.P, np.array([1, 0]).T)) + self.R)
         self.x_hat = self.x_hat + K * y
+
+        self.P = (np.eye(2) - np.outer(K, np.array([1, 0]))) * self.P
 
         return self.x_hat[0]
