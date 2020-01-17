@@ -34,6 +34,8 @@ ADDR_GYRO_ZOUT_L = 0x48
 
 ADDR_PWR_MGMT_1 = 0x6B
 
+# Address of DLPF port
+MPU6050_DLPF_BW_5 = 0x1A
 
 class Node:
 
@@ -43,6 +45,7 @@ class Node:
         self.bus = smbus.SMBus(1)
         # address is either 0x68 or 0x69. see MPU-6050 data sheet for details
         self.address = 0x68
+        self.bus.write_byte_data(self.address, MPU6050_DLPF_BW_5, 6)
 
         # set full scale for gyroscope and accelerometer
         self.accel_fs = ACCEL_FS_0
@@ -62,6 +65,7 @@ class Node:
             imu_message.angular_velocity.y = gyro[1]
             imu_message.angular_velocity.z = gyro[2]
 
+            # TODO genaues mapping auf tatsaechliche Beschl
             imu_message.linear_acceleration.x = accel[0]
             imu_message.linear_acceleration.y = accel[1]
             imu_message.linear_acceleration.z = accel[2]
