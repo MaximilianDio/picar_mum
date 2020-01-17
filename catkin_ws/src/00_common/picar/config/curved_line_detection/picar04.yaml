@@ -1,5 +1,3 @@
-# publishing rate in Hz
-rate: 50
 #number of curve points (use between 3 and 30)
 num_points: 3
 # True: show results in frame with track bars
