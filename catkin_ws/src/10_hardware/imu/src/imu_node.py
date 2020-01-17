@@ -41,7 +41,7 @@ class Node:
 
     def __init__(self):
         rospy.init_node("imu_node")
-        self.rate = rospy.Rate(100)
+        self.rate = rospy.Rate(100)  # 100
         self.bus = smbus.SMBus(1)
         # address is either 0x68 or 0x69. see MPU-6050 data sheet for details
         self.address = 0x68
