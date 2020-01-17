@@ -15,7 +15,7 @@ xBnd = [-5, 5];
 yBnd = [-10, 10];
 
 startPoint = [0; 0; 0];   %Start here
-finishPoint = [1.5; 0; 0];   %Finish here
+finishPoint = [1; 0.3; 0];   %Finish here
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
@@ -46,8 +46,8 @@ problem.bounds.initialState.upp = startPoint;
 problem.bounds.finalState.low = finishPoint;
 problem.bounds.finalState.upp = finishPoint;
 
-problem.bounds.control.low = [0; - deg2rad(25)];
-problem.bounds.control.upp = [1.2; deg2rad(25)];
+problem.bounds.control.low = [0.4; - deg2rad(25)];
+problem.bounds.control.upp = [1.5; deg2rad(25)];
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%

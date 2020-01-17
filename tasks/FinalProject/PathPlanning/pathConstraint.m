@@ -4,7 +4,7 @@ function [c, ceq, cGrad, ceqGrad] = pathConstraint(t, x, u)
 c = [];
 
 for i = 1:length(u)-1
-    c = [c; abs(u(:,i+1) - u(:,i)) - [0.3;pi/10]];
+    c = [c; abs(u(:,i+1) - u(:,i)) - [0.4;pi/5]];
 end
 
 % Box on the road
