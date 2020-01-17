@@ -12,13 +12,8 @@ from apriltag_detection import AprilTagDetector
 
 class ApriltagDetectionNode:
 
-    def __init__(self, isDebug):
-        self.DEBUG = isDebug
+    def __init__(self):
 
-        # TODO remove if TAGS exist in simulation
-        if self.DEBUG:
-            # start webcam capture
-            self.cap = cv2.VideoCapture(0)
 
         # ros Image has to be bridged to openCV
         self.bridge = CvBridge()
@@ -30,8 +25,7 @@ class ApriltagDetectionNode:
         # read the cofig parameters form .yaml file
         self.setup_params()
 
-        # set publish rate of node
-        self.rate = rospy.Rate(self._params["Rate"])
+        self.DEBUG = self._params["Debug"]
 
         # register all publishers
         self.init_publishers()
@@ -42,6 +36,10 @@ class ApriltagDetectionNode:
         self.sub_img = rospy.Subscriber("~input_image/raw", Image, self.rcv_img_cb)
 
         self.init_apriltags()
+
+    # ----------------------------------------------------------------------
+    # ----------------------- initialization -------------------------------
+    # ----------------------------------------------------------------------
 
     def setup_params(self):
 
@@ -106,7 +104,10 @@ class ApriltagDetectionNode:
 
         self.tag_detector = AprilTagDetector(tag_ID, tag_size, tag_tvec, tag_rmat, mtx, dist, tvec_cam, rmat_cam)
 
-    # MAIN CALLBACK
+    # ---------------------------------------------------------------------
+    # ---------------------- callback -------------------------------------
+    # ---------------------------------------------------------------------
+
     def rcv_img_cb(self, image_data):
         tag_position = Point32()
 
@@ -121,8 +122,8 @@ class ApriltagDetectionNode:
         if self.DEBUG:
             self.tag_detector.draw_tag(img_bgr)
             # Display the resulting frame
-        cv2.imshow('apriltags', img_bgr)
-        cv2.waitKey(1)
+            cv2.imshow('frame', img_bgr)
+            cv2.waitKey(1)
 
         if tvec is not None:
             tag_position.x = tvec[0][0]
@@ -135,16 +136,9 @@ class ApriltagDetectionNode:
 
         self.publishers["apriltag_position"].publish(tag_position)
 
-        self.rate.sleep()
-
 
 if __name__ == "__main__":
-    DEBUG = True
     node_name = 'april_detection_node'
-    if DEBUG:
-        rospy.init_node(node_name, log_level=rospy.DEBUG)
-    else:
-        rospy.init_node(node_name)
-
-    node = ApriltagDetectionNode(DEBUG)
+    rospy.init_node(node_name)
+    node = ApriltagDetectionNode()
     rospy.spin()

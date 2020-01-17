@@ -1,4 +1,4 @@
-Rate: 100 # Hz
+Debug: False
 TagID: 0
 TagSize: 0.12 # in m
 Tagtvec: [0.0, 0.0, 0.0] # translational vector from tag to reference coordinate system e.g. COM of car
