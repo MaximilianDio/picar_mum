@@ -29,7 +29,7 @@ class PathTrackingFF(object):
 
         self.picarfun = Picar()
 
-    def get_control_output(self, inputdata):
+    def get_steering_output(self, inputdata):
         """
 
         :param inputData: object of class ControlerValues
