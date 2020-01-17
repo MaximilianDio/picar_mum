@@ -8,8 +8,8 @@ class Wheel:
 
     wheel_width = 0.028
     wheel_diameter = 0.065
-    ksv = 46.04  # N/rad
-    ksh = 115.25  # N/rad
+    ksv = 0.53*180/np.pi      #our value 46.04  # N/rad
+    ksh = 0.82*180/np.pi      #our value 115.25  # N/rad
 
 
 class Picar(object):
@@ -35,6 +35,9 @@ class Picar(object):
 
     # Inertia of Mass
     inertia_z = 0.0379
+
+
+
     ########Functions
 
     # velocity transform

@@ -34,7 +34,7 @@ class SteeringControlNode(object):
         # read the controller configuration from config file
         self.setup_params(config_file_path)
 
-        self.controller = path_tracking_ff.PathTrackingFF(self._params["kp"], self._params["xLA"])
+        self.controller = path_tracking_ff.PathTrackingFF(self._params["kp"],self._params["kp_c"], self._params["xLA"])
 
         # register all publishers
         self.init_publishers()
@@ -58,6 +58,11 @@ class SteeringControlNode(object):
             "~set_kp",
             SetValue,
             self.set_kp)
+
+        self.services["set_kp_c"] = rospy.Service(
+            "~set_kp_c",
+            SetValue,
+            self.set_kp_c)
 
         self.services["set_xLA"] = rospy.Service(
             "~set_xLA",
@@ -93,6 +98,13 @@ class SteeringControlNode(object):
         self.update_controller()
         return 1
 
+    def set_kp_c(self, request):
+        """Sets the k_pvel_gain parameter of the controller."""
+        self._params["kp_c"] = request.value
+        set_param("~kp_c", request.value)
+        self.update_controller()
+        return 1
+
     def set_xLA(self, request):
         """Sets the k_psteer_gain parameter of the controller."""
         self._params["xLA"] = request.value
@@ -104,6 +116,7 @@ class SteeringControlNode(object):
         """Updates the controller object's picar"""
         self.controller.update_parameters(
             self._params["kp"],
+            self._params["kp_c"],
             self._params["xLA"])
 
     def update_velocity_estimation(self,message):
@@ -116,7 +129,7 @@ class SteeringControlNode(object):
 
         # self.timestamp = rospy.get_rostime()
 
-        self.publish_car_cmd(delta, 0.1)
+        self.publish_car_cmd(delta, 0.4)
 
 
     def publish_car_cmd(self, steering_angle, velocity):
