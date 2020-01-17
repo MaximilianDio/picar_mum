@@ -12,7 +12,6 @@ from std_msgs.msg import Float32
 
 class VelocityControllerTuning(object):
     """Class to control the vehicle by publishing ROS messages based on keyboard input.
-
     """
     K_LEFT = 0
     K_RIGHT = 1
@@ -186,7 +185,6 @@ class VelocityControllerTuning(object):
 
     def pub_message(self, keys):
         """Publishes a CarCmd message to control the car.
-
         Args:
             keys(list): List of bools corresponding to pressed/unpressed keys
         """
@@ -215,7 +213,6 @@ class VelocityControllerTuning(object):
 
     def set_velocity_from_keys(self, keys):
         """Sets the member 'velocity' according to arrow keys pressed
-
         Args:
             keys (list): List of bools corresponding to pressed/unpressed keys
         """
