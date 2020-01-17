@@ -1,3 +1,6 @@
+from distance_controller import PIDDistanceController
+
+
 class OvertakeStateMachine:
 
     def __init__(self, switch_params, min_dist_obstacle):
@@ -25,9 +28,17 @@ class OvertakeStateMachine:
 
         # TODO init all controller types and values (as class objects)
 
+        # -- PID DISTANCE controller for state 3*
+        # TODO change values
+        self.des_distance = 1
+        Kp_distance = 1
+        Kd_distance = 1
+        Ki_distance = 1
+        self.pid_distance_controller = PIDDistanceController(Kp_distance, Kd_distance, Ki_distance)
+
         # return values for car command
-        self.des_velocity = None
-        self.des_angle = None
+        self.des_velocity = 0.0
+        self.des_angle = 0.0
 
     def state_switcher(self):
 
@@ -118,11 +129,14 @@ class OvertakeStateMachine:
         if self.curve_point is not None and self.rel_obstacle_point is not None and self.rel_obstacle_velocity is not None:
             # TODO: object and line detection control, control speed to keep desired distance and angle to stay on curve
             # self.curve_point is CurvePoint2D and rel_obstacle_point and rel_obstacle_velocity is Point2D
-            pass
 
-        # TODO: update desired angle and velocity
-        self.des_velocity = 0.0
-        self.des_angle = 0.0
+            # TODO: update desired angle and velocity
+            self.des_velocity = self.pid_distance_controller.control(self.des_distance, self.rel_obstacle_point.x)
+            self.des_angle = 0.0
+        else:
+
+            self.des_velocity = 0.0
+            self.des_angle = 0.0
 
         # change state if needed
         if not self.switch_params["object_detection"]:
