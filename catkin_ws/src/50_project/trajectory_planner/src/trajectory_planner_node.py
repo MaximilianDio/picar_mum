@@ -2,8 +2,7 @@
 import rospy
 import yaml
 from geometry_msgs.msg import Point32
-from sensor_msgs.msg import Image
-from picar_msgs.srv import SetBool, SetSteeringParametersList
+from picar_msgs.srv import SetValue, SetBool, SetSteeringParametersList, SetDistanceParametersList
 from std_msgs.msg import Float32
 from picar_msgs.msg import CarCmd, MsgCurvePoint2D
 from picar_common.picar_common import get_param, get_config_file_path, set_param
@@ -48,15 +47,8 @@ class TrajectoryPlanner:
         # create all services
         self.init_services()
 
-        self.switch_params = {"line_detection": False,  # line can be detected
-                              "object_detection": False,  # object detected
-                              "overtake": False  # overtaking is allowed
-                              }
-
-
         # create state machine
-        self.state_machine = OvertakeStateMachine(self.switch_params,
-                                                  self._params)  # TODO input controller parameters
+        self.state_machine = OvertakeStateMachine(self._params)
 
     # ----------------------- initialization -----------------------------
 
@@ -73,15 +65,31 @@ class TrajectoryPlanner:
             SetBool,
             self.service_overtake_clb)
 
+        self.services["set_desired_distance"] = rospy.Service(
+            "~set_desired_obstacle_distance",
+            SetValue,
+            self.service_des_obstacle_distance_clb)
+
+        self.services["set_vel_reference"] = rospy.Service(
+            "~set_vel_reference",
+            SetValue,
+            self.service_vel_reference_clb)
+
+        # ---------------- controller params -------------------------
+
         self.services["update_steering_parameters"] = rospy.Service(
             "~update_steering_parameters",
             SetSteeringParametersList,
             self.service_steering_params_clb)
 
+        self.services["update_distance_controller_parameters"] = rospy.Service(
+            "~update_distance_controller_parameters",
+            SetDistanceParametersList,
+            self.service_distance_params_clb)
+
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
         # relative position of leaders blue ball to picar
-        # TODO: publish to des_car_command -> current bad fix publish to car_cmd
         self.publishers["des_car_command"] = rospy.Publisher("~des_car_cmd", CarCmd, queue_size=1)
 
     def init_subscribers(self):
@@ -99,7 +107,19 @@ class TrajectoryPlanner:
 
     def service_overtake_clb(self, request):
         """Sets values via service"""
-        self.switch_params["overtake"] = request.value
+        self.state_machine.switch_params["overtake"] = request.value
+
+        return 1
+
+    def service_des_obstacle_distance_clb(self, request):
+        """Sets values via service"""
+        self.state_machine.des_distance_to_obstacle = request.value
+
+        return 1
+
+    def service_vel_reference_clb(self, request):
+        """Sets values via service"""
+        self.state_machine.vel_reference = request.value
 
         return 1
 
@@ -110,35 +130,45 @@ class TrajectoryPlanner:
 
         return 1
 
+    def service_distance_params_clb(self, request):
+        self.state_machine.velocity_control_3star.set_Kp(request.Kp)
+        self.state_machine.velocity_control_3star.set_Kd(request.Kd)
+        self.state_machine.velocity_control_3star.set_Ki(request.Ki)
+
+        return 1
+
     # ---------------------- Topic Callbacks -----------------------------
 
     def update_obstacle_pos_clb(self, message):
+        quatschwert = 0.5  # TODO
+
         obstacle = Point2D([message.x, message.y])
 
         # update relative position of obstacle
-        if obstacle.x == DEFAULT_FALSE_FLOAT_VALUE or obstacle.y == DEFAULT_FALSE_FLOAT_VALUE:
-            self.switch_params["object_detection"] = False
+        if obstacle.x == DEFAULT_FALSE_FLOAT_VALUE or obstacle.x < quatschwert \
+                or obstacle.y == DEFAULT_FALSE_FLOAT_VALUE:
+            self.state_machine.switch_params["object_detection"] = False
             self.state_machine.rel_obstacle_point = None
+            self.state_machine.rel_obstacle_velocity = None
         else:
-            self.switch_params["object_detection"] = True
+            self.state_machine.switch_params["object_detection"] = True
             self.state_machine.rel_obstacle_point = obstacle
-
-        # update relative velocity of obstacle
-        self.state_machine.rel_obstacle_velocity = self.estimate_rel_obstacle_velocity(obstacle)
+            # update relative velocity of obstacle
+            self.state_machine.rel_obstacle_velocity = self.estimate_rel_obstacle_velocity(obstacle)
 
     def update_curved_point_clb(self, message):
         # message of type MsgCurvePoint2D
         curve_point = message
         # update curvepoint
         if curve_point.x == DEFAULT_FALSE_FLOAT_VALUE or curve_point.x == DEFAULT_FALSE_FLOAT_VALUE:
-            self.switch_params["line_detection"] = False
+            self.state_machine.switch_params["line_detection"] = False
             self.state_machine.curve_point = None
         else:
-            self.switch_params["line_detection"] = True
+            self.state_machine.switch_params["line_detection"] = True
             self.state_machine.curve_point = curve_point
 
     def update_own_velocity_clb(self, message):
-        self.state_machine.own_velocity = message.data
+        self.state_machine.own_velocity_est = message.data
 
     def run_node(self, time):
         """ main callback which will be called by pacemaker node, updates all necessary data to state machine and runs
@@ -149,9 +179,6 @@ class TrajectoryPlanner:
         # update time in state machine
         self.state_machine.time = self.time
 
-        # update switching parameters in state machine
-        self.state_machine.switch_params = self.switch_params
-
         # DEBUG can be deleted
         print "-----------------------------------------------------------------------------------"
         print "-----------------------------------------------------------------------------------"
@@ -161,8 +188,8 @@ class TrajectoryPlanner:
         if self.state_machine.switch_params["line_detection"]:
             print "curve point: x: " + str(self.state_machine.curve_point.x) + " y: " + str(
                 self.state_machine.curve_point.y)
-        print "obstacle detected: " + str(self.state_machine.switch_params["object_detection"])
-        print "own velocity: " + str(self.state_machine.own_velocity)
+        print "obstacle can be detected: " + str(self.state_machine.switch_params["object_detection"])
+        print "own velocity: " + str(self.state_machine.own_velocity_est)
         if self.state_machine.switch_params["object_detection"]:
             print "obstacle at position: x: " + str(self.state_machine.rel_obstacle_point.x) + " y: " + str(
                 self.state_machine.rel_obstacle_point.y)
@@ -183,10 +210,6 @@ class TrajectoryPlanner:
         # TODO decide what to do when none is returned - IDEA return 0.0
         des_car_command.velocity = self.state_machine.des_velocity
         des_car_command.angle = self.state_machine.des_angle
-
-        print "-----------------------------------------------------------------------------------"
-        print "des_car_velocity: " + str(des_car_command.velocity)
-        print "des_car_angle: " + str(des_car_command.angle)
 
         self.publishers["des_car_command"].publish(des_car_command)
 

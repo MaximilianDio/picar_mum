@@ -4,20 +4,24 @@ from steering_controller import PathTrackingFF
 
 class OvertakeStateMachine:
 
-    def __init__(self, switch_params, params_dict):
+    def __init__(self, params_dict):
         # initial state
         self.current_state = "1"
 
-        # have to be provided by node e.g. sensor data or calculations !
-        self.switch_params = switch_params
+        self.switch_params = {"line_detection": False,  # line can be detected
+                              "object_detection": False,  # object detected
+                              "overtake": False  # overtaking is allowed
+                              }
 
         # updated by velocity estimator node
+        # TODO use velocity estimator
         self.own_velocity_est = 0.0
+        self.vel_reference = params_dict["vel_reference"]  # desired velocity for state 1,2
 
         self.time = 0.0  # initial time (starts when state machine gets first pacemaker message)
         self.overtake_start_time = 0.0
 
-        self.curve_point = None  # CurvePoint2D
+        self.curve_point = None  # CurvePointMessage
         self.rel_obstacle_point = None  # Point2D
         self.rel_obstacle_velocity = None  # Point2D
 
@@ -32,7 +36,6 @@ class OvertakeStateMachine:
         # --------------------------------------------------------------
         # -- steering controller for state 1, 2 and 3*
         # --------------------------------------------------------------
-        # TODO change values
         Kp_steering = params_dict["Kp_steering"]
         Kp_c_steering = params_dict["Kp_c_steering"]
         xLA_steering = params_dict["xLA_steering"]
@@ -44,8 +47,7 @@ class OvertakeStateMachine:
 
         # -- PID DISTANCE controller for state 3*
         # ----------------------------------------------
-        # TODO change values
-        self.des_distance = 0.5
+        self.des_distance_to_obstacle = params_dict["des_distance_to_obstacle"]
         Kp_distance = params_dict["Kp_distance"]
         Kd_distance = params_dict["Kd_distance"]
         Ki_distance = params_dict["Ki_distance"]
@@ -95,11 +97,14 @@ class OvertakeStateMachine:
     def state_1(self):
         """ no obstacle detected - line controlled """
         # run controller
-        des_angle = 0.0
-        # TODO set velocity from outside
-        des_velocity = 0.2
+
         if self.curve_point is not None:
             des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
+            des_velocity = self.vel_reference
+        else:
+            # stop car when no line is detected!
+            des_angle = 0.0
+            des_velocity = 0.0
 
         self.des_velocity = des_velocity
         self.des_angle = des_angle
@@ -113,28 +118,31 @@ class OvertakeStateMachine:
     def state_2(self):
         """ obstacle was detected but it is far awy - only line controlled"""
         # run controller
-        des_angle = 0.0
-        # TODO set velocity from outside
-        des_velocity = 0.2
         if self.curve_point is not None:
             des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
+            des_velocity = self.vel_reference
+        else:
+            # stop car when no line is detected!
+            des_angle = 0.0
+            des_velocity = 0.0
 
         self.des_velocity = des_velocity
         self.des_angle = des_angle
-        quatschwert = 0.35
 
         # change state if needed
         if not self.switch_params["object_detection"]:
+            # go back to state 1 when vehicle can not be detected
             self.current_state = "1"
             return
         else:
 
-            if max(self.rel_obstacle_point.x, quatschwert) > self.min_dist_obstacle:
+            if self.rel_obstacle_point.x > self.min_dist_obstacle:
                 # stay in state 2
                 return
             else:
                 if not self.switch_params["overtake"]:
                     self.current_state = "3*"
+                    self.velocity_control_3star.reset_integrated_error()
                     return
                 else:
                     self.init_state_3_transition()
@@ -143,16 +151,19 @@ class OvertakeStateMachine:
     def state_3_star(self):
         """ keep distance to obstacle (drive with same velocity at a given distance) - see leader control"""
         # run controller
-        des_angle = 0.0
-        des_velocity = 0.0
-        if self.curve_point is not None and self.rel_obstacle_point is not None and self.rel_obstacle_velocity is not None:
-            # TODO: object and line detection control, control speed to keep desired distance and angle to stay on curve
-            # self.curve_point and rel_obstacle_point and rel_obstacle_velocity is Point2D
-            des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
 
-            # TODO: update desired angle and velocity
-            des_velocity = self.velocity_control_3star.control(self.des_distance-0.3, self.rel_obstacle_point.x)
-            print "des_velocity: " + str(des_velocity)
+        # run controller
+        if self.curve_point is not None:
+            des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
+        else:
+            des_angle = 0.0
+
+        if self.rel_obstacle_point is not None and self.rel_obstacle_velocity is not None:
+            des_velocity = self.velocity_control_3star.control(self.des_distance_to_obstacle, self.rel_obstacle_point.x,
+                                                               self.rel_obstacle_velocity.x, self.time)
+        else:
+            # stop car when no line is detected!
+            des_velocity = 0.0
 
         self.des_velocity = des_velocity
         self.des_angle = des_angle
@@ -166,14 +177,15 @@ class OvertakeStateMachine:
                 # stay in state
                 return
             else:
-                # TODO
-                # self.init_state_3_transition()
-                # self.current_state = "3"
+
+                self.init_state_3_transition()
+                self.current_state = "3"
                 return
 
     def init_state_3_transition(self):
         """ initialize necessary information before going to state 3 - e.g. calculate necessary overtake time,
         trajectory time ... """
+
         # use overtake_start_time to calculate delta time (e.g. time spent in state)
         self.overtake_start_time = self.time
 
@@ -269,7 +281,8 @@ class OvertakeStateMachine:
         # reset overtaker time
         self.overtake_start_time = self.time
 
-        self.t_trajectory = 5.0  # TODO: calculate necessary time to fulfill open loop maneuver (only openloop trajectory)
+        # TODO: calculate necessary time to fulfill open loop maneuver (only openloop trajectory)
+        self.t_trajectory = 5.0
 
     def state_5(self):
         """ final state open loop trajectory controller back to starting line (in front of obstacle)"""

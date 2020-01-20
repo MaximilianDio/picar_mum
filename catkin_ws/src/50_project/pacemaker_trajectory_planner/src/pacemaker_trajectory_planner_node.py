@@ -3,7 +3,7 @@ import rospy
 from std_msgs.msg import Float32
 
 if __name__ == "__main__":
-    rate = 100  # Hz
+    rate = 50  # Hz
 
     rospy.init_node("pacemaker_trajectory_planner")
 

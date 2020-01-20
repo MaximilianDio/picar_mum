@@ -5,17 +5,31 @@ class PIDDistanceController:
         self.__Ki = abs(Ki)
 
         self.__integrated_error_distance = 0.0
+        self.old_time = 0
 
-    def control(self, des_distance, cur_distance):
+    def control(self, des_distance, cur_distance, rel_velocity, time):
         """ controls distance with PID controller
-        @:returns control_command - can be used as des speed command"""
+        @:returns control_command - can be used as des_speed command"""
 
-        errorDistance = des_distance - cur_distance
-        self.__integrated_error_distance += errorDistance
-        # TODO implement derivative part
-        control_command = self.__Kp * errorDistance + self.__Ki * self.__integrated_error_distance
+        # calc delta time
+        dt = time - self.old_time
+        self.old_time = time
 
-        return control_command
+        # error distance if des_distcane - cur_distance negative increase speed -> minus sign
+        errorDistance = -(des_distance - cur_distance)
+
+        # integrate error
+        self.__integrated_error_distance += errorDistance * dt
+
+        # Control inputs
+        # bring car to desired distance
+        U_p = self.__Kp * errorDistance
+        # keep velocity the same as obstacle
+        U_d = self.__Kd * rel_velocity
+        # control input on integrated error
+        U_i = self.__Ki * self.__integrated_error_distance
+
+        return U_d + U_p + U_i
 
     def set_Kp(self, Kp):
         """ set Kp only with positive values"""
