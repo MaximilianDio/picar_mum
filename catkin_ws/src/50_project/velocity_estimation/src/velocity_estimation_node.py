@@ -6,7 +6,6 @@ from velocity_estimator import VelocityEstimator
 from picar.parameters import Wheel
 from sensor_msgs.msg import Imu
 
-
 class VelocityEstimation(object):
     def __init__(self):
         self.rate = rospy.Rate(100)  # TODO publish hertz rate anpassen

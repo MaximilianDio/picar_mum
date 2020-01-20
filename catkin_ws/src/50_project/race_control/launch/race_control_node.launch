@@ -1,0 +1,27 @@
+<launch>
+    <arg name="ns"/>
+    <arg name="local"/>
+    <arg name="machine"/>
+
+    <!-- launch velocity_estimation_node -->
+    <group if="$(arg local)">
+        <group ns="$(arg ns)">
+            <node pkg="race_control" type="race_control_node.py" name="race_control_node" output="screen"/>
+        </group>
+    </group>
+
+    <group unless="$(arg local)">
+        <group ns="$(arg ns)">
+            <node machine="$(arg machine)" pkg="race_control" type="race_control_node.py" name="race_control_node" output="screen"/>
+        </group>
+    </group>
+
+
+    <!-- Subscriptions -->
+    <!-- "~velocity_estimated": std_msgs/Float32 -->
+    <!-- "~curve_point": picar_msgs/MsgCurvePoint2D -->
+
+    <!-- Publications -->
+    <!-- "~car_cmd": picar_msgs/CarCmd -->
+
+</launch>

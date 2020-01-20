@@ -61,8 +61,6 @@ class CurveDetector:
         rospy.loginfo("[{}] Received camera_info message."
                       "".format(rospy.get_name()))
 
-        # publishing rate
-        self.rate = rospy.Rate(self._params["rate"])
         # set true for testing
         self.visualize = self._params["visualization"]
 
@@ -221,8 +219,6 @@ class CurveDetector:
             curve_point_msg.cy = DEFAULT_FALSE_VALUE
 
         self.publishers["curve_point"].publish(curve_point_msg)
-        # publish message with given frequency
-        self.rate.sleep()
 
 
 if __name__ == "__main__":

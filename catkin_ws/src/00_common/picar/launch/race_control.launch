@@ -30,26 +30,36 @@
             <arg name="machine" value="$(arg machine)"/>
         </include>
 
-        <!-- start imu node -->
-        <include file="$(find imu)/launch/imu_node.launch">
-            <arg name="ns" value="$(arg ns)"/>
-            <arg name="machine" value="$(arg machine)"/>
-        </include>
-
         <!-- start encoder node -->
         <include file="$(find encoder)/launch/encoder_node.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
         </include>
 
-        <!-- start velocity_estimation node -->
-        <!--<remap from="velocity_estimation_node/imu" to="imu_node/imu"/>-->
-        <remap from="velocity_estimation_node/input_encoder_data" to="encoder_node/wheel_speed"/>
-        <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
+        <!-- start node controlling the imu -->
+        <include file="$(find imu)/launch/imu_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+        </include>
+
+           <!-- start race_controller_node -->
+        <remap from="race_control_node/curve_point" to="curved_line_detection_node/curve_point" />
+        <remap from="race_control_node/velocity_estimated" to="velocity_estimation_node/velocity_estimated" />
+        <include file="$(find race_control)/launch/race_control_node.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
             <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
         </include>
+
+        <!-- start velocity_estimation node -->
+        <remap from="velocity_estimation_node/imu" to="imu_node/imu"/>
+        <remap from="velocity_estimation_node/input_encoder_data" to="encoder_node/wheel_speed"/>
+        <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(arg local)"/>
+        </include>
+
 
         <!-- start test_extrinsics_node -->
         <include file="$(find extrinsics)/launch/test_extrinsics_node.launch">
@@ -68,12 +78,21 @@
         </include>
 
         <!-- start velocity_estimation node -->
-        <!--<remap from="velocity_estimation_node/imu" to="imu"/>-->
+        <remap from="velocity_estimation_node/imu" to="imu"/>
         <remap from="velocity_estimation_node/input_encoder_data" to="wheel_speed"/>
         <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
             <arg name="local" value="$(arg local)"/>
+        </include>
+
+            <!-- start race_controller_node -->
+        <remap from="race_control_node/curve_point" to="curved_line_detection_node/curve_point" />
+        <remap from="race_control_node/velocity_estimated" to="velocity_estimation_node/velocity_estimated" />
+        <include file="$(find race_control)/launch/race_control_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
         </include>
     </group>
 
@@ -94,11 +113,5 @@
         <arg name="machine" value="$(arg machine)"/>
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
     </include>
-
-
-
-    <!-- start race_controller_node -->
-
-    <!-- TODO -->
 
 </launch>
