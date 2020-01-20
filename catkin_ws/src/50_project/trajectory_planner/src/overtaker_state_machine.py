@@ -14,7 +14,6 @@ class OvertakeStateMachine:
                               }
 
         # updated by velocity estimator node
-        # TODO use velocity estimator
         self.own_velocity_est = 0.0
         self.vel_reference = params_dict["vel_reference"]  # desired velocity for state 1,2
 
@@ -43,6 +42,7 @@ class OvertakeStateMachine:
 
         # -- velocity controller for state 1,2
         # ----------------------------------------------
+        # TODO
         # self.velocity_control_12 =
 
         # -- PID DISTANCE controller for state 3*

@@ -215,7 +215,6 @@ class TrajectoryPlanner:
 
     def estimate_rel_obstacle_velocity(self, point):
 
-        # FIXME check if velocity is right, seems wrong!
         velocity = None
         # use old and new position (and time) to calculate velocity
         if self.obstacle_old_pos is not None and self.time != 0.0:
