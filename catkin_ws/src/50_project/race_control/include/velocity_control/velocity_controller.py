@@ -35,7 +35,6 @@ class VelocityController(object):
         dv = self.current_vel - self.last_vel
 
         self.error = self.current_vel - self.desired_vel
-        #vel_output = -self.ki * self.error_integral - self.kp * self.error + self.last_control
         vel_output = -self.kp * self.error + self.last_control - self.kd * (dv/dt)
         self.last_control = vel_output
         if abs(vel_output) > self.sat:
@@ -52,4 +51,4 @@ class VelocityController(object):
 
     def update_gains(self, kp, ki):
         self.kp = kp
-        self.ki = ki
+        self.kd = kd
