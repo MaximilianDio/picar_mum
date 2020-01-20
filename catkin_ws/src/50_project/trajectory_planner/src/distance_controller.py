@@ -11,9 +11,9 @@ class PIDDistanceController:
         @:returns control_command - can be used as des speed command"""
 
         errorDistance = des_distance - cur_distance
-        self.integrated_error_distance += errorDistance
+        self.__integrated_error_distance += errorDistance
         # TODO implement derivative part
-        control_command = self.Kp * errorDistance + self.Ki * self.integrated_error_distance
+        control_command = self.__Kp * errorDistance + self.__Ki * self.__integrated_error_distance
 
         return control_command
 

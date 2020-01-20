@@ -53,9 +53,10 @@ class TrajectoryPlanner:
                               "overtake": False  # overtaking is allowed
                               }
 
+
         # create state machine
         self.state_machine = OvertakeStateMachine(self.switch_params,
-                                                  self._params["min_dist_obstacle"])  # TODO input controller parameters
+                                                  self._params)  # TODO input controller parameters
 
     # ----------------------- initialization -----------------------------
 
@@ -81,9 +82,7 @@ class TrajectoryPlanner:
         """ initialize ROS publishers and stores them in a dictionary"""
         # relative position of leaders blue ball to picar
         # TODO: publish to des_car_command -> current bad fix publish to car_cmd
-        self.publishers["des_car_command"] = rospy.Publisher("~desired_car_command", CarCmd,
-        #self.publishers["car_cmd"] = rospy.Publisher("~desired_car_command", CarCmd,
-                                                             queue_size=1)
+        self.publishers["des_car_command"] = rospy.Publisher("~des_car_cmd", CarCmd, queue_size=1)
 
     def init_subscribers(self):
         """ initialize ROS subscribers and stores them in a dictionary"""
@@ -105,7 +104,7 @@ class TrajectoryPlanner:
         return 1
 
     def service_steering_params_clb(self, request):
-        self.state_machine.steering_control_123star.Kp= request.Kp
+        self.state_machine.steering_control_123star.Kp = request.Kp
         self.state_machine.steering_control_123star.Kp_c = request.Kp_c
         self.state_machine.steering_control_123star.xLA = request.xLA
 
@@ -154,6 +153,8 @@ class TrajectoryPlanner:
         self.state_machine.switch_params = self.switch_params
 
         # DEBUG can be deleted
+        print "-----------------------------------------------------------------------------------"
+        print "-----------------------------------------------------------------------------------"
         print "---------------------" + str(self.state_machine.time) + "--------------------------"
         print "current state: " + str(self.state_machine.current_state)
         print "curve can be detected: " + str(self.state_machine.switch_params["line_detection"])
@@ -183,8 +184,11 @@ class TrajectoryPlanner:
         des_car_command.velocity = self.state_machine.des_velocity
         des_car_command.angle = self.state_machine.des_angle
 
-        # self.publishers["des_car_command"].publish(des_car_command)
+        print "-----------------------------------------------------------------------------------"
+        print "des_car_velocity: " + str(des_car_command.velocity)
+        print "des_car_angle: " + str(des_car_command.angle)
 
+        self.publishers["des_car_command"].publish(des_car_command)
 
     def estimate_rel_obstacle_velocity(self, point):
 

@@ -3,6 +3,7 @@ import numpy as np
 from picar.parameters import Picar, Wheel
 from picar_common.curve import CurvePoint2D
 
+
 class PathTrackingFF(object):
 
     def __init__(self, Kp, Kp_c, xLA):
@@ -46,10 +47,6 @@ class PathTrackingFF(object):
         except Exception:
             kappa = 0
 
-        print error
-        print delta_psi
-        print kappa
-
         # data from encoders
         u_x = velocity_estimated
 
@@ -83,5 +80,3 @@ class PathTrackingFF(object):
 
         if Kp_c is not None:
             self.Kp_c = Kp_c
-
-
