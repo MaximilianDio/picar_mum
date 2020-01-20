@@ -31,6 +31,7 @@ class VelocityTrackingNode(object):
 
     def update_current_velocity(self, message):
         self.cur_vel = message.data
+        print(self.cur_vel)
 
     def init_subscribers(self):
         rospy.Subscriber("~velocity_estimated",

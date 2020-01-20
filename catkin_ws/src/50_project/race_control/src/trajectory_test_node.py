@@ -28,8 +28,11 @@ class TrajectoryTestNode(object):
             message.header.stamp = rospy.get_rostime()
             curTime = curTime.secs + float(curTime.nsecs * 1e-9)
             print "Time: " + str(curTime)
-            if curTime > 10:
-                message.velocity, message.angle = self.overtaker.get_feedforward_control(curTime - 10)
+            if curTime > 12 and curTime <= 15:
+                message.velocity = 0.5
+                message.angle = 0.0
+            elif curTime > 15:
+                message.velocity, message.angle = self.overtaker.get_feedforward_control(curTime - 15)
             else:
                 message.velocity = 0.0
                 message.angle = 0.0
