@@ -1,4 +1,5 @@
 from distance_controller import PIDDistanceController
+from steering_controller import PathTrackingFF
 
 
 class OvertakeStateMachine:
@@ -11,7 +12,7 @@ class OvertakeStateMachine:
         self.switch_params = switch_params
 
         # updated by velocity estimator node
-        self.own_velocity = 0.0
+        self.own_velocity_est = 0.0
 
         self.time = 0.0  # initial time (starts when state machine gets first pacemaker message)
         self.overtake_start_time = 0.0
@@ -27,14 +28,28 @@ class OvertakeStateMachine:
         self.t_trajectory = None
 
         # TODO init all controller types and values (as class objects)
+        # initialize controllers
+        # --------------------------------------------------------------
+        # -- steering controller for state 1, 2 and 3*
+        # --------------------------------------------------------------
+        # TODO change values
+        self.Kp_steering = 1
+        self.Kp_c_steering = 1
+        self.xLA_steering = 1
+        self.steering_control_123star = PathTrackingFF(self.Kp_steering, self.Kp_c_steering, self.xLA_steering)
+
+        # -- velocity controller for state 1,2
+        # ----------------------------------------------
+        # self.velocity_control_12 =
 
         # -- PID DISTANCE controller for state 3*
+        # ----------------------------------------------
         # TODO change values
         self.des_distance = 1
         Kp_distance = 1
         Kd_distance = 1
         Ki_distance = 1
-        self.pid_distance_controller = PIDDistanceController(Kp_distance, Kd_distance, Ki_distance)
+        self.velocity_control_3star = PIDDistanceController(Kp_distance, Kd_distance, Ki_distance)
 
         # return values for car command
         self.des_velocity = 0.0
@@ -80,19 +95,22 @@ class OvertakeStateMachine:
     def state_1(self):
         """ no obstacle detected - line controlled """
         # run controller
+        des_angle = 0
         if self.curve_point is not None:
             # TODO: use curve position and derive necessary action e.g. speed and steering angle
+            des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
+
             # TODO: implement controller run method (which runs the controller in one time step)
             # self.curve_point is CurvePoint2D
             pass
 
         # TODO: update desired angle and velocity
         self.des_velocity = 0.0
-        self.des_angle = 0.0
+        self.des_angle = des_angle
 
         # decide switch
         if self.switch_params["object_detection"]:
-            self.current_state = "2"
+            #self.current_state = "2"
             return
         # otherwise stay in state
 
@@ -131,7 +149,7 @@ class OvertakeStateMachine:
             # self.curve_point is CurvePoint2D and rel_obstacle_point and rel_obstacle_velocity is Point2D
 
             # TODO: update desired angle and velocity
-            self.des_velocity = self.pid_distance_controller.control(self.des_distance, self.rel_obstacle_point.x)
+            self.des_velocity = 0.0# self.velocity_control_3star.control(self.des_distance, self.rel_obstacle_point.x)
             self.des_angle = 0.0
         else:
 

@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import numpy as np
 from picar.parameters import Picar, Wheel
-
+from picar_common.curve import CurvePoint2D
 
 class PathTrackingFF(object):
 
@@ -29,17 +29,29 @@ class PathTrackingFF(object):
 
         self.picarfun = Picar()
 
-    def get_steering_output(self, inputdata):
+    def get_steering_output(self, curve_point, velocity_estimated):
         """
 
         :param inputData: object of class ControlerValues
         :return: steering angle of vehicle
         """
-        # discrete form of controller
-        u_x = inputdata.u_x
-        error = inputdata.error
-        delta_psi = inputdata.delta_psi
-        kappa = inputdata.kappa
+
+        error = - curve_point.y / curve_point.x * Picar.cog_x  # sign changed due to coor sys
+        delta_psi = - np.arctan(curve_point.slope)  # sign changed due to coor sys
+        try:
+            if curve_point.cy > 0:  # assign sign to curvature based on midpoint of circle
+                kappa = 1 / curve_point.cR
+            else:
+                kappa = - 1 / curve_point.cR
+        except Exception:
+            kappa = 0
+
+        print error
+        print delta_psi
+        print kappa
+
+        # data from encoders
+        u_x = velocity_estimated
 
         # feedback steering angle
         delta_fb = - self.Kp * (error + self.xLA * delta_psi)
@@ -54,31 +66,7 @@ class PathTrackingFF(object):
 
         delta = self.picarfun.get_angle(delta / np.pi * 180)
 
-        print('error: ' + str(error) + '\n')
-        print('psi: ' + str(delta_psi) + '\n')
-        print('delta_fb: ' + str(delta_fb / np.pi * 180) + '\n')
-        print('delta_ff: ' + str(delta_ff / np.pi * 180) + '\n ------------------ \n')
-
         return delta
-
-    def format_control_inputs(self, curve_point, velocity_estimated):
-        # input for controller
-        output_data = ControllerValues()
-
-        output_data.error = - curve_point.y / curve_point.x * Picar.cog_x  # sign changed due to coor sys
-        output_data.delta_psi = - np.arctan(curve_point.slope)  # sign changed due to coor sys
-        try:
-            if curve_point.cy > 0:  # assign sign to curvature based on midpoint of circle
-                output_data.kappa = 1 / curve_point.cR
-            else:
-                output_data.kappa = - 1 / curve_point.cR
-        except Exception:
-            output_data.kappa = 0
-
-        # data from encoders
-        output_data.u_x = velocity_estimated
-
-        return output_data
 
     def update_parameters(self, Kp, Kp_c, xLA):
 
@@ -97,22 +85,3 @@ class PathTrackingFF(object):
             self.Kp_c = Kp_c
 
 
-class ControllerValues(object):
-    def __init__(self):
-
-        self.error = 0.0  # lateral error
-        self.delta_psi = 0.0  # relative orientation error
-
-        self.u_x = 0.0  # current longitudinal velocity
-        self.kappa = 0.0  # current curvature
-
-    def set_values(self, error, delta_psi, u_x, kappa):
-
-        if error is not None:
-            self.error = error
-        if delta_psi is not None:
-            self.delta_psi = delta_psi
-        if u_x is not None:
-            self.u_x = u_x
-        if kappa is not None:
-            self.kappa = kappa

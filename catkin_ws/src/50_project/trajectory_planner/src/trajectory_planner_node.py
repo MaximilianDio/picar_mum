@@ -115,10 +115,7 @@ class TrajectoryPlanner:
 
     def update_curved_point_clb(self, message):
         # message of type MsgCurvePoint2D
-        curve_point = CurvePoint2D([message.x, message.y])
-        curve_point.slope = message.slope
-        curve_point.circle = Circle2D(message.cR, Point2D([message.x, message.y]))
-
+        curve_point = message
         # update curvepoint
         if curve_point.x == DEFAULT_FALSE_FLOAT_VALUE or curve_point.x == DEFAULT_FALSE_FLOAT_VALUE:
             self.switch_params["line_detection"] = False
@@ -172,7 +169,7 @@ class TrajectoryPlanner:
         des_car_command.velocity = self.state_machine.des_velocity
         des_car_command.angle = self.state_machine.des_angle
 
-        self.publishers["des_car_command"].publish(des_car_command)
+        # self.publishers["des_car_command"].publish(des_car_command)
 
     def estimate_rel_obstacle_velocity(self, point):
 

@@ -5,7 +5,7 @@
     <env name="GAZEBO_MODEL_PATH" value="$(optenv GAZEBO_MODEL_PATH):$(find simulation)/models"/>
 
     <arg name="ns" default="simcar"/>
-    <arg name="verbose" default="true"/>
+    <arg name="verbose" default="false"/>
     <arg name="paused"/>
     <arg name="gui"/>
 
