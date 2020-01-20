@@ -17,12 +17,14 @@ add_message_files(
   CarCmd.msg
   Pose2DStamped.msg
   WheelSpeedStamped.msg
+  SteeringParameters.msg
 )
 
 add_service_files(
   FILES
   SetValue.srv
   SetBool.srv
+  SetSteeringParametersList.srv
 )
 
 generate_messages(

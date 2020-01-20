@@ -3,9 +3,9 @@ import rospy
 import yaml
 from geometry_msgs.msg import Point32
 from sensor_msgs.msg import Image
-from picar_msgs.srv import SetBool
+from picar_msgs.srv import SetBool, SetSteeringParametersList
 from std_msgs.msg import Float32
-from picar_msgs.msg import CarCmd, MsgCurvePoint2D
+from picar_msgs.msg import CarCmd, MsgCurvePoint2D, SteeringParameters
 from picar_common.picar_common import get_param, get_config_file_path, set_param
 from overtaker_state_machine import OvertakeStateMachine
 from picar_common.curve import *
@@ -72,6 +72,11 @@ class TrajectoryPlanner:
             SetBool,
             self.service_overtake_clb)
 
+        self.services["update_steering_parameters"] = rospy.Service(
+            "~update_steering_parameters",
+            SetSteeringParametersList,
+            self.service_steering_params_clb)
+
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
         # relative position of leaders blue ball to picar
@@ -94,6 +99,13 @@ class TrajectoryPlanner:
     def service_overtake_clb(self, request):
         """Sets values via service"""
         self.switch_params["overtake"] = request.value
+
+        return 1
+
+    def service_steering_params_clb(self, request):
+        self.state_machine.Kp_steering = request.Kp
+        self.state_machine.Kp_c_steering = request.Kp_c
+        self.state_machine.xLA_steering = request.xLA
 
         return 1
 
