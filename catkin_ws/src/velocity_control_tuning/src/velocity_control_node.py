@@ -32,8 +32,8 @@ class VelocityControllerTuning(object):
     def __init__(self):
         pygame.init()
         # Initialize controller
-        self.controller = VelocityController(0.04, 0.01)
-
+        self.controller = VelocityController(0.03, 0.005)
+        self.rate = rospy.Rate(80)
         vehicle_name = rospy.get_namespace().strip("/")
 
         self.velocity = 0.0
@@ -131,7 +131,7 @@ class VelocityControllerTuning(object):
 
             pygame.display.flip()
             self.pub_message(keys)
-            time.sleep(0.01)
+            self.rate.sleep()
 
     def check_direction_button(self, keyboard_input, keys):
         """Checks which arrow keys are pressed"""
@@ -218,7 +218,7 @@ class VelocityControllerTuning(object):
         if keys[self.K_0]:
             self.velocity = 1.0
         if keys[self.K_1]:
-            self.velocity = 0.1
+            self.velocity = 0.0
         if keys[self.K_2]:
             self.velocity = 0.2
         if keys[self.K_3]:

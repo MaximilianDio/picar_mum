@@ -8,7 +8,7 @@ class TrajectoryTestNode(object):
     """Race controller ROS node."""
 
     def __init__(self):
-        self.rate = rospy.Rate(100)
+        self.rate = rospy.Rate(80)
         self.publishers = {}
         # register all publishers
         self.init_publishers()
@@ -28,7 +28,7 @@ class TrajectoryTestNode(object):
             message.header.stamp = rospy.get_rostime()
             curTime = curTime.secs + float(curTime.nsecs * 1e-9)
             print "Time: " + str(curTime)
-            if curTime > 12 and curTime <= 20:
+            if curTime > 12 and curTime <= 15:
                 message.velocity = 0.5
                 message.angle = 0.0
             elif curTime > 15:

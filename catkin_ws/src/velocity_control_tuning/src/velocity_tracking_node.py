@@ -11,7 +11,7 @@ class VelocityTrackingNode(object):
     def __init__(self):
         self.publishers = {}
         self.init_subscribers()
-        self.controller = VelocityController(0.05, 0.025)
+        self.controller = VelocityController(0.1, 0.01)
 
         self.velocity = 0.0
         self.angle = 0.0  # absolute value
@@ -40,6 +40,7 @@ class VelocityTrackingNode(object):
 
         des_vel = trajectory_data.velocity
         car_cmd.angle = trajectory_data.angle
+        car_cmd.velocity = 0.0
 
         car_cmd.velocity = self.controller.get_velocity_output(self.cur_vel, des_vel)
 

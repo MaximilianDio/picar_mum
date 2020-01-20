@@ -29,13 +29,20 @@ class VelocityController(object):
         dt = self.cur_time - self.last_time
         if dt == 0:
             dt = 1
+            print("DEBUG 1")
 
         dv = self.current_vel - self.last_vel
 
         self.error = self.current_vel - self.desired_vel
-        vel_output = self.last_control + (- self.kp * self.error - self.kd * (dv/dt))
-        print("desired_vel: " + str(self.desired_vel))
-        print("actual_vel: " + str(self.current_vel))
+        if self.desired_vel == 0.0:
+            vel_output = 0.0
+        else:
+            vel_output = self.last_control + (- self.kp * self.error - self.kd * (dv/dt))
+        print("error: " + str(self.error))
+
+        if vel_output < 0:
+            vel_output = 0
+
         self.last_control = vel_output
 
         self.last_time = self.cur_time
