@@ -28,7 +28,7 @@ class TrajectoryTestNode(object):
             message.header.stamp = rospy.get_rostime()
             curTime = curTime.secs + float(curTime.nsecs * 1e-9)
             print "Time: " + str(curTime)
-            if curTime > 12 and curTime <= 15:
+            if curTime > 12 and curTime <= 20:
                 message.velocity = 0.5
                 message.angle = 0.0
             elif curTime > 15:

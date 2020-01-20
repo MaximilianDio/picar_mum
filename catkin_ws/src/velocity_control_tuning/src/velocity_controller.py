@@ -18,35 +18,27 @@ class VelocityController(object):
         self.cur_time = self.cur_time.secs + float(self.cur_time.nsecs * 1e-9)
         self.last_time = self.cur_time
         self.error = 0.0
-        self.error_integral = 0.0
-        self.sat = 2.0
         self.last_control = 0.0
 
     def get_velocity_output(self, meas, des_vel):
         self.current_vel = meas
         self.desired_vel = des_vel
 
-        if abs(des_vel) < 0.2:
-            self.last_control = 0.0
-
         self.cur_time = rospy.get_rostime()
         self.cur_time = self.cur_time.secs + float(self.cur_time.nsecs * 1e-9)
         dt = self.cur_time - self.last_time
+        if dt == 0:
+            dt = 1
+
         dv = self.current_vel - self.last_vel
 
         self.error = self.current_vel - self.desired_vel
-        vel_output = self.last_control - self.kp * self.error - self.kd * (dv/dt)
+        vel_output = self.last_control + (- self.kp * self.error - self.kd * (dv/dt))
+        print("desired_vel: " + str(self.desired_vel))
+        print("actual_vel: " + str(self.current_vel))
         self.last_control = vel_output
-
-        if abs(vel_output) > self.sat:
-            pass
-        else:
-            self.error_integral = self.error_integral + self.error * dt
 
         self.last_time = self.cur_time
         self.last_vel = self.current_vel
-        return 0.0 #vel_output
 
-    def update_gains(self, kp, kd):
-        self.kp = kp
-        self.kd = kd
+        return vel_output

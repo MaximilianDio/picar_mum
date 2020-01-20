@@ -32,7 +32,7 @@ class VelocityControllerTuning(object):
     def __init__(self):
         pygame.init()
         # Initialize controller
-        self.controller = VelocityController(0.12, 0.025)
+        self.controller = VelocityController(0.04, 0.01)
 
         vehicle_name = rospy.get_namespace().strip("/")
 
@@ -131,7 +131,7 @@ class VelocityControllerTuning(object):
 
             pygame.display.flip()
             self.pub_message(keys)
-            time.sleep(0.03)
+            time.sleep(0.01)
 
     def check_direction_button(self, keyboard_input, keys):
         """Checks which arrow keys are pressed"""
@@ -184,7 +184,7 @@ class VelocityControllerTuning(object):
             keys[self.K_9] = True
 
     def pub_message(self, keys):
-        """Publishes a CarCmd message to control the car.
+        """Publishes a CarCmd mzessage to control the car.
         Args:
             keys(list): List of bools corresponding to pressed/unpressed keys
         """
@@ -197,7 +197,6 @@ class VelocityControllerTuning(object):
 
         if keys[self.K_UP]:
             car_cmd.velocity = self.controller.get_velocity_output(self.cur_vel, self.velocity)
-            print("Pudblished Vel: " + str(car_cmd.velocity))
         if keys[self.K_DOWN]:
             car_cmd.velocity = -self.controller.get_velocity_output(self.cur_vel, self.velocity)
         if keys[self.K_LEFT]:
