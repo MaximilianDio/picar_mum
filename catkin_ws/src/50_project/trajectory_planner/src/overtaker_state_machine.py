@@ -33,10 +33,10 @@ class OvertakeStateMachine:
         # -- steering controller for state 1, 2 and 3*
         # --------------------------------------------------------------
         # TODO change values
-        self.Kp_steering = 1
-        self.Kp_c_steering = 1
-        self.xLA_steering = 1
-        self.steering_control_123star = PathTrackingFF(self.Kp_steering, self.Kp_c_steering, self.xLA_steering)
+        Kp_steering = 1
+        Kp_c_steering = 1
+        xLA_steering = 1
+        self.steering_control_123star = PathTrackingFF(Kp_steering, Kp_c_steering, xLA_steering)
 
         # -- velocity controller for state 1,2
         # ----------------------------------------------

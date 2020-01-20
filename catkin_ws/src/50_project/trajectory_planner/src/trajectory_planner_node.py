@@ -103,9 +103,9 @@ class TrajectoryPlanner:
         return 1
 
     def service_steering_params_clb(self, request):
-        self.state_machine.Kp_steering = request.Kp
-        self.state_machine.Kp_c_steering = request.Kp_c
-        self.state_machine.xLA_steering = request.xLA
+        self.state_machine.steering_control_123star.Kp= request.Kp
+        self.state_machine.steering_control_123star.Kp_c = request.Kp_c
+        self.state_machine.steering_control_123star.xLA = request.xLA
 
         return 1
 
