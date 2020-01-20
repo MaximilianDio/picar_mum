@@ -181,7 +181,8 @@ class TrajectoryPlanner:
         des_car_command.velocity = self.state_machine.des_velocity
         des_car_command.angle = self.state_machine.des_angle
 
-        # self.publishers["des_car_command"].publish(des_car_command)
+        self.publishers["des_car_command"].publish(des_car_command)
+
 
     def estimate_rel_obstacle_velocity(self, point):
 
