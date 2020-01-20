@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>steering_control</name>
+  <name>race_control</name>
   <version>0.0.0</version>
   <description>Control the car to race the lane</description>
 

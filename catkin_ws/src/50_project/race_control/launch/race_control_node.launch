@@ -6,13 +6,13 @@
     <!-- launch velocity_estimation_node -->
     <group if="$(arg local)">
         <group ns="$(arg ns)">
-            <node pkg="steering_control" type="steering_control_node.py" name="steering_control_node" output="screen"/>
+            <node pkg="race_control" type="race_control_node.py" name="race_control_node" output="screen"/>
         </group>
     </group>
 
     <group unless="$(arg local)">
         <group ns="$(arg ns)">
-            <node machine="$(arg machine)" pkg="steering_control" type="steering_control_node.py" name="steering_control_node" output="screen"/>
+            <node machine="$(arg machine)" pkg="race_control" type="race_control_node.py" name="race_control_node" output="screen"/>
         </group>
     </group>
 

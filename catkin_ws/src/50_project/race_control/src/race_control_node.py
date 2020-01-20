@@ -9,8 +9,8 @@ from steering_control import path_tracking_ff
 from velocity_control import velocity_controller
 
 
-class SteeringControlNode(object):
-    """Steering controller ROS node."""
+class RaceControlNode(object):
+    """race controller ROS node."""
 
     def __init__(self):
         pass
@@ -171,8 +171,8 @@ class SteeringControlNode(object):
 
 def main():
     """Starts the leader control node"""
-    rospy.init_node("leader_control_node")
-    SteeringControlNode()
+    rospy.init_node("race_control_node")
+    RaceControlNode()
     rospy.spin()
 
 
