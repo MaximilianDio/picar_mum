@@ -10,7 +10,7 @@ end
 % Box on the road
 
 % Length
-L = 0.2;
+L = 0.15;
 
 % width
 w = 0.2;
