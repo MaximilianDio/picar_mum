@@ -25,11 +25,11 @@ class TrajectoryTestNode(object):
         while not rospy.is_shutdown():
             curTime = rospy.get_rostime() - self.start_time
             message = CarCmd()
-            message.header.stamp = rospy.get_rostime()
+            message.header.stamp = rospy.get_rostime() - self.start_time
             curTime = curTime.secs + float(curTime.nsecs * 1e-9)
             print "Time: " + str(curTime)
             if curTime > 12 and curTime <= 15:
-                message.velocity = 0.5
+                message.velocity = 0.0
                 message.angle = 0.0
             elif curTime > 15:
                 message.velocity, message.angle = self.overtaker.get_feedforward_control(curTime - 15)

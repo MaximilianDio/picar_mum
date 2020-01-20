@@ -32,7 +32,7 @@ class VelocityControllerTuning(object):
     def __init__(self):
         pygame.init()
         # Initialize controller
-        self.controller = VelocityController(0.03, 0.005)
+        self.controller = VelocityController(0.04, 0.012)
         self.rate = rospy.Rate(80)
         vehicle_name = rospy.get_namespace().strip("/")
 

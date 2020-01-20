@@ -14,7 +14,7 @@ class OvertakingTrajectory(object):
     def __init__(self):
         file_path = os.path.join(rospkg.RosPack().get_path("race_control"),
                                  "src",
-                                 "v05to05.csv")
+                                 "Overtake.csv")
         traj = np.genfromtxt(file_path, delimiter=',')
         self.time = traj[0, :]
         self.velocity = traj[1, :]
