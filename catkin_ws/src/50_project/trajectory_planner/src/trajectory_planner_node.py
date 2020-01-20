@@ -5,7 +5,7 @@ from geometry_msgs.msg import Point32
 from sensor_msgs.msg import Image
 from picar_msgs.srv import SetBool, SetSteeringParametersList
 from std_msgs.msg import Float32
-from picar_msgs.msg import CarCmd, MsgCurvePoint2D, SteeringParameters
+from picar_msgs.msg import CarCmd, MsgCurvePoint2D
 from picar_common.picar_common import get_param, get_config_file_path, set_param
 from overtaker_state_machine import OvertakeStateMachine
 from picar_common.curve import *
@@ -80,7 +80,9 @@ class TrajectoryPlanner:
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
         # relative position of leaders blue ball to picar
+        # TODO: publish to des_car_command -> current bad fix publish to car_cmd
         self.publishers["des_car_command"] = rospy.Publisher("~desired_car_command", CarCmd,
+        #self.publishers["car_cmd"] = rospy.Publisher("~desired_car_command", CarCmd,
                                                              queue_size=1)
 
     def init_subscribers(self):
@@ -181,7 +183,7 @@ class TrajectoryPlanner:
         des_car_command.velocity = self.state_machine.des_velocity
         des_car_command.angle = self.state_machine.des_angle
 
-        self.publishers["des_car_command"].publish(des_car_command)
+        # self.publishers["des_car_command"].publish(des_car_command)
 
 
     def estimate_rel_obstacle_velocity(self, point):
