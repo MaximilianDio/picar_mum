@@ -46,7 +46,7 @@ problem.bounds.initialState.upp = startPoint;
 problem.bounds.finalState.low = finishPoint;
 problem.bounds.finalState.upp = finishPoint;
 
-problem.bounds.control.low = [0.4; - deg2rad(25)];
+problem.bounds.control.low = [0.8; - deg2rad(25)];
 problem.bounds.control.upp = [1.5; deg2rad(25)];
 
 
