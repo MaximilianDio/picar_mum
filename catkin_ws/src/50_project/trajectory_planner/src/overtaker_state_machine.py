@@ -168,7 +168,6 @@ class OvertakeStateMachine:
                 # stay in state
                 return
             else:
-
                 self.init_state_3_transition()
                 self.current_state = "3"
                 return
@@ -185,7 +184,7 @@ class OvertakeStateMachine:
         self.overtake_start_time = self.time
 
         # necessary overtake time (based on velocity and position of own vehicle and obstacle)
-        self.t_trajectory = self.time[len(self.trajectory.time) - 1]
+        self.t_trajectory = self.trajectory.time[len(self.trajectory.time) - 1]
 
     def state_3(self):
         """ open loop controlled overtaking maneuver, to other line"""
@@ -198,7 +197,7 @@ class OvertakeStateMachine:
         # open loop control with overtaking time
         open_loop_velocity, open_loop_angle = self.trajectory.get_feedforward_control(state_time)
 
-        # TODO: MATTI: -update desired angle and velocity
+        # update desired angle and velocity according to mappings
         self.des_velocity = self.mappings.get_velocity(open_loop_velocity)
         self.des_angle = self.mappings.get_angle(open_loop_angle)
 

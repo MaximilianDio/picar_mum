@@ -7,7 +7,7 @@ import os
 class OvertakingTrajectory(object):
 
     def __init__(self):
-        file_path = os.path.join(rospkg.RosPack().get_path("race_control"),
+        file_path = os.path.join(rospkg.RosPack().get_path("trajectory_planner"),
                                  "src",
                                  "Overtaker08.csv")
         traj = np.genfromtxt(file_path, delimiter=',')
