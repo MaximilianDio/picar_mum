@@ -53,6 +53,9 @@ class OvertakeStateMachine:
         Ki_distance = params_dict["Ki_distance"]
         self.velocity_control_3star = PIDDistanceController(Kp_distance, Kd_distance, Ki_distance)
 
+        # -- TRAJECTORY PLANNER FOR OVERTAKING
+        # TODO MATTI: init class overting trajectory
+
         # return values for car command
         self.des_velocity = 0.0
         self.des_angle = 0.0
@@ -74,22 +77,6 @@ class OvertakeStateMachine:
         elif self.current_state == "3":
             # call state 3
             self.state_3()
-
-        elif self.current_state == "4":
-            # call state
-            self.state_4()
-
-        elif self.current_state == "4*":
-            # call state
-            self.state_4_star()
-
-        elif self.current_state == "5":
-            # call state
-            self.state_5()
-
-        elif self.current_state == "5*":
-            # call state
-            self.state_5_star()
 
         else:
             raise ValueError
@@ -186,11 +173,14 @@ class OvertakeStateMachine:
         """ initialize necessary information before going to state 3 - e.g. calculate necessary overtake time,
         trajectory time ... """
 
+        # TODO MATTI: change
+        self.des_velocity = 0.8
+        self.des_angle = 0.0
+
         # use overtake_start_time to calculate delta time (e.g. time spent in state)
         self.overtake_start_time = self.time
 
-        # TODO calculate necessary overtake time (based on velocity and position of own vehicle and obstacle)
-        self.overtake_time = 10.0  # TODO: calculate here (state 3 and 4)
+        # TODO MATTI: calculate necessary overtake time (based on velocity and position of own vehicle and obstacle)
         self.t_trajectory = 5.0  # TODO: calculate necessary time to fulfill open loop maneuver (only trajectory)
 
     def state_3(self):
@@ -201,9 +191,9 @@ class OvertakeStateMachine:
         print "time spent in state 3: " + str(state_time)
 
         # run controller
-        # TODO open loop control with overtaking time
+        # TODO MATTI: open loop control with overtaking time
 
-        # TODO: update desired angle and velocity
+        # TODO: MATTI: -update desired angle and velocity
         self.des_velocity = 0.0
         self.des_angle = 0.0
 
@@ -212,99 +202,14 @@ class OvertakeStateMachine:
             # stay in state
             return
         else:
-            # FIXME do we need to reset time for state 4???
-            if self.switch_params["line_detection"]:
-                self.current_state = "4"
-                return
-            else:
-                self.current_state = "4*"
-                return
-
-    def state_4(self):
-        """ closed loop controlled - drive car parallel to obstacle (parallel to line with offset) until obstacle is
-        overtaken and save passing is possible """
-
-        # time spend in this state and state 3
-        state_time = self.time - self.overtake_start_time
-        print "time spent in state 4,4* and 3: " + str(state_time)
-
-        # run controller
-        if self.curve_point is not None:
-            # TODO: use curve position and derive necessary action e.g. speed and steering angle (offset required!!)
-            # self.curve_point is CurvePoint2D
-            pass
-
-        # TODO: update desired angle and velocity
-        self.des_velocity = 0.0
-        self.des_angle = 0.0
-
-        # change state if needed
-        if state_time < self.overtake_time:
-            if not self.switch_params["line_detection"]:
-                self.current_state = "4*"
-                return
-            # stay in state
-            return
-        else:
-            self.init_state_5_transition()
-            self.current_state = "5"
-            return
-
-    def state_4_star(self):
-        """ open loop controlled - drive car parallel to obstacle until obstacle is overtaken and save passing
-         is possible"""
-
-        # time spend in this state and state 3
-        state_time = self.time - self.overtake_start_time
-        print "time spent in state 4,4* and 3: " + str(state_time)
-
-        # run controller
-        # TODO control openloop
-
-        # TODO: update desired angle and velocity
-        self.des_velocity = 0.0
-        self.des_angle = 0.0
-
-        # change state if needed
-        if state_time < self.overtake_time:
-            if self.switch_params["line_detection"]:
-                self.current_state = "4"
-                return
-            # stay in state
-            return
-        else:
-            self.init_state_5_transition()
-            self.current_state = "5"
-            return
-
-    def init_state_5_transition(self):
-        # reset overtaker time
-        self.overtake_start_time = self.time
-
-        # TODO: calculate necessary time to fulfill open loop maneuver (only openloop trajectory)
-        self.t_trajectory = 5.0
-
-    def state_5(self):
-        """ final state open loop trajectory controller back to starting line (in front of obstacle)"""
-
-        state_time = self.time - self.overtake_start_time
-        print "time spent in state 5: " + str(state_time)
-
-        # run controller
-        # TODO open loop control with overtaking time
-
-        # TODO: update desired angle and velocity
-        self.des_velocity = 0.0
-        self.des_angle = 0.0
-
-        # TODO decide when to switch to 5*
-        if state_time <= self.t_trajectory:
-            # stay in state
-            return
-        else:
             self.current_state = "1"
             return
+            # FIXME do we need to reset time for state 4???
+            # if self.switch_params["line_detection"]:
+            #     self.current_state = "4"
+            #     return
+            # else:
+            #     self.current_state = "4*"
+            #     return
 
-    def state_5_star(self):
-        # TODO (necessary??!)
-        pass
+
