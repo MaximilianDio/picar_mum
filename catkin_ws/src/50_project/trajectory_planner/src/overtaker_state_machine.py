@@ -1,5 +1,6 @@
 from distance_controller import PIDDistanceController
 from steering_controller import PathTrackingFF
+from velocity_picker import VelocityPicker
 
 
 class OvertakeStateMachine:
@@ -42,8 +43,7 @@ class OvertakeStateMachine:
 
         # -- velocity controller for state 1,2
         # ----------------------------------------------
-        # TODO
-        # self.velocity_control_12 =
+        self.velocity_control_12 = VelocityPicker()
 
         # -- PID DISTANCE controller for state 3*
         # ----------------------------------------------
@@ -100,7 +100,7 @@ class OvertakeStateMachine:
 
         if self.curve_point is not None:
             des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
-            des_velocity = self.vel_reference
+            des_velocity = self.velocity_control_12.get_des_vel(self.curve_point.cR)
         else:
             # stop car when no line is detected!
             des_angle = 0.0
@@ -120,7 +120,7 @@ class OvertakeStateMachine:
         # run controller
         if self.curve_point is not None:
             des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
-            des_velocity = self.vel_reference
+            des_velocity = des_velocity = self.velocity_control_12.get_des_vel(self.curve_point.cR)
         else:
             # stop car when no line is detected!
             des_angle = 0.0
