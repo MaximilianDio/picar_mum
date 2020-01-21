@@ -51,6 +51,9 @@ class PathTrackingFF(object):
         u_x = velocity_estimated
 
         # feedback steering angle
+        if delta_psi == float("inf"):
+            delta_psi = 0.0
+
         delta_fb = - self.Kp * (error + self.xLA * delta_psi)
 
         # feedforward steering angle due to curvature and longitudinal velocity
