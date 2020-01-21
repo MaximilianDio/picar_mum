@@ -131,7 +131,7 @@ class OvertakeStateMachine:
                 # stay in state 2
                 return
             else:
-                if not self.switch_params["overtake"]:
+                if not self.switch_params["overtake"] and self.rel_obstacle_point.x < 2 * self.min_dist_obstacle:
                     self.current_state = "3*"
                     self.velocity_control_3star.reset_integrated_error()
                     return
@@ -208,5 +208,3 @@ class OvertakeStateMachine:
         else:
             self.current_state = "1"
             return
-
-
