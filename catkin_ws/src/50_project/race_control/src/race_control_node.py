@@ -151,6 +151,12 @@ class RaceControlNode(object):
 
         velocity = self.velocity_control.get_velocity_output(self.velocity_est, 2.5)  # input in meters pro second
 
+        if velocity < 0:
+            print("Velocity negativ!!!")
+            velocity = 0
+        else:
+            velocity = velocity
+
         self.publish_car_cmd(delta, velocity)
 
     def publish_car_cmd(self, steering_angle, velocity):
