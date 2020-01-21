@@ -1,6 +1,8 @@
 from distance_controller import PIDDistanceController
 from steering_controller import PathTrackingFF
 from velocity_picker import VelocityPicker
+from trajectoryplanner import OvertakingTrajectory
+from picar.parameters import Picar
 
 
 class OvertakeStateMachine:
@@ -33,7 +35,7 @@ class OvertakeStateMachine:
 
         # TODO init all controller types and values (as class objects)
         # initialize controllers
-        # --------------------------------------------------------------
+        # --------------------------------------------------------------/home/mattivahs/picar_mum/catkin_ws/src/50_project/trajectory_planner/src
         # -- steering controller for state 1, 2 and 3*
         # --------------------------------------------------------------
         Kp_steering = params_dict["Kp_steering"]
@@ -55,6 +57,8 @@ class OvertakeStateMachine:
 
         # -- TRAJECTORY PLANNER FOR OVERTAKING
         # TODO MATTI: init class overting trajectory
+        self.trajectory = OvertakingTrajectory()
+        self.mappings = Picar()
 
         # return values for car command
         self.des_velocity = 0.0
@@ -107,7 +111,7 @@ class OvertakeStateMachine:
         # run controller
         if self.curve_point is not None:
             des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
-            des_velocity = des_velocity = self.velocity_control_12.get_des_vel(self.curve_point.cR)
+            des_velocity = self.velocity_control_12.get_des_vel(self.curve_point.cR)
         else:
             # stop car when no line is detected!
             des_angle = 0.0
@@ -173,15 +177,15 @@ class OvertakeStateMachine:
         """ initialize necessary information before going to state 3 - e.g. calculate necessary overtake time,
         trajectory time ... """
 
-        # TODO MATTI: change
-        self.des_velocity = 0.8
-        self.des_angle = 0.0
+        # desired initial values
+        self.des_velocity = self.trajectory.velocity[0]
+        self.des_angle = self.trajectory.angle[0]
 
         # use overtake_start_time to calculate delta time (e.g. time spent in state)
         self.overtake_start_time = self.time
 
-        # TODO MATTI: calculate necessary overtake time (based on velocity and position of own vehicle and obstacle)
-        self.t_trajectory = 5.0  # TODO: calculate necessary time to fulfill open loop maneuver (only trajectory)
+        # necessary overtake time (based on velocity and position of own vehicle and obstacle)
+        self.t_trajectory = self.time[len(self.trajectory.time) - 1]
 
     def state_3(self):
         """ open loop controlled overtaking maneuver, to other line"""
@@ -191,11 +195,12 @@ class OvertakeStateMachine:
         print "time spent in state 3: " + str(state_time)
 
         # run controller
-        # TODO MATTI: open loop control with overtaking time
+        # open loop control with overtaking time
+        open_loop_velocity, open_loop_angle = self.trajectory.get_feedforward_control(state_time)
 
         # TODO: MATTI: -update desired angle and velocity
-        self.des_velocity = 0.0
-        self.des_angle = 0.0
+        self.des_velocity = self.mappings.get_velocity(open_loop_velocity)
+        self.des_angle = self.mappings.get_angle(open_loop_angle)
 
         # change state if needed
         if state_time < self.t_trajectory:
@@ -204,12 +209,5 @@ class OvertakeStateMachine:
         else:
             self.current_state = "1"
             return
-            # FIXME do we need to reset time for state 4???
-            # if self.switch_params["line_detection"]:
-            #     self.current_state = "4"
-            #     return
-            # else:
-            #     self.current_state = "4*"
-            #     return
 
 
