@@ -1,7 +1,4 @@
 #sim parameters
-kp:  4 #5 #p_gain of controller
-xLA: 0.02 #0.1 # Look ahead distance in m of steering control
-kp_c: 0.1 #0.3 #gain of feed forward model term
-
-
-
+kp:  1.5 #5 #p_gain of controller
+xLA: 0.25 #0.1 # Look ahead distance in m of steering control
+kp_c: 0.5 #0.3 #gain of feed forward model term
