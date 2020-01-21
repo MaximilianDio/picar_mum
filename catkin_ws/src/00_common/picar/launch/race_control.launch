@@ -5,7 +5,7 @@
     <arg name="paused" default="true"/>
     <arg name="gui" default="true"/>
     <arg name="local" default="true"/>
-    <arg name="compute_on_pi" default="false"/>
+    <arg name="compute_on_pi" default="true"/>
 
 
     <machine
@@ -60,11 +60,6 @@
             <arg name="local" value="$(arg local)"/>
         </include>
 
-
-        <!-- start test_extrinsics_node -->
-        <include file="$(find extrinsics)/launch/test_extrinsics_node.launch">
-            <arg name="ns" value="$(arg ns)"/>
-        </include>
     </group>
 
 
