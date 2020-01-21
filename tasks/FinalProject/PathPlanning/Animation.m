@@ -154,7 +154,7 @@ figure('Name','Car-Animation','NumberTitle','off','position',...
     Pix_Screen(4)*window_scale])%window size
 % xlim = ([-1 50]);
 % ylim = ([-1 3]);
-set(gca,'DataAspectRatio',[1 1 1])%no distorted dimension
+% set(gca,'DataAspectRatio',[1 1 1])%no distorted dimension
 hold on
 
 

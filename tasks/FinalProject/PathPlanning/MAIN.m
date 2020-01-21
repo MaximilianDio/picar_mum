@@ -15,7 +15,7 @@ xBnd = [-5, 5];
 yBnd = [-10, 10];
 
 startPoint = [0; 0; 0];   %Start here
-finishPoint = [1.5; 0.1; 0];   %Finish here
+finishPoint = [1.8; 0.1; 0];   %Finish here
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
@@ -23,7 +23,7 @@ finishPoint = [1.5; 0.1; 0];   %Finish here
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 
 problem.func.dynamics = @(t,x,u)( BycicleModel(t,x,u) );
-problem.func.pathObj = @(t,x,u)(sum([1000 * u(1,:); 1000 * u(2,:)].^2,1));
+problem.func.pathObj = @(t,x,u)(sum([100 * u(1,:); u(2,:)].^2,1));
 problem.func.pathCst = @(t,x,u)( pathConstraint(t,x,u) );
 problem.func.bndCst = @(t0,x0,tF,xF,u0,uF)( boundaryConstraint(t0, x0, tF, xF,u0,uF) );
 
@@ -76,7 +76,7 @@ problem.options.nlpOpt = optimset(...
 % problem.options.method = 'gpops';
 
 problem.options.method = 'trapezoid';
-problem.options.trapezoid.nGrid = 30;
+problem.options.trapezoid.nGrid = 20;
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 %                            Solve!                                       %

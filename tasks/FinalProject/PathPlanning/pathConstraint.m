@@ -10,13 +10,13 @@ end
 % Box on the road
 
 % Length
-L = 0.2;
+L = 0.32;
 
 % width
-w = 0.2;
+w = 0.32;
 
 % Position of the box
-p = [0.75; 0];
+p = [0.8; 0];
 % Circle around box with radius
 r = sqrt(L^2 + w^2);
 % 
