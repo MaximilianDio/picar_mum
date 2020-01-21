@@ -43,11 +43,10 @@ class VelocityTrackingNode(object):
         car_cmd.velocity = 0.0
         time = trajectory_data.header.stamp
         time = time.secs + float(time.nsecs * 1e-9)
-        #if time > 15:
-         #   car_cmd.velocity = des_vel
-        #else:
-        car_cmd.velocity = self.controller.get_velocity_output(self.cur_vel, des_vel)
-
+        if time > 15:
+            car_cmd.velocity = get_velocity(des_vel)
+        else:
+            car_cmd.velocity = self.controller.get_velocity_output(self.cur_vel, des_vel)
         self.publisher.publish(car_cmd)
 
 
@@ -55,6 +54,16 @@ def main():
     rospy.init_node("velocity_tracking_node")
     VelocityTrackingNode()
     rospy.spin()
+
+
+# velocity transform
+def get_velocity(x):
+    p1 = -0.76149
+    p2 = 2.6308
+    p3 = -0.3301
+
+    y = p1 * x * x + p2 * x + p3
+    return y
 
 
 if __name__ == "__main__":
