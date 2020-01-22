@@ -25,6 +25,7 @@ add_service_files(
   SetBool.srv
   SetSteeringParametersList.srv
   SetDistanceParametersList.srv
+  SetVelocityParametersList.srv
 )
 
 generate_messages(

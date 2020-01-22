@@ -1,9 +1,10 @@
 #! /usr/bin/env python
 import numpy as np
 from picar.parameters import Picar, Wheel
+from picar_common.curve import CurvePoint2D
 
 
-class SteeringController(object):
+class PathTrackingFF(object):
 
     def __init__(self, Kp, Kp_c, xLA):
 
@@ -31,12 +32,12 @@ class SteeringController(object):
 
     def get_steering_output(self, curve_point, velocity_estimated):
 
-        delta_psi = - np.arctan(curve_point.slope)  # sign changed due to coor sys
+        if curve_point.slope == float("inf"):
+            delta_psi = 0.0  # only use psi if 3 points are detected - look a head term less influence !
+        else:
+            delta_psi = - np.arctan(curve_point.slope)  # sign changed due to coor sys
 
         # feedback steering angle
-        if delta_psi == float("inf"):
-            delta_psi = 0.0
-
 
         if curve_point.x == float("inf"):
             print("No useable Imagedata")
@@ -45,11 +46,9 @@ class SteeringController(object):
         else:
             error = - curve_point.y / curve_point.x * Picar.cog_x  # sign changed due to coor sys
 
-
-
         # assign sign to curvature based on midpoint of circle
         try:
-            if curve_point.cy > 0:
+            if curve_point.cy > 0:  # assign sign to curvature based on midpoint of circle
                 kappa = 1 / curve_point.cR
             else:
                 kappa = - 1 / curve_point.cR
@@ -66,7 +65,7 @@ class SteeringController(object):
         g_ff = self.mass * u_x ** 2 / self.l * ((self.b * self.C_r + self.a * self.C_f * (self.Kp * self.xLA - 1)) / (
                 self.C_r * self.C_f)) + self.l - self.b * self.Kp * self.xLA
 
-        delta_ff = self.Kp_c * g_ff * kappa
+        delta_ff = self.Kp_c * g_ff * kappa  # only computed if 3 points are avail
 
         # total steering angle
         delta = delta_ff + delta_fb
