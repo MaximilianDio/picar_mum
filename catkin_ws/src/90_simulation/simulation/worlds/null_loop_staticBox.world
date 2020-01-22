@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+    <world name="null_loop_world">
+        <light name="sun" type="directional">
+            <pose>0 0 30 0.5 0 0 0</pose>
+            <cast_shadows>1</cast_shadows>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <attenuation>
+                <range>100</range>
+            </attenuation>
+            <direction>-0.5 0.5 -1</direction>
+        </light>
+
+        <physics name='default_physics' default='0' type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+
+
+        <gravity>0 0 -9.8</gravity>
+
+        <scene>
+            <ambient>1 1 1 1</ambient>
+            <background>0.2 0.0 0.2 1</background>
+            <shadows>1</shadows>
+            <grid>0</grid>
+        </scene>
+
+        <include>
+            <uri>model://empty_ground_plane</uri>
+            <pose>1 0 -0.001 0 0 0</pose>
+        </include>
+
+
+        <!-- create the map -->
+        <include>
+            <uri>model://null_track</uri>
+        </include>
+
+        <model name="Tag0">
+            <pose>1.5 2 0.1 0 0 0</pose>
+            <link name="Tag-0">
+            <collision name="collision">
+                <geometry>
+                <box>
+                    <size>.2 .2 .2</size>
+                </box>
+                </geometry>
+            </collision>
+            <visual name="visual">
+                <geometry>
+                <box>
+                    <size>.2 .2 .2</size>
+                </box>
+                </geometry>
+                <material>
+                <script>
+                    <uri>model://Tags/Tag-0/scripts</uri>
+                    <uri>model://Tags/Tag-0/textures</uri>
+                    <name>Tag0</name>
+                </script>
+                </material>
+            </visual>
+            </link>
+
+            <!-- <link name="box">
+            <pose>-1 0 0 0 0 0</pose>
+            <collision name="collision">
+                <geometry>
+                <box>
+                    <size>.15 .15 .15</size>
+                </box>
+                </geometry>
+            </collision>
+            <visual name="visual">
+                <geometry>
+                <box>
+                    <size>.15 .15 .15</size>
+                </box>
+                </geometry>
+                <material>
+                <script>
+                    <uri>model://Tags/Tag-1/scripts</uri>
+                    <uri>model://Tags/Tag-1/textures</uri>
+                    <name>Tag1</name>
+                </script>
+                </material>
+            </visual>
+            </link> -->
+        </model>
+    </world>
+</sdf>

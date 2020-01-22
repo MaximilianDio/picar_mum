@@ -1,0 +1,21 @@
+
+########################################
+# steering control gains for state 1,2,3*
+Kp_steering: 1.3
+Kp_c_steering: 0.5
+xLA_steering: 0.28
+########################################
+# velocity control for state 1,2
+vel_reference: 0.7
+switch_bound: 1.4
+
+########################################
+min_dist_obstacle: 1.5 # distance when state machine switches to state 3*
+                       # (should be larger than des_distance to obstacle)
+des_distance_to_obstacle: 0.5 # reference input for distance controller
+                              # (should be larger than possible values e.g. 0.5
+########################################
+# velocity control gains for state 3* -> keep distance to obstacle
+Kp_distance: 0.9
+Kd_distance: 1.0
+Ki_distance: 0.01

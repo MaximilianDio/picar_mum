@@ -31,7 +31,7 @@ class LeaderGetter(object):
 
         self.update_params(params)
 
-        self.use_trackbars = True
+        self.use_trackbars = False
 
         if self.use_trackbars == True:
             self.__create_trackbar()
@@ -55,13 +55,13 @@ class LeaderGetter(object):
         self.HEIGHT = 600  # px
         self.trackbar_window = np.zeros((self.WIDTH, self.HEIGHT, 3), np.uint8)
         self.window_name = "trackbars"
-        #cv2.namedWindow(self.window_name)
+        cv2.namedWindow(self.window_name)   # Need to be opend
         for name, value in zip(self.TRACKBAR_NAMES, self.HSV_values):
             print name
-            #cv2.createTrackbar(name, self.window_name, value, 255, nothing)
+            cv2.createTrackbar(name, self.window_name, value, 255, nothing)
 
     def __update_trackbars(self):
-        #cv2.imshow(self.window_name, self.trackbar_window)
+        cv2.imshow(self.window_name, self.trackbar_window)
         cv2.waitKey(1)
 
     def __update_trackbar_pos(self):
@@ -87,7 +87,7 @@ class LeaderGetter(object):
         self.mask_param_green_high[2] = cv2.getTrackbarPos("V_green_h", self.window_name)
 
         # update circle detection parameters
-        # self.dp = cv2.getTrackbarPos("dp", self.window_name)
+        self.dp = cv2.getTrackbarPos("dp", self.window_name)
         self.minDist = cv2.getTrackbarPos("minDist", self.window_name)
         self.param1 = cv2.getTrackbarPos("param1", self.window_name)
         self.param2 = cv2.getTrackbarPos("param2", self.window_name)

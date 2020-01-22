@@ -1,5 +1,6 @@
 import math
 
+
 def diff(p1, p2):
     """
 
@@ -52,11 +53,23 @@ class CurvePoint2D(Point2D):
 
 class Circle2D:
 
-    def __init__(self, p1, p2, p3):
-        if isinstance(p1, Point2D) and isinstance(p2, Point2D) and isinstance(p3, Point2D):
-            self.calc_circle(p1, p2, p3)
-        else:
-            raise ValueError("input must be 3 point2D objects")
+    def __init__(self, *args, **kwargs):
+        if len(args) == 2:
+            radius = args[0]
+            center_point = args[1]
+
+            if isinstance(radius, float) and isinstance(center_point, Point2D):
+                self.center = radius
+                self.center = Point2D([center_point.x, center_point.y])
+        elif len(args) == 3:
+            p1 = args[0]
+            p2 = args[1]
+            p3 = args[2]
+
+            if isinstance(p1, Point2D) and isinstance(p2, Point2D) and isinstance(p3, Point2D):
+                self.calc_circle(p1, p2, p3)
+            else:
+                raise ValueError("input must be 3 point2D objects")
 
     def calc_circle(self, p1, p2, p3):
 
@@ -101,7 +114,6 @@ class Circle2D:
                 grad_L1 = -1 / gradp1p2
                 x = mp2.x
                 y = grad_L1 * (x - mp1.x) + mp1.y
-
 
         # calculate radius
         radius = math.sqrt(math.pow(p1.x - x, 2) + math.pow(p1.y - y, 2))
