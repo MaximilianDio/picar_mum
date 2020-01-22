@@ -28,7 +28,7 @@ class OvertakeStateMachine:
         self.min_dist_obstacle = params_dict["min_dist_obstacle"]  # defined in yaml file
         self.overtake_time = None  # calculated during transition to state 3
 
-        # calculated in transition to state 3 and 5
+        # calculated in transition to state 3
         self.t_trajectory = None
 
         # TODO init all controller types and values (as class objects)
@@ -89,7 +89,7 @@ class OvertakeStateMachine:
 
         if self.curve_point is not None:
             des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
-            des_velocity = self.velocity_control_12.get_velocity(self.curve_point.cR*np.sign(self.curve_point.cy))
+            des_velocity = self.velocity_control_12.get_velocity(self.curve_point.cR * np.sign(self.curve_point.cy))
         else:
             # stop car when no line is detected!
             des_angle = 0.0
@@ -109,7 +109,7 @@ class OvertakeStateMachine:
         # run controller
         if self.curve_point is not None:
             des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
-            des_velocity = self.velocity_control_12.get_velocity(self.curve_point.cR*np.sign(self.curve_point.cy))
+            des_velocity = self.velocity_control_12.get_velocity(self.curve_point.cR * np.sign(self.curve_point.cy))
         else:
             # stop car when no line is detected!
             des_angle = 0.0
@@ -206,10 +206,3 @@ class OvertakeStateMachine:
         else:
             self.current_state = "1"
             return
-            # FIXME do we need to reset time for state 4???
-            # if self.switch_params["line_detection"]:
-            #     self.current_state = "4"
-            #     return
-            # else:
-            #     self.current_state = "4*"
-            #     return
