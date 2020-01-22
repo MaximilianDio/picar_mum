@@ -13,9 +13,3 @@ switch_bound: 1.4
 # velocity control gains
 Kp_velocity: 0.0
 Kd_velocity: 0.0
-
-########################################
-min_dist_obstacle: 1.5 # distance when state machine switches to state 3*
-                       # (should be larger than des_distance to obstacle)
-des_distance_to_obstacle: 0.5 # reference input for distance controller
-                              # (should be larger than possible values e.g. 0.5

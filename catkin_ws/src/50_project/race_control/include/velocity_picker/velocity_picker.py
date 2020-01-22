@@ -1,4 +1,3 @@
-
 class VelocityPicker(object):
 
     def __init__(self):
@@ -11,7 +10,14 @@ class VelocityPicker(object):
         self.minimal_velocity = 0.8  # minimal/basic velocity
         self.switch_bound = 2  # radius at which size the car should switch to fast velocity
 
-    def get_velocity(self, cur_estimated_radius):
+    def get_velocity(self, curve_point):
+
+        # assign sign to radius  based on midpoint of circle
+        # TODO test
+        if curve_point.cy > 0:
+            cur_estimated_radius = curve_point.cR
+        else:
+            cur_estimated_radius = - curve_point.cR
 
         ave = self.moving_average(cur_estimated_radius)
         if ave > self.switch_bound:
