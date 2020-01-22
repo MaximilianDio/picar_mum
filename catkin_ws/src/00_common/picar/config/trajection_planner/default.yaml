@@ -6,10 +6,10 @@ Kp_c_steering: 0.5
 xLA_steering: 0.25
 ########################################
 # velocity control for state 1,2
-vel_reference: 0.6
+vel_reference: 0.3
 
 ########################################
-min_dist_obstacle: 1.2 # distance when state machine switches to state 3*
+min_dist_obstacle: 0.8 # distance when state machine switches to state 3*
                        # (should be larger than des_distance to obstacle)
 des_distance_to_obstacle: 0.5 # reference input for distance controller
                               # (should be larger than possible values e.g. 0.5
