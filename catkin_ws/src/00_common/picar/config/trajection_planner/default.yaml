@@ -11,9 +11,10 @@ switch_bound: 1.4
 
 ########################################
 min_dist_obstacle: 1.5 # distance when state machine switches to state 3*
-                       # (should be larger than des_distance to obstacle)
+# (should be larger than des_distance to obstacle)
 des_distance_to_obstacle: 0.5 # reference input for distance controller
-                              # (should be larger than possible values e.g. 0.5
+# WARNING !!!!!should be larger than possible values e.g. apriltag_quatschwert !!!!!!
+apriltag_quatschwert: 0.45 # ONLY CHNAGE IF YOU KNOW WHAT YOU ARE DOING
 ########################################
 # velocity control gains for state 3* -> keep distance to obstacle
 Kp_distance: 0.9

@@ -39,6 +39,7 @@ class TrajectoryPlanner:
         self.setup_params(config_file_path)
 
         self.debug_flag = self._params["Debug"]
+        self.apriltag_quatschwert = self._params["apriltag_quatschwert"]
 
         # register all publishers
         self.init_subscribers()
@@ -151,7 +152,7 @@ class TrajectoryPlanner:
     # ---------------------- Topic Callbacks -----------------------------
 
     def update_obstacle_pos_clb(self, message):
-        quatschwert = 0.5  # TODO
+        quatschwert = self.apriltag_quatschwert
 
         obstacle = Point2D([message.x, message.y])
 
