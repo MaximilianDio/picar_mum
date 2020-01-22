@@ -1,0 +1,27 @@
+<launch>
+    <arg name="ns" default="picar04"/>
+    <arg name="machine" default="$(arg ns)"/>
+    <arg name="sim" default="false"/>
+    <arg name="paused" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="compute_on_pi" default="false"/>
+
+
+    <machine
+            name="$(arg machine)"
+            address="$(arg machine).local"
+            user="pi"
+            env-loader="/home/pi/picar_mum/catkin_ws/env.sh"
+    />
+
+
+    <!-- start curve_detection_node -->
+    <remap from="curved_line_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
+    <include file="$(find curved_line_detection)/launch/curved_line_detection_node.launch">
+        <arg name="ns" value="$(arg ns)"/>
+        <arg name="machine" value="$(arg machine)"/>
+        <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
+    </include>
+
+
+</launch>

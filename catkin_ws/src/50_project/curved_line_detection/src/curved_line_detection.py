@@ -57,6 +57,28 @@ class Trackbar:
             self.param_dict[parameter][0] = cv2.getTrackbarPos(parameter, self.window_name)
 
 
+def average_points(points,N):
+
+    points = [points[i * N:(i + 1) * N] for i in range((len(points) + N - 1) // N)]
+    points_tmp = []
+    for point_chunks in points:
+        try:
+            line = np.array(point_chunks)
+            line_tmp = []
+            for i in range(line.shape[1]):
+                point = list(np.average(line[:, i], axis=0).astype(int))
+
+                line_tmp.append(point)
+
+            points_tmp.append(line_tmp)
+
+        except Exception:
+            for line in point_chunks:
+                points_tmp.append(line)
+
+    return points_tmp
+
+
 class CurvePointExtractor:
 
     def __init__(self, hsv_mask_interval, num_stripes, roi_interval, use_trackbar=True):
@@ -149,7 +171,7 @@ class CurvePointExtractor:
 
         # blur image
         try:
-            roi_hsv = cv2.GaussianBlur(roi_hsv, (3, 3), cv2.BORDER_DEFAULT)
+            roi_hsv = cv2.GaussianBlur(roi_hsv, (5, 3), cv2.BORDER_DEFAULT)
         except:
             # do nothing
             pass
@@ -157,7 +179,23 @@ class CurvePointExtractor:
         # mask image
         mask_roi = self.__mask(roi_hsv)
 
+        # median filter to get rid of small imperfections
+        mask_roi = cv2.medianBlur(mask_roi, 3)
+
+        # erode mask
+        kernel = np.ones((5, 1), np.uint8)
+        mask_roi = cv2.erode(mask_roi, kernel, iterations=1)
+        mask_roi = cv2.dilate(mask_roi, kernel, iterations=1)
+
+        # show mask result in trackbar window -> will resize window to width of mask!!!
+        if self.use_trackbars:
+            cv2.imshow(self.trackbar.window_name, mask_roi)
+            cv2.waitKey(1)
+
         curve_points = []
+
+        N = 20
+        self.__num_stripes = self.__num_stripes * N
         # number of stripes -> number of points in x direction of car
         for i in range(0, self.__num_stripes, 1):
             # calculate cropping borders for stripes
@@ -167,11 +205,11 @@ class CurvePointExtractor:
             y = int((y1 + y2) / 2)  # alternative 1
             # y = int(y2 - 1)  # alternative 2
 
-            # crop image to line
-            line = mask_roi[y, :]
-
             # offset to original image for later recalculation to original image coordinates
             line_offset = [self.__roi_offset[0], y + self.__roi_offset[1]]
+
+            # crop image to line
+            line = mask_roi[y, :]
 
             # get edges - return -255 to 255
             edge = cv2.Sobel(line, cv2.CV_64F, 0, 1, ksize=3)
@@ -188,10 +226,13 @@ class CurvePointExtractor:
                 for start_point, end_point in points:
                     curve_point = [(start_point[0] + end_point[0]) / 2 + line_offset[0], line_offset[1]]
                     curve_points[i].append(curve_point)
+                    break
             except IndexError:
                 print "error with point extraction"
 
         curve_points = [x for x in curve_points if x != []]
+
+        curve_points = average_points(curve_points,N)
         return curve_points
 
     def __mask(self, img_hsv):
@@ -223,17 +264,13 @@ class CurvePointExtractor:
         mask[:, 0:2] = 0
         mask[:, -1:-3] = 0
 
-        # show mask result in trackbar window -> will resize window to width of mask!!!
-        if self.use_trackbars:
-            cv2.imshow(self.trackbar.window_name, mask)
-            cv2.waitKey(1)
-
         return mask
 
     def detect_curve(self, image):
         # update parameters from trackbar
         self.__update_param()
 
+        # TODO if allready cropped than this part can be removed!
         roi = self.__get_roi(image)
         curve_points = self.__extract_image_curve_points(roi)
 
