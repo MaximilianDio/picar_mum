@@ -173,8 +173,9 @@ class TrajectoryPlanner:
     def run_node(self, time):
         """ main callback which will be called by pacemaker node, updates all necessary data to state machine and runs
         it state machine calls corresponding trajectory planner which updates desired velocity and angle!"""
-
-        self.time = time.data
+        time = rospy.get_rostime()
+        self.time = time.secs + time.nsecs * 1e-9
+        #self.time = time.data
 
         # update time in state machine
         self.state_machine.time = self.time
