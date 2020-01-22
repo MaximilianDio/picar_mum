@@ -5,7 +5,7 @@
     <arg name="paused" default="true"/>
     <arg name="gui" default="true"/>
     <arg name="local" default="true"/>
-    <arg name="compute_on_pi" default="true"/>
+    <arg name="compute_on_pi" default="false"/>
 
 
     <machine

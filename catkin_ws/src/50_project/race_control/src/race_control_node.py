@@ -5,7 +5,7 @@ from picar_common.picar_common import get_param, get_config_file_path, set_param
 from picar_msgs.msg import CarCmd, MsgCurvePoint2D
 from std_msgs.msg import Float64, Float32
 from picar_msgs.srv import SetValue
-from steering_control import path_tracking_ff
+from steering_control import steering_controller
 from velocity_control import velocity_controller
 
 
@@ -23,11 +23,13 @@ class RaceControlNode(object):
         self.last_time = 0.0
         self.velocity_est = 0.0
 
+        # import parameters from config yaml files
         config_file_name = get_param("~config_file_name", "default")
 
-        config_file_path = get_config_file_path("steering_control",
+        config_file_path = get_config_file_path("race_control",
                                                 config_file_name)
 
+        # shut down node if no config file could be found
         if config_file_path is None:
             rospy.signal_shutdown("Could not find any config file... "
                                   "Shutting down!")
@@ -35,52 +37,30 @@ class RaceControlNode(object):
         # read the controller configuration from config file
         self.setup_params(config_file_path)
 
-        # initialize controllers
-        self.steering_control = path_tracking_ff.PathTrackingFF(self._params["kp"], self._params["kp_c"],
-                                                                self._params["xLA"])
-
-        self.velocity_control = velocity_controller.VelocityController(0.12, 0.025)
+        # register all publishers
+        self.init_subscribers()
 
         # register all publishers
         self.init_publishers()
+
         # create all services
         self.init_services()
 
-        self.sub_velocity_est = rospy.Subscriber("~velocity_estimated",
-                                                 Float32,
-                                                 self.update_velocity_estimation,
-                                                 queue_size=1)
+        # initialize controllers
+        self.steering_control = steering_controller.SteeringController(self._params["Kp_steering"],
+                                                                       self._params["Kp_c_steering"],
+                                                                       self._params["xLA_steering"])
 
-        self.sub_curved_points = rospy.Subscriber("~curve_point",
-                                                  MsgCurvePoint2D,
-                                                  self.vehicle_control,  # TODO determine whos callbacking ;)
-                                                  queue_size=1)
+        self.velocity_control = velocity_controller.VelocityController(self._params["Kp_velocity"],
+                                                                       self._params["Kd_velocity"])
 
-    def init_services(self):
-        """Initialize ROS services to configure the controller during runtime"""
-
-        self.services["set_kp"] = rospy.Service(
-            "~set_kp",
-            SetValue,
-            self.set_kp)
-
-        self.services["set_kp_c"] = rospy.Service(
-            "~set_kp_c",
-            SetValue,
-            self.set_kp_c)
-
-        self.services["set_xLA"] = rospy.Service(
-            "~set_xLA",
-            SetValue,
-            self.set_xLA)
-
-        self.service = rospy.Service("~set_p_gain",
-                                     SetValue,
-                                     self.set_p_gain)
-
-        self.service = rospy.Service("~set_d_gain",
-                                     SetValue,
-                                     self.set_d_gain)
+    def init_subscribers(self):
+        """ initialize ROS subscribers and stores them in a dictionary"""
+        # Kalmanfilter output to get velocity est.
+        rospy.Subscriber("~velocity_estimated", Float32, self.update_velocity_estimation,
+                         queue_size=1)
+        # Get Vision data
+        rospy.Subscriber("~curve_point", MsgCurvePoint2D, self.vehicle_control, queue_size=1)
 
     def init_publishers(self):
         """Initialize ROS publishers and stores them in a dictionary
@@ -92,37 +72,46 @@ class RaceControlNode(object):
             CarCmd,
             queue_size=1)
 
-    def setup_params(self, config_file_path):
-        """Reads configs from configuration file.
+    def init_services(self):
+        """Initialize ROS services to configure the controller during runtime"""
 
-        Args:
-            config_file_path (str): Path of the configuration file.
-        """
+        self.services["set_kp"] = rospy.Service("~set_kp",
+                                                SetValue,
+                                                self.set_kp)
+
+        self.services["set_kp_c"] = rospy.Service("~set_kp_c",
+                                                  SetValue,
+                                                  self.set_kp_c)
+
+        self.services["set_xLA"] = rospy.Service("~set_xLA",
+                                                 SetValue,
+                                                 self.set_xLA)
+
+        self.services["set_p_gain"] = rospy.Service("~set_p_gain",
+                                                   SetValue,
+                                                   self.set_p_gain)
+
+        self.services["set_d_gain"] = rospy.Service("~set_d_gain",
+                                                   SetValue,
+                                                   self.set_d_gain)
+
+    def setup_params(self, config_file_path):
         with open(config_file_path, "r") as file_handle:
             data = yaml.safe_load(file_handle)
         self._params = data
         for param_name in self._params:
             set_param("~" + param_name, self._params[param_name])
 
-    def set_kp(self, request):
-        """Sets the k_pvel_gain parameter of the controller."""
-        self._params["kp"] = request.value
-        set_param("~kp", request.value)
-        self.update_controller()
+    def set_kp(self, message):
+        self.steering_control.Kp = message.value
         return 1
 
-    def set_kp_c(self, request):
-        """Sets the k_pvel_gain parameter of the controller."""
-        self._params["kp_c"] = request.value
-        set_param("~kp_c", request.value)
-        self.update_controller()
+    def set_kp_c(self, message):
+        self.steering_control.Kp_c = message.value
         return 1
 
-    def set_xLA(self, request):
-        """Sets the k_psteer_gain parameter of the controller."""
-        self._params["xLA"] = request.value
-        set_param("~xLA", request.value)
-        self.update_controller()
+    def set_xLA(self, message):
+        self.steering_control.xLA = message.value
         return 1
 
     def set_p_gain(self, message):
@@ -133,31 +122,18 @@ class RaceControlNode(object):
         self.velocity_control.kd = message.value
         return 1
 
-    def update_controller(self):
-        """Updates the controller object's picar"""
-        self.steering_control.update_parameters(
-            self._params["kp"],
-            self._params["kp_c"],
-            self._params["xLA"])
-
     def update_velocity_estimation(self, message):
         self.velocity_est = message.data
 
     def vehicle_control(self, message):
 
-        controller_values = self.steering_control.format_control_inputs(message, self.velocity_est)
+        # get steering angle
+        angle = self.steering_control.get_steering_output(message, self.velocity_est)
 
-        delta = self.steering_control.get_steering_output(controller_values)
+        # get velocity
+        velocity = self.velocity_control.get_velocity_output(message, self.velocity_est)  # input in meters pro second
 
-        #velocity = self.velocity_control.get_velocity_output(self.velocity_est, 0.6)  # input in meters pro second
-
-        #if velocity < 0:
-         #   print("Velocity negativ!!!")
-          #  velocity = 0
-        # else:
-          #  velocity = velocity
-
-        self.publish_car_cmd(delta, 0.4)
+        self.publish_car_cmd(angle, velocity)
 
     def publish_car_cmd(self, steering_angle, velocity):
         """Publishes car command to control the car

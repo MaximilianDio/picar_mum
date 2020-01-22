@@ -1,10 +1,10 @@
 ########################################
-#Simcar parameters
+#Picar04 parameters
 ########################################
 # steering control gains
-Kp_steering: 5 #p_gain of controller
-xLA_steering: 0.1 # Look ahead distance in m of steering control
-Kp_c_steering: 0.3  #gain of feed forward model term
+Kp_steering: 1.5 #p_gain of controller
+xLA_steering: 0.25 # Look ahead distance in m of steering control
+Kp_c_steering: 0.5  #gain of feed forward model term
 
 ########################################
 # steering control gains
