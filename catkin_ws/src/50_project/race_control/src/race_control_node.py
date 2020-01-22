@@ -109,7 +109,7 @@ class RaceControlNode:
                                                                    self._params["Kp_c_steering"],
                                                                    self._params["xLA_steering"])
         # velocity picker
-        self.velocity_picker = velocity_picker.VelocityPicker()
+        self.velocity_picker = velocity_picker.VelocityPicker(self._params["vel_reference"], self._params["switch_bound"])
 
         # velocity control
         self.velocity_control = velocity_controller.VelocityController(self._params["Kp_velocity"],

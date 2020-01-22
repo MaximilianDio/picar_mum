@@ -6,7 +6,7 @@ Kp_c_steering: 0.5
 xLA_steering: 0.28
 ########################################
 # velocity picker
-vel_reference: 0.7
+vel_reference: 0.9
 switch_bound: 1.4
 
 ########################################
