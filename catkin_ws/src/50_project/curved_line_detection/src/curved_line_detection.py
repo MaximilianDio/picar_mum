@@ -171,7 +171,7 @@ class CurvePointExtractor:
 
         # blur image
         try:
-            roi_hsv = cv2.GaussianBlur(roi_hsv, (3, 3), cv2.BORDER_DEFAULT)
+            roi_hsv = cv2.GaussianBlur(roi_hsv, (5, 3), cv2.BORDER_DEFAULT)
         except:
             # do nothing
             pass
@@ -183,8 +183,9 @@ class CurvePointExtractor:
         mask_roi = cv2.medianBlur(mask_roi, 3)
 
         # erode mask
-        kernel = np.ones((3, 3), np.uint8)
+        kernel = np.ones((5, 1), np.uint8)
         mask_roi = cv2.erode(mask_roi, kernel, iterations=1)
+        mask_roi = cv2.dilate(mask_roi, kernel, iterations=1)
 
         # show mask result in trackbar window -> will resize window to width of mask!!!
         if self.use_trackbars:
@@ -193,7 +194,7 @@ class CurvePointExtractor:
 
         curve_points = []
 
-        N = 4
+        N = 20
         self.__num_stripes = self.__num_stripes * N
         # number of stripes -> number of points in x direction of car
         for i in range(0, self.__num_stripes, 1):
