@@ -64,6 +64,9 @@ class SteeringController(object):
 
         delta = self.picarfun.get_angle(delta / np.pi * 180)
 
+        if delta is float("NaN"):
+            delta = 0
+
         return delta
 
     def update_parameters(self, Kp, Kp_c, xLA):

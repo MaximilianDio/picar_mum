@@ -103,8 +103,8 @@ class MotorController(object):
         angle = max(angle, self.params.angle_min)
         angle = min(angle, self.params.angle_max)
 
-        pwm = int(float(self.params.servo_gain) * angle
-                  + self.params.servo_offset)
+        pwm = int(float(self.params.servo_gain) * angle + self.params.servo_offset)
+
         self.set_servo_pwm(pwm)
 
     def set_throttle_pwm(self, pwm):

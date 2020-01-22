@@ -131,8 +131,7 @@ class RaceControlNode(object):
         angle = self.steering_control.get_steering_output(message, self.velocity_est)
 
         # get velocity
-        velocity = self.velocity_control.get_velocity_output(self._params["vel_reference"],
-                                                             self.velocity_est)  # input in meters pro second
+        velocity = self._params["vel_reference"] #self.velocity_control.get_velocity_output(self._params["vel_reference"],self.velocity_est)  # input in meters pro second
 
         self.publish_car_cmd(angle, velocity)
 
