@@ -2,8 +2,8 @@
 ########################################
 # steering control gains for state 1,2,3*
 Kp_steering: 1.5
-Kp_c_steering: 0.5
-xLA_steering: 0.25
+Kp_c_steering: 0.35
+xLA_steering: 0.28
 ########################################
 # velocity control for state 1,2
 vel_reference: 0.0

@@ -31,14 +31,22 @@ class PathTrackingFF(object):
         self.picarfun = Picar()
 
     def get_steering_output(self, curve_point, velocity_estimated):
-        """
 
-        :param inputData: object of class ControlerValues
-        :return: steering angle of vehicle
-        """
+        if curve_point.slope == float("inf"):
+            delta_psi = 0.0  # only use psi if 3 points are detected - look a head term less influence !
+        else:
+            delta_psi = - np.arctan(curve_point.slope)  # sign changed due to coor sys
 
-        error = - curve_point.y / curve_point.x * Picar.cog_x  # sign changed due to coor sys
-        delta_psi = - np.arctan(curve_point.slope)  # sign changed due to coor sys
+        # feedback steering angle
+
+        if curve_point.x == float("inf"):
+            print("No useable Imagedata")
+            error = 0
+            delta_psi = 0.0
+        else:
+            error = - curve_point.y / curve_point.x * Picar.cog_x  # sign changed due to coor sys
+
+        # assign sign to curvature based on midpoint of circle
         try:
             if curve_point.cy > 0:  # assign sign to curvature based on midpoint of circle
                 kappa = 1 / curve_point.cR
@@ -51,15 +59,13 @@ class PathTrackingFF(object):
         u_x = velocity_estimated
 
         # feedback steering angle
-        if delta_psi == float("inf"):
-            delta_psi = 0.0
-
         delta_fb = - self.Kp * (error + self.xLA * delta_psi)
 
         # feedforward steering angle due to curvature and longitudinal velocity
         g_ff = self.mass * u_x ** 2 / self.l * ((self.b * self.C_r + self.a * self.C_f * (self.Kp * self.xLA - 1)) / (
                 self.C_r * self.C_f)) + self.l - self.b * self.Kp * self.xLA
-        delta_ff = self.Kp_c * g_ff * kappa
+
+        delta_ff = self.Kp_c * g_ff * kappa  # only computed if 3 points are avail
 
         # total steering angle
         delta = delta_ff + delta_fb
