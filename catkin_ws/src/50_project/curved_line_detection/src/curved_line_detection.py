@@ -194,8 +194,8 @@ class CurvePointExtractor:
 
         curve_points = []
 
-        N = 20
-        self.__num_stripes = self.__num_stripes * N
+        N = 10
+        self.__num_stripes = self.__num_stripes*N
         # number of stripes -> number of points in x direction of car
         for i in range(0, self.__num_stripes, 1):
             # calculate cropping borders for stripes
