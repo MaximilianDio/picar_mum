@@ -6,7 +6,7 @@ Kp_c_steering: 0.5
 xLA_steering: 0.25
 ########################################
 # velocity control for state 1,2
-vel_reference: 0.6
+vel_reference: 0.2
 
 ########################################
 min_dist_obstacle: 0.8 # distance when state machine switches to state 3*

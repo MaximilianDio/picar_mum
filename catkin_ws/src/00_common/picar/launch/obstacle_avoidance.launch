@@ -43,7 +43,7 @@
 <!--        </include>-->
 
         <!-- simulation environment -->
-        <include file="$(find simulation)/launch/null_loop.launch">
+        <include file="$(find simulation)/launch/null_loop_staticBox.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="paused" value="$(arg paused)"/>
             <arg name="gui" value="$(arg gui)"/>

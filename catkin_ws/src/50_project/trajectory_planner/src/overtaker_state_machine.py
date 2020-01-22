@@ -13,7 +13,7 @@ class OvertakeStateMachine:
 
         self.switch_params = {"line_detection": False,  # line can be detected
                               "object_detection": False,  # object detected
-                              "overtake": False  # overtaking is allowed
+                              "overtake": True  # overtaking is allowed
                               }
 
         # updated by velocity estimator node
@@ -91,7 +91,7 @@ class OvertakeStateMachine:
 
         if self.curve_point is not None:
             des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
-            des_velocity = self.velocity_control_12.get_des_vel(self.curve_point.cR)
+            des_velocity = self.vel_reference  # self.velocity_control_12.get_des_vel(self.curve_point.cR)
         else:
             # stop car when no line is detected!
             des_angle = 0.0
@@ -111,7 +111,7 @@ class OvertakeStateMachine:
         # run controller
         if self.curve_point is not None:
             des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
-            des_velocity = self.velocity_control_12.get_des_vel(self.curve_point.cR)
+            des_velocity = self.vel_reference  # self.velocity_control_12.get_des_vel(self.curve_point.cR)
         else:
             # stop car when no line is detected!
             des_angle = 0.0
@@ -131,7 +131,7 @@ class OvertakeStateMachine:
                 # stay in state 2
                 return
             else:
-                if not self.switch_params["overtake"] and self.rel_obstacle_point.x < 2 * self.min_dist_obstacle:
+                if not self.switch_params["overtake"]:
                     self.current_state = "3*"
                     self.velocity_control_3star.reset_integrated_error()
                     return
@@ -207,4 +207,5 @@ class OvertakeStateMachine:
             return
         else:
             self.current_state = "1"
+            self.switch_params["overtake"] = False
             return
