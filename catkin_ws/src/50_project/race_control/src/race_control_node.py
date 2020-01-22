@@ -75,7 +75,7 @@ class RaceControlNode:
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
         # Commanded Values to Picar
-        self.publishers["car_cmd"] = rospy.Publisher("car_cmd", CarCmd, queue_size=1)
+        self.publishers["car_cmd"] = rospy.Publisher("motor_node/car_cmd", CarCmd, queue_size=1)
 
     def init_services(self):
 

@@ -57,8 +57,7 @@ class Trackbar:
             self.param_dict[parameter][0] = cv2.getTrackbarPos(parameter, self.window_name)
 
 
-def average_points(points,N):
-
+def average_points(points, N):
     points = [points[i * N:(i + 1) * N] for i in range((len(points) + N - 1) // N)]
     points_tmp = []
     for point_chunks in points:
@@ -194,13 +193,16 @@ class CurvePointExtractor:
 
         curve_points = []
 
-        N = 10
-        self.__num_stripes = self.__num_stripes*N
+        N = 10  # TODO make it changable
+        if N > height_roi / self.__num_stripes:
+            N = height_roi / self.__num_stripes
+        num_stripes = self.__num_stripes * N
+
         # number of stripes -> number of points in x direction of car
-        for i in range(0, self.__num_stripes, 1):
+        for i in range(0, num_stripes, 1):
             # calculate cropping borders for stripes
-            y1 = height_roi - (i + 1) * height_roi / self.__num_stripes
-            y2 = height_roi - i * height_roi / self.__num_stripes
+            y1 = height_roi - (i + 1) * height_roi / num_stripes
+            y2 = height_roi - i * height_roi / num_stripes
 
             y = int((y1 + y2) / 2)  # alternative 1
             # y = int(y2 - 1)  # alternative 2
@@ -232,7 +234,7 @@ class CurvePointExtractor:
 
         curve_points = [x for x in curve_points if x != []]
 
-        curve_points = average_points(curve_points,N)
+        curve_points = average_points(curve_points, N)
         return curve_points
 
     def __mask(self, img_hsv):

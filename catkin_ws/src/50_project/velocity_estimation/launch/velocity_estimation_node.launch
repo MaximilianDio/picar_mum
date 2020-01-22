@@ -19,6 +19,7 @@
 
     <!-- Subscriptions -->
     <!-- "~input_encoder_data": picar_msgs/WheelSpeedStamped -->
+    <!-- "~imu": sensor_msgs/Imu -->
 
     <!-- Publications -->
     <!-- "~velocity_estimated": std_msgs/Float32 -->

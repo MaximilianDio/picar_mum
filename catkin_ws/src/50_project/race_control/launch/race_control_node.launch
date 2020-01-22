@@ -18,10 +18,10 @@
 
 
     <!-- Subscriptions -->
-    <!-- "~velocity_estimated": std_msgs/Float32 -->
     <!-- "~curve_point": picar_msgs/MsgCurvePoint2D -->
+    <!-- "~velocity_estimated": std_msgs/Float32 -->
 
     <!-- Publications -->
-    <!-- "~car_cmd": picar_msgs/CarCmd -->
+    <!-- "car_cmd": picar_msgs/CarCmd -->
 
 </launch>
