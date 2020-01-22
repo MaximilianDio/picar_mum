@@ -12,5 +12,5 @@ Kp_velocity: 0.12
 Kd_velocity: 0.025
 ########################################
 # min velocity
-vel_reference: 0.85
+vel_reference: 0.85 # velocity desired
 

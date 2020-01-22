@@ -88,12 +88,12 @@ class RaceControlNode(object):
                                                  self.set_xLA)
 
         self.services["set_p_gain"] = rospy.Service("~set_p_gain",
-                                                   SetValue,
-                                                   self.set_p_gain)
+                                                    SetValue,
+                                                    self.set_p_gain)
 
         self.services["set_d_gain"] = rospy.Service("~set_d_gain",
-                                                   SetValue,
-                                                   self.set_d_gain)
+                                                    SetValue,
+                                                    self.set_d_gain)
 
     def setup_params(self, config_file_path):
         with open(config_file_path, "r") as file_handle:
@@ -131,7 +131,8 @@ class RaceControlNode(object):
         angle = self.steering_control.get_steering_output(message, self.velocity_est)
 
         # get velocity
-        velocity = self.velocity_control.get_velocity_output(message, self.velocity_est)  # input in meters pro second
+        velocity = self.velocity_control.get_velocity_output(self._params["vel_reference"],
+                                                             self.velocity_est)  # input in meters pro second
 
         self.publish_car_cmd(angle, velocity)
 
