@@ -9,11 +9,11 @@ class VelocityPicker(object):
         self.ave_list = [0.0] * self.number_avg  # array storing the last several values of the radii
         self.maximal_velocity = 2.5  # maximal velocity
         self.minimal_velocity = 0.8  # minimal/basic velocity
-        self.switch_bound = 2  # radius at which size the car should switch to fast velocity
+        self.switch_bound = 0.9  # radius at which size the car should switch to fast velocity
 
     def get_velocity(self, cur_estimated_radius):
 
-        ave = self.moving_average(cur_estimated_radius)
+        ave = abs(self.moving_average(cur_estimated_radius))
         if ave > self.switch_bound:
             vel_out = self.maximal_velocity
         else:
@@ -21,7 +21,7 @@ class VelocityPicker(object):
         return vel_out
 
     def moving_average(self, new_val):
-        if new_val > 10 or new_val == float('nan'):
+        if abs(new_val) > 10 or new_val == float('nan'):
             new_val = 2.5
 
         self.ave_list.append(new_val)
