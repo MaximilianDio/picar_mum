@@ -180,26 +180,26 @@ class TrajectoryPlanner:
         self.state_machine.time = self.time
 
         # DEBUG can be deleted
-        print "-----------------------------------------------------------------------------------"
-        print "-----------------------------------------------------------------------------------"
-        print "---------------------" + str(self.state_machine.time) + "--------------------------"
-        print "current state: " + str(self.state_machine.current_state)
-        print "curve can be detected: " + str(self.state_machine.switch_params["line_detection"])
-        if self.state_machine.switch_params["line_detection"]:
-            print "curve point: x: " + str(self.state_machine.curve_point.x) + " y: " + str(
-                self.state_machine.curve_point.y)
-        print "obstacle can be detected: " + str(self.state_machine.switch_params["object_detection"])
-        print "own velocity: " + str(self.state_machine.own_velocity_est)
-        if self.state_machine.switch_params["object_detection"]:
-            print "obstacle at position: x: " + str(self.state_machine.rel_obstacle_point.x) + " y: " + str(
-                self.state_machine.rel_obstacle_point.y)
-            print "min distance to obstacle: " + str(self.state_machine.min_dist_obstacle)
-            print "too close: " + str(self.state_machine.rel_obstacle_point.x < self.state_machine.min_dist_obstacle)
-            if self.state_machine.rel_obstacle_velocity is not None:
-                print "relative obstacle velocity: x: " + str(
-                    self.state_machine.rel_obstacle_velocity.x) + " y: " + str(
-                    self.state_machine.rel_obstacle_velocity.y)
-        print "can overtake: " + str(self.state_machine.switch_params["overtake"])
+        #print "-----------------------------------------------------------------------------------"
+        #print "-----------------------------------------------------------------------------------"
+        #print "---------------------" + str(self.state_machine.time) + "--------------------------"
+        #print "current state: " + str(self.state_machine.current_state)
+        #print "curve can be detected: " + str(self.state_machine.switch_params["line_detection"])
+        #if self.state_machine.switch_params["line_detection"]:
+        #    print "curve point: x: " + str(self.state_machine.curve_point.x) + " y: " + str(
+        #        self.state_machine.curve_point.y)
+        #print "obstacle can be detected: " + str(self.state_machine.switch_params["object_detection"])
+        #print "own velocity: " + str(self.state_machine.own_velocity_est)
+        #if self.state_machine.switch_params["object_detection"]:
+        #    print "obstacle at position: x: " + str(self.state_machine.rel_obstacle_point.x) + " y: " + str(
+        #        self.state_machine.rel_obstacle_point.y)
+        #    print "min distance to obstacle: " + str(self.state_machine.min_dist_obstacle)
+        #    print "too close: " + str(self.state_machine.rel_obstacle_point.x < self.state_machine.min_dist_obstacle)
+        #    if self.state_machine.rel_obstacle_velocity is not None:
+        #        print "relative obstacle velocity: x: " + str(
+        #            self.state_machine.rel_obstacle_velocity.x) + " y: " + str(
+        #            self.state_machine.rel_obstacle_velocity.y)
+        #print "can overtake: " + str(self.state_machine.switch_params["overtake"])
 
         # run states and switch states if needed
         self.state_machine.state_switcher()

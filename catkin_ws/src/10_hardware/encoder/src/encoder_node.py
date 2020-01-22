@@ -7,7 +7,7 @@ import rospy
 
 F_CPU = 16000000.0
 PRESCALER = 256.0
-BAUD = 57600
+BAUD = 250000
 
 ticks_per_sec = F_CPU/PRESCALER
 pulses_per_rev = 10
