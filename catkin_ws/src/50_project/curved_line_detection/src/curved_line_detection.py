@@ -57,6 +57,28 @@ class Trackbar:
             self.param_dict[parameter][0] = cv2.getTrackbarPos(parameter, self.window_name)
 
 
+def average_points(points,N):
+
+    points = [points[i * N:(i + 1) * N] for i in range((len(points) + N - 1) // N)]
+    points_tmp = []
+    for point_chunks in points:
+        try:
+            line = np.array(point_chunks)
+            line_tmp = []
+            for i in range(line.shape[1]):
+                point = list(np.average(line[:, i], axis=0).astype(int))
+
+                line_tmp.append(point)
+
+            points_tmp.append(line_tmp)
+
+        except Exception:
+            for line in point_chunks:
+                points_tmp.append(line)
+
+    return points_tmp
+
+
 class CurvePointExtractor:
 
     def __init__(self, hsv_mask_interval, num_stripes, roi_interval, use_trackbar=True):
@@ -170,6 +192,9 @@ class CurvePointExtractor:
             cv2.waitKey(1)
 
         curve_points = []
+
+        N = 4
+        self.__num_stripes = self.__num_stripes * N
         # number of stripes -> number of points in x direction of car
         for i in range(0, self.__num_stripes, 1):
             # calculate cropping borders for stripes
@@ -179,11 +204,11 @@ class CurvePointExtractor:
             y = int((y1 + y2) / 2)  # alternative 1
             # y = int(y2 - 1)  # alternative 2
 
-            # crop image to line
-            line = mask_roi[y, :]
-
             # offset to original image for later recalculation to original image coordinates
             line_offset = [self.__roi_offset[0], y + self.__roi_offset[1]]
+
+            # crop image to line
+            line = mask_roi[y, :]
 
             # get edges - return -255 to 255
             edge = cv2.Sobel(line, cv2.CV_64F, 0, 1, ksize=3)
@@ -200,10 +225,13 @@ class CurvePointExtractor:
                 for start_point, end_point in points:
                     curve_point = [(start_point[0] + end_point[0]) / 2 + line_offset[0], line_offset[1]]
                     curve_points[i].append(curve_point)
+                    break
             except IndexError:
                 print "error with point extraction"
 
         curve_points = [x for x in curve_points if x != []]
+
+        curve_points = average_points(curve_points,N)
         return curve_points
 
     def __mask(self, img_hsv):
