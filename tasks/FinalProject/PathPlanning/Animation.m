@@ -140,10 +140,10 @@ end
 
 %% Plot
 % window
-window(1)=min(x)-carLength;%x min
-window(2)=max(x)+carLength;%x max
-window(3)=min(y)-carLength;%y min
-window(4)=max(y)+carLength;%y max
+window(1)=min(x)-2 * carLength;%x min
+window(2)=max(x)+ 2 *carLength;%x max
+window(3)=min(y)-2 *carLength;%y min
+window(4)=max(y)+2 *carLength;%y max
 
 Pix_Screen=get(0,'screensize');%get dimension of PC screen
 
@@ -152,9 +152,7 @@ figure('Name','Car-Animation','NumberTitle','off','position',...
     (Pix_Screen(4)-Pix_Screen(4)*window_scale)/2,...%shift
     Pix_Screen(3)*window_scale,...%window size
     Pix_Screen(4)*window_scale])%window size
-% xlim = ([-1 50]);
-% ylim = ([-1 3]);
-% set(gca,'DataAspectRatio',[1 1 1])%no distorted dimension
+grid on
 hold on
 
 

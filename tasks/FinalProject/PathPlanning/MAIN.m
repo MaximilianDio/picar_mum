@@ -15,7 +15,7 @@ xBnd = [-5, 5];
 yBnd = [-10, 10];
 
 startPoint = [0; 0; 0];   %Start here
-finishPoint = [1.8; 0.1; 0];   %Finish here
+finishPoint = [2; 0; 0];   %Finish here
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
