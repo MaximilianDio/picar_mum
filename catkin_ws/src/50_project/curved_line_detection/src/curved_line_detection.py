@@ -157,6 +157,18 @@ class CurvePointExtractor:
         # mask image
         mask_roi = self.__mask(roi_hsv)
 
+        # median filter to get rid of small imperfections
+        mask_roi = cv2.medianBlur(mask_roi, 3)
+
+        # erode mask
+        kernel = np.ones((3, 3), np.uint8)
+        mask_roi = cv2.erode(mask_roi, kernel, iterations=1)
+
+        # show mask result in trackbar window -> will resize window to width of mask!!!
+        if self.use_trackbars:
+            cv2.imshow(self.trackbar.window_name, mask_roi)
+            cv2.waitKey(1)
+
         curve_points = []
         # number of stripes -> number of points in x direction of car
         for i in range(0, self.__num_stripes, 1):
@@ -223,17 +235,13 @@ class CurvePointExtractor:
         mask[:, 0:2] = 0
         mask[:, -1:-3] = 0
 
-        # show mask result in trackbar window -> will resize window to width of mask!!!
-        if self.use_trackbars:
-            cv2.imshow(self.trackbar.window_name, mask)
-            cv2.waitKey(1)
-
         return mask
 
     def detect_curve(self, image):
         # update parameters from trackbar
         self.__update_param()
 
+        # TODO if allready cropped than this part can be removed!
         roi = self.__get_roi(image)
         curve_points = self.__extract_image_curve_points(roi)
 
