@@ -32,14 +32,14 @@ class PathTrackingFF(object):
 
     def get_steering_output(self, curve_point, velocity_estimated):
 
-        if curve_point.slope == float("inf"):
+        if curve_point is None:
             delta_psi = 0.0  # only use psi if 3 points are detected - look a head term less influence !
         else:
             delta_psi = - np.arctan(curve_point.slope)  # sign changed due to coor sys
 
         # feedback steering angle
 
-        if curve_point.x == float("inf"):
+        if curve_point is None:
             print("No useable Imagedata")
             error = 0
             delta_psi = 0.0

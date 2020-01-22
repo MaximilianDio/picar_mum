@@ -42,7 +42,7 @@ class RaceControlNode:
         # read the config parameters form .yaml file
         self.setup_params(config_file_path)
 
-        self.DEBUG = True
+        self.DEBUG = False
 
         # register all publishers
         self.init_subscribers()
@@ -54,6 +54,10 @@ class RaceControlNode:
         self.init_services()
 
         # create all controller
+        self.steering_control = None
+        self.velocity_picker = None
+        self.velocity_control = None
+
         self.init_controller()
 
     # ----------------------- initialization -----------------------------
@@ -149,16 +153,15 @@ class RaceControlNode:
         curve_point = message
         # update curvepoint
         if curve_point.x == DEFAULT_FALSE_FLOAT_VALUE or curve_point.y == DEFAULT_FALSE_FLOAT_VALUE:
-            self.curve_point = None  # TODO einstellen !!
+            self.curve_point = None
         else:
             self.curve_point = curve_point
 
-        self.control_picar()  # TODO hier callback ?
+        self.control_picar()
 
     def update_own_velocity(self, message):
         self.own_velocity_est = message.data
 
-        self.control_picar()
 
     def control_picar(self):
 
