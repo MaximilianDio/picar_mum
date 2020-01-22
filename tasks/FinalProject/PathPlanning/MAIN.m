@@ -15,7 +15,7 @@ xBnd = [-5, 5];
 yBnd = [-10, 10];
 
 startPoint = [0; 0; 0];   %Start here
-finishPoint = [2; 0; 0];   %Finish here
+finishPoint = [3; 0; 0];   %Finish here
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
@@ -23,7 +23,7 @@ finishPoint = [2; 0; 0];   %Finish here
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
 
 problem.func.dynamics = @(t,x,u)( BycicleModel(t,x,u) );
-problem.func.pathObj = @(t,x,u)(sum([100 * u(1,:); u(2,:)].^2,1));
+problem.func.pathObj = @(t,x,u)(sum([100 * u(1,:); 10 * u(2,:)].^2,1));
 problem.func.pathCst = @(t,x,u)( pathConstraint(t,x,u) );
 problem.func.bndCst = @(t0,x0,tF,xF,u0,uF)( boundaryConstraint(t0, x0, tF, xF,u0,uF) );
 
@@ -43,10 +43,10 @@ problem.bounds.state.upp = [xBnd(2); yBnd(2);  2*pi];
 problem.bounds.initialState.low = startPoint;
 problem.bounds.initialState.upp = startPoint;
 
-problem.bounds.finalState.low = finishPoint;
-problem.bounds.finalState.upp = finishPoint;
+problem.bounds.finalState.low = [2.5; 0; 0];
+problem.bounds.finalState.upp = [4; 0; 0];
 
-problem.bounds.control.low = [0.8; - deg2rad(25)];
+problem.bounds.control.low = [0.3; - deg2rad(25)];
 problem.bounds.control.upp = [1.5; deg2rad(25)];
 
 
