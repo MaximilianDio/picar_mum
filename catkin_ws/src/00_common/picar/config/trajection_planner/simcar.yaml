@@ -1,4 +1,4 @@
-
+Debug: True
 ########################################
 # steering control gains for state 1,2,3*
 Kp_steering: 1.5

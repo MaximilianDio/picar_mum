@@ -1,7 +1,7 @@
 #number of curve points (use between 3 and 30)
 num_points: 3
 # True: show results in frame with track bars
-visualization: True
+visualization: False
 # hsv interval for selecting mask
 HSV_low: [90, 40 , 135]
 HSV_high: [120, 255, 255]

@@ -38,7 +38,7 @@ class TrajectoryPlanner:
         # read the config parameters form .yaml file
         self.setup_params(config_file_path)
 
-        self.DEBUG = True
+        self.debug_flag = self._params["Debug"]
 
         # register all publishers
         self.init_subscribers()
@@ -190,7 +190,7 @@ class TrajectoryPlanner:
         # update time in state machine
         self.state_machine.time = self.time
 
-        if self.DEBUG == True:
+        if self.debug_flag == True:
             print "-----------------------------------------------------------------------------------"
             print "-----------------------------------------------------------------------------------"
             print "---------------------" + str(self.state_machine.time) + "--------------------------"
