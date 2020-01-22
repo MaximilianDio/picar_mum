@@ -168,7 +168,7 @@ axis(window)
 rearWheel=patch(rearWheel_x(1,:),rearWheel_y(1,:),[0.7 0.7 0.7]);
 frontWheel=patch(frontWheel_x(1,:),frontWheel_y(1,:),[0.7 0.7 0.7]);
 connectionLine=line(Line_x(1,:),Line_y(1,:),'LineWidth',1.7,'Color',[0.2 0.2 0.2]);
-obstacle = patch([0.8-0.15, 0.8+0.15, 0.8+0.15, 0.8-0.15], [0.15, 0.15, -0.15, -0.15], 'red');
+obstacle = patch([0.6-0.15, 0.6+0.15, 0.6+0.15, 0.6-0.15], [0.15, 0.15, -0.15, -0.15], 'red');
 % hinterreifen.FaceColor=[0.5 0.5 0.5];
 if disp_path == true%plot path: true / false
     if vel_gamma==1
@@ -258,7 +258,7 @@ for i = 2:length(t)
     set(frontWheel,'XData',frontWheel_x(i,:),'YData',frontWheel_y(i,:))
     set(connectionLine,'XData',Line_x(i,:),'YData',Line_y(i,:))
     obstcl_speed = 0.3;
-    set(obstacle, 'XData',[0.8-0.15 + obstcl_speed * t(i), 0.8+0.15 + obstcl_speed * t(i), 0.8+0.15 + obstcl_speed * t(i), 0.8-0.15 + obstcl_speed * t(i)])
+    set(obstacle, 'XData',[0.6-0.15 + obstcl_speed * t(i), 0.6+0.15 + obstcl_speed * t(i), 0.6+0.15 + obstcl_speed * t(i), 0.6-0.15 + obstcl_speed * t(i)])
     if disp_path == true%plot path: true / false
         set(path,'XData',x(1:i),'YData',y(1:i))%enhace path
     end

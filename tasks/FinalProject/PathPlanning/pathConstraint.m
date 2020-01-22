@@ -10,10 +10,10 @@ end
 % Box on the road
 
 % Length
-L = 0.3;
+L = 0.25;
 
 % width
-w = 0.3;
+w = 0.25;
 
 % Position of the box
 % p = [0.8; 0];
@@ -21,7 +21,7 @@ w = 0.3;
 r = sqrt(L^2 + w^2);
 % 
 for i = 1: length(x)
-    c = [c; -norm(x(1:2,i) - [0.8 + 0.3 * t(i); 0]) + r];
+    c = [c; -norm(x(1:2,i) - [0.6 + 0.3 * t(i); 0]) + r];
 end
 
 ceq = [];
