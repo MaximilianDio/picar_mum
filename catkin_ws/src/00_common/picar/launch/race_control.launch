@@ -4,8 +4,7 @@
     <arg name="sim" default="false"/>
     <arg name="paused" default="true"/>
     <arg name="gui" default="true"/>
-    <arg name="local" default="true"/>
-    <arg name="compute_on_pi" default="true"/>
+    <arg name="compute_on_pi" default="false"/>
 
 
     <machine
@@ -24,7 +23,7 @@
             <arg name="machine" value="$(arg machine)"/>
         </include>
 
-          <!-- start camera node -->
+        <!-- start camera node -->
         <include file="$(find camera)/launch/camera_node.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
@@ -42,9 +41,9 @@
             <arg name="machine" value="$(arg machine)"/>
         </include>
 
-           <!-- start race_controller_node -->
-        <remap from="race_control_node/curve_point" to="curved_line_detection_node/curve_point" />
-        <remap from="race_control_node/velocity_estimated" to="velocity_estimation_node/velocity_estimated" />
+        <!-- start race_controller_node -->
+        <remap from="race_control_node/curve_point" to="curved_line_detection_node/curve_point"/>
+        <remap from="race_control_node/velocity_estimated" to="velocity_estimation_node/velocity_estimated"/>
         <include file="$(find race_control)/launch/race_control_node.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
@@ -57,7 +56,7 @@
         <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
-            <arg name="local" value="$(arg local)"/>
+            <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
         </include>
 
     </group>
@@ -78,12 +77,12 @@
         <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
-            <arg name="local" value="$(arg local)"/>
+            <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
         </include>
 
-            <!-- start race_controller_node -->
-        <remap from="race_control_node/curve_point" to="curved_line_detection_node/curve_point" />
-        <remap from="race_control_node/velocity_estimated" to="velocity_estimation_node/velocity_estimated" />
+        <!-- start race_controller_node -->
+        <remap from="race_control_node/curve_point" to="curved_line_detection_node/curve_point"/>
+        <remap from="race_control_node/velocity_estimated" to="velocity_estimation_node/velocity_estimated"/>
         <include file="$(find race_control)/launch/race_control_node.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
@@ -93,7 +92,7 @@
 
 
     <!-- start always -->
-     <!--start color_normalization_node -->
+    <!--start color_normalization_node -->
     <remap from="color_normalization_node/input_image/compressed" to="camera_node/image/compressed"/>
     <include file="$(find color_normalization)/launch/color_normalization_node.launch">
         <arg name="ns" value="$(arg ns)"/>

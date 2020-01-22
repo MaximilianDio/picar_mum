@@ -9,6 +9,9 @@ from steering_control import steering_controller
 from velocity_control import velocity_controller
 
 
+# ros message for float values if nothing was detected
+DEFAULT_FALSE_FLOAT_VALUE = float("inf")
+
 class RaceControlNode(object):
     """race controller ROS node."""
 
@@ -127,11 +130,17 @@ class RaceControlNode(object):
 
     def vehicle_control(self, message):
 
+        # get velocity
+        if message.x == DEFAULT_FALSE_FLOAT_VALUE or message.y == DEFAULT_FALSE_FLOAT_VALUE:
+            velocity = 0
+        else:
+            velocity = self._params["vel_reference"]  # self.velocity_control.get_velocity_output(self._params["vel_reference"],self.velocity_est)  # input in meters pro second
+
         # get steering angle
         angle = self.steering_control.get_steering_output(message, self.velocity_est)
 
-        # get velocity
-        velocity = self._params["vel_reference"] #self.velocity_control.get_velocity_output(self._params["vel_reference"],self.velocity_est)  # input in meters pro second
+
+
 
         self.publish_car_cmd(angle, velocity)
 

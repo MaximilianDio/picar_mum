@@ -31,12 +31,21 @@ class SteeringController(object):
 
     def get_steering_output(self, curve_point, velocity_estimated):
 
-        error = - curve_point.y / curve_point.x * Picar.cog_x  # sign changed due to coor sys
         delta_psi = - np.arctan(curve_point.slope)  # sign changed due to coor sys
 
         # feedback steering angle
         if delta_psi == float("inf"):
             delta_psi = 0.0
+
+
+        if curve_point.x == float("inf"):
+            print("No useable Imagedata")
+            error = 0
+            delta_psi = 0.0
+        else:
+            error = - curve_point.y / curve_point.x * Picar.cog_x  # sign changed due to coor sys
+
+
 
         # assign sign to curvature based on midpoint of circle
         try:
@@ -63,9 +72,6 @@ class SteeringController(object):
         delta = delta_ff + delta_fb
 
         delta = self.picarfun.get_angle(delta / np.pi * 180)
-
-        if delta is float("NaN"):
-            delta = 0
 
         return delta
 
