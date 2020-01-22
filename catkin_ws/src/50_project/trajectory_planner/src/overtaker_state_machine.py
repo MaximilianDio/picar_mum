@@ -16,7 +16,6 @@ class OvertakeStateMachine:
 
         # updated by velocity estimator node
         self.own_velocity_est = 0.0
-        self.vel_reference = params_dict["vel_reference"]  # desired velocity for state 1,2
 
         self.time = 0.0  # initial time (starts when state machine gets first pacemaker message)
         self.overtake_start_time = 0.0
@@ -44,6 +43,8 @@ class OvertakeStateMachine:
         # -- velocity controller for state 1,2
         # ----------------------------------------------
         self.velocity_control_12 = VelocityPicker()
+        self.velocity_control_12.minimal_velocity = params_dict["vel_reference"]  # desired velocity for state 1,2
+        self.velocity_control_12.switch_bound = params_dict["switch_bound"]  # switching radius
 
         # -- PID DISTANCE controller for state 3*
         # ----------------------------------------------
@@ -87,7 +88,7 @@ class OvertakeStateMachine:
 
         if self.curve_point is not None:
             des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
-            des_velocity = self.vel_reference #self.velocity_control_12.get_des_vel(self.curve_point.cR)
+            des_velocity = self.velocity_control_12.get_velocity(self.curve_point.cR)
         else:
             # stop car when no line is detected!
             des_angle = 0.0
@@ -107,7 +108,7 @@ class OvertakeStateMachine:
         # run controller
         if self.curve_point is not None:
             des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
-            des_velocity = self.vel_reference  #des_velocity = self.velocity_control_12.get_des_vel(self.curve_point.cR)
+            des_velocity = self.velocity_control_12.get_velocity(self.curve_point.cR)
         else:
             # stop car when no line is detected!
             des_angle = 0.0
@@ -211,5 +212,3 @@ class OvertakeStateMachine:
             # else:
             #     self.current_state = "4*"
             #     return
-
-
