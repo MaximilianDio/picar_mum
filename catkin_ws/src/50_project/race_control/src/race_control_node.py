@@ -172,9 +172,11 @@ class RaceControlNode:
         else:
             angle = self.steering_control.get_steering_output(self.curve_point, self.own_velocity_est)
 
-            velocity = self.velocity_picker.get_velocity(self.curve_point)
+            des_velocity = self.velocity_picker.get_velocity(self.curve_point)
 
-            # velocity = self.velocity_control.get_velocity_output(velocity, self.own_velocity_est)
+            velocity = des_velocity
+
+            # velocity = self.velocity_control.get_velocity_output(des_velocity , self.own_velocity_est)
 
         if self.DEBUG == True:
             print "-----------------------------------------------------------------------------------"

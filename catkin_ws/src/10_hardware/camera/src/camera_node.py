@@ -212,7 +212,7 @@ def main():
     with PiCamera(resolution=resolution, framerate=fps, sensor_mode=4) as camera:
         cam_config = CameraParams(camera)
         srv = Server(cam_paramsConfig, cam_config.reconfigure_cb)
-        if fisheye:
+        if fisheye:  # TODO if fisheye löscen
             w = 0.8  # 0.7 relativ width to resolution # todo double check cropping
             h = 0.7 # relativ high to resolution
             x = 0.125 # shift of lower left edge to resolution
