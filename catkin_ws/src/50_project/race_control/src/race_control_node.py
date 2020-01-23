@@ -113,7 +113,8 @@ class RaceControlNode:
                                                                    self._params["Kp_c_steering"],
                                                                    self._params["xLA_steering"])
         # velocity picker
-        self.velocity_picker = velocity_picker.VelocityPicker(self._params["vel_reference"], self._params["switch_bound"])
+        self.velocity_picker = velocity_picker.VelocityPicker(self._params["vel_reference"],
+                                                              self._params["switch_bound"])
 
         # velocity control
         self.velocity_control = velocity_controller.VelocityController(self._params["Kp_velocity"],
@@ -162,20 +163,24 @@ class RaceControlNode:
     def update_own_velocity(self, message):
         self.own_velocity_est = message.data
 
-
     def control_picar(self):
 
-        angle = self.steering_control.get_steering_output(self.curve_point, self.own_velocity_est)
+        if self.curve_point is None:
+            angle = 0
+            velocity = 0
 
-        des_velocity = self.velocity_picker.get_velocity(self.curve_point)
+        else:
+            angle = self.steering_control.get_steering_output(self.curve_point, self.own_velocity_est)
 
-        velocity = des_velocity  # TODO Velocity Tracker tunen
-        # velocity = self.velocity_control.get_velocity_output(des_velocity, self.own_velocity_est)
+            velocity = self.velocity_picker.get_velocity(self.curve_point)
+
+            # velocity = self.velocity_control.get_velocity_output(velocity, self.own_velocity_est)
 
         if self.DEBUG == True:
             print "-----------------------------------------------------------------------------------"
             print "-----------------------------------------------------------------------------------"
-            print "-----------------------" + str(rospy.get_rostime()) + "----------------------------" # TODO change time
+            print "-----------------------" + str(
+                rospy.get_rostime()) + "----------------------------"  # TODO change time
             print "curve point: x: " + str(self.curve_point.x) + " y: " + str(self.curve_point.y)
             print "own velocity: " + str(self.own_velocity_est)
             print "angle cmd: " + str(angle)

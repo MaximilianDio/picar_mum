@@ -32,7 +32,6 @@ class VelocityPicker(object):
         else:
             cur_estimated_radius = - curve_point.cR
 
-        # todo resent list im radius changes sign ?
         if self.last_cur_estimated_radius * cur_estimated_radius < 0:
             self.ave_list = [0.0] * self.number_avg
 

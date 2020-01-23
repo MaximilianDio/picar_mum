@@ -213,10 +213,10 @@ def main():
         cam_config = CameraParams(camera)
         srv = Server(cam_paramsConfig, cam_config.reconfigure_cb)
         if fisheye:
-            w = 0.7
-            h = 0.7
-            x = 0.15
-            y = 0.15
+            w = 0.8  # 0.7 relativ width to resolution # todo double check cropping
+            h = 0.7 # relativ high to resolution
+            x = 0.125 # shift of lower left edge to resolution
+            y = 0.15  # shift of lower left edge to resolution
             camera.zoom = (x, y, w, h)
 
 

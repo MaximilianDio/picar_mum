@@ -1,8 +1,8 @@
 
 ########################################
 # steering control gains
-Kp_steering: 1.5
-Kp_c_steering: 0.5
+Kp_steering: 1.3
+Kp_c_steering: 0.4
 xLA_steering: 0.3
 ########################################
 # velocity picker
