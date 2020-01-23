@@ -99,7 +99,7 @@ class CurveDetector:
 
     def init_subscribers(self):
         """ initialize ROS subscribers and stores them in a dictionary"""
-        self.subscribers["image_input"] = rospy.Subscriber("~input_image/raw", Image, self.rcv_img_cb)
+        self.subscribers["image_input"] = rospy.Subscriber("~input_image/raw", Image, self.rcv_img_cb,queue_size=1)
 
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""

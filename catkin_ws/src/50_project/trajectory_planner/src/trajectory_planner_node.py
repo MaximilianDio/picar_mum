@@ -103,13 +103,13 @@ class TrajectoryPlanner:
     def init_subscribers(self):
         """ initialize ROS subscribers and stores them in a dictionary"""
         # pacemaker
-        rospy.Subscriber("~pacemaker", Float32, self.run_node)
+        rospy.Subscriber("~pacemaker", Float32, self.run_node,queue_size=1)
         # position of detected obstacle
-        rospy.Subscriber("~obstacle_position", Point32, self.update_obstacle_pos_clb)
+        rospy.Subscriber("~obstacle_position", Point32, self.update_obstacle_pos_clb,queue_size=1)
         # point on curve with position and circle
-        rospy.Subscriber("~curve_point", MsgCurvePoint2D, self.update_curved_point_clb)
+        rospy.Subscriber("~curve_point", MsgCurvePoint2D, self.update_curved_point_clb,queue_size=1)
         # point on curve with position and circle
-        rospy.Subscriber("~own_velocity", Float32, self.update_own_velocity_clb)
+        rospy.Subscriber("~own_velocity", Float32, self.update_own_velocity_clb,queue_size=1)
 
     # --------------------- Service Callbacks ----------------------------
 

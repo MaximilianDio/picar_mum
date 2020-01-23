@@ -33,7 +33,7 @@ class ApriltagDetectionNode:
         self.init_services()
 
         # subscribe to image and publish position of leader
-        self.sub_img = rospy.Subscriber("~input_image/raw", Image, self.rcv_img_cb)
+        self.sub_img = rospy.Subscriber("~input_image/raw", Image, self.rcv_img_cb,queue_size=1)
 
         self.init_apriltags()
 
