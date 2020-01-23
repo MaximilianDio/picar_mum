@@ -11,7 +11,8 @@ MAX_SATURATION = MAX_VALUE = 255
 MIN_NUM_STRIPES = 3
 MAX_NUM_STRIPES = 30
 
-
+LEFT_CURVE = 0
+RIGHT_CURVE = -1
 def nothing(x):
     """ dummy function does nothing, used as dummy callback for trackbar"""
     pass
@@ -219,6 +220,8 @@ class CurvePointExtractor:
             start_points = np.argwhere(edge > self.EDGE_THRESHOLD)
             end_points = np.argwhere(edge < -self.EDGE_THRESHOLD)
 
+            curve_type = LEFT_CURVE # FIXME only left curve possible right now
+
             # start and end points will always have two high values exactly next to each other
             # -> only use the even values
             try:
@@ -226,7 +229,7 @@ class CurvePointExtractor:
                 curve_points.append([])
 
                 for start_point, end_point in points:
-                    curve_point = [(start_point[0] + end_point[0]) / 2 + line_offset[0], line_offset[1]]
+                    curve_point = [(start_point[curve_type] + end_point[curve_type]) / 2 + line_offset[0], line_offset[1]]
                     curve_points[i].append(curve_point)
                     break
             except IndexError:

@@ -7,5 +7,5 @@ angle_max: 30.0
 angle_min: -30.0
 throttle_min: -4095
 throttle_max: 4095
-servo_offset: 1228
-servo_gain: -13.0
+servo_offset: 1218
+servo_gain: -14.0
