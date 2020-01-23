@@ -16,12 +16,6 @@
     />
 
     <group unless="$(arg sim)">
-        <!-- keyboard control for debugging -->
-<!--        &lt;!&ndash; TODO remove when ready &ndash;&gt;-->
-<!--        <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">-->
-<!--            <arg name="ns" value="$(arg ns)"/>-->
-<!--        </include>-->
-
         <!-- start camera node -->
         <include file="$(find camera)/launch/camera_node.launch">
             <arg name="ns" value="$(arg ns)"/>
@@ -37,11 +31,6 @@
 
     <!-- If running in simulation-->
     <group if="$(arg sim)">
-<!--        &lt;!&ndash; keyboard control for debugging &ndash;&gt;-->
-<!--        <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">-->
-<!--            <arg name="ns" value="simcar"/>-->
-<!--        </include>-->
-
         <!-- simulation environment -->
         <include file="$(find simulation)/launch/race_loop.launch">
             <arg name="ns" value="$(arg ns)"/>
@@ -99,31 +88,6 @@
     </group>
 
 
-    <!-- velocity estimator -->
-    <group unless="$(arg sim)">
-        <!-- start encoder node -->
-        <include file="$(find encoder)/launch/encoder_node.launch">
-            <arg name="ns" value="$(arg ns)"/>
-            <arg name="machine" value="$(arg machine)"/>
-        </include>
-
-        <!-- start velocity_estimation node -->
-        <remap from="velocity_estimation_node/input_encoder_data" to="encoder_node/wheel_speed"/>
-        <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
-            <arg name="ns" value="$(arg ns)"/>
-            <arg name="machine" value="$(arg machine)"/>
-            <arg name="local" value="$(arg local)"/>
-        </include>
-    </group>
-    <group if="$(arg sim)">
-        <!-- start velocity_estimation node -->
-        <remap from="velocity_estimation_node/input_encoder_data" to="wheel_speed"/>
-        <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
-            <arg name="ns" value="$(arg ns)"/>
-            <arg name="machine" value="$(arg machine)"/>
-            <arg name="local" value="$(arg local)"/>
-        </include>
-    </group>
 
     <!-- Trajectory planner -->
     <!-- pacemaker -->
@@ -136,7 +100,7 @@
     <remap from="trajectory_planner_node/pacemaker" to="pacemaker_trajectory_planner_node/clock"/>
     <remap from="trajectory_planner_node/obstacle_position" to="apriltag_detection_node/apriltag_position"/>
     <remap from="trajectory_planner_node/curve_point" to="curved_line_detection_node/curve_point"/>
-    <remap from="trajectory_planner_node/own_velocity" to="velocity_estimation_node/velocity_estimated"/>
+
 
     <!-- from controller to motor -->
     <remap from="trajectory_planner_node/des_car_cmd" to="motor_node/car_cmd" />

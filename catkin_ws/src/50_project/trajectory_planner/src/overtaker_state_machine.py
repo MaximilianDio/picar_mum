@@ -55,6 +55,9 @@ class OvertakeStateMachine:
         # threshold for switching radius
         self.velocity_control_12.switch_bound = params_dict["switch_bound"]
 
+        # TODO not nice!
+        self.own_velocity_est = params_dict["vel_reference_curve"]
+
         # -- PID DISTANCE controller for state 3*
         # ----------------------------------------------
         self.des_distance_to_obstacle = params_dict["des_distance_to_obstacle"]
