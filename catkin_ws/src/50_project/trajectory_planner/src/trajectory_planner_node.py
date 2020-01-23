@@ -108,8 +108,8 @@ class TrajectoryPlanner:
         rospy.Subscriber("~obstacle_position", Point32, self.update_obstacle_pos_clb)
         # point on curve with position and circle
         rospy.Subscriber("~curve_point", MsgCurvePoint2D, self.update_curved_point_clb)
-        # point on curve with position and circle
-        rospy.Subscriber("~own_velocity", Float32, self.update_own_velocity_clb)
+        # # point on curve with position and circle
+        # rospy.Subscriber("~own_velocity", Float32, self.update_own_velocity_clb)
 
     # --------------------- Service Callbacks ----------------------------
 
@@ -179,8 +179,8 @@ class TrajectoryPlanner:
             self.state_machine.switch_params["line_detection"] = True
             self.state_machine.curve_point = curve_point
 
-    def update_own_velocity_clb(self, message):
-        self.state_machine.own_velocity_est = message.data
+    # def update_own_velocity_clb(self, message):
+    #     self.state_machine.own_velocity_est = message.data
 
     def run_node(self, time):
         """ main callback which will be called by pacemaker node, updates all necessary data to state machine and runs
