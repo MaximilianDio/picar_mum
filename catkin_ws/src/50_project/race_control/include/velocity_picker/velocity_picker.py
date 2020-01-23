@@ -4,12 +4,12 @@ class VelocityPicker(object):
         """
         Returns:
         """
-        self.number_avg = 5 # number of stored values for radii estimation
+        self.number_avg = 5  # number of stored values for radii estimation
         self.ave_list = [0.0] * self.number_avg  # array storing the last several values of the radii
         self.maximal_velocity = 2.5  # maximal velocity
         self.minimal_velocity = vel_reference  # minimal/basic velocity
         self.switch_bound = switch_bound  # radius at which size the car should switch to fast velocity
-        self.last_cur_estimated_radius = 0
+        self.last_cur_estimated_radius = 0  # attribute to store last radius
 
     def get_velocity(self, curve_point):
 
@@ -33,9 +33,12 @@ class VelocityPicker(object):
             cur_estimated_radius = - curve_point.cR
 
         # todo resent list im radius changes sign ?
+        if self.last_cur_estimated_radius * cur_estimated_radius < 0:
+            self.ave_list = [0.0] * self.number_avg
 
         self.ave_list.append(cur_estimated_radius)
         self.ave_list.pop(0)
+        self.last_cur_estimated_radius = cur_estimated_radius
         return sum(self.ave_list) / len(self.ave_list)
 
     def update_velocity_picker(self, maximal_velocity, minimal_velocity, switch_bound):
