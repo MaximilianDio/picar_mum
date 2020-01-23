@@ -13,6 +13,8 @@ MAX_NUM_STRIPES = 30
 
 LEFT_CURVE = 0
 RIGHT_CURVE = -1
+
+
 def nothing(x):
     """ dummy function does nothing, used as dummy callback for trackbar"""
     pass
@@ -81,7 +83,7 @@ def average_points(points, N):
 
 class CurvePointExtractor:
 
-    def __init__(self, hsv_mask_interval, num_stripes, roi_interval, use_trackbar=True):
+    def __init__(self, hsv_mask_interval, num_stripes, roi_interval, direction=LEFT_CURVE, use_trackbar=True):
         """
         :param hsv_mask_interval: 2 by 3 numpy array which contains low HSV values and high HSV values for masking the
         region of interest
@@ -93,6 +95,8 @@ class CurvePointExtractor:
         """
 
         self.EDGE_THRESHOLD = 200
+
+        self.direction = direction
 
         if not isinstance(num_stripes, int) or num_stripes < MIN_NUM_STRIPES:
             raise ValueError("num_stripes must be integer > 0")
@@ -220,24 +224,26 @@ class CurvePointExtractor:
             start_points = np.argwhere(edge > self.EDGE_THRESHOLD)
             end_points = np.argwhere(edge < -self.EDGE_THRESHOLD)
 
-            curve_type = LEFT_CURVE # FIXME only left curve possible right now
-
             # start and end points will always have two high values exactly next to each other
-            # -> only use the even values
+            # -> only use the even values (0)
             try:
                 points = zip(start_points, end_points)[1::2]
                 curve_points.append([])
 
-                for start_point, end_point in points:
-                    curve_point = [(start_point[curve_type] + end_point[curve_type]) / 2 + line_offset[0], line_offset[1]]
-                    curve_points[i].append(curve_point)
-                    break
+                curve_point = [(start_points[self.direction][0] + end_points[self.direction][0]) / 2 + line_offset[0],
+                               line_offset[1]]
+                curve_points[i].append(curve_point)
+                # for start_point, end_point in points:
+                #     curve_point = [(start_point[0] + end_point[0]) / 2 + line_offset[0], line_offset[1]]
+                #     curve_points[i].append(curve_point)
+                #     break
             except IndexError:
                 print "error with point extraction"
 
         curve_points = [x for x in curve_points if x != []]
 
         curve_points = average_points(curve_points, N)
+
         return curve_points
 
     def __mask(self, img_hsv):

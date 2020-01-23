@@ -21,4 +21,4 @@ class OvertakingTrajectory(object):
         else:
             velocity_interp = interp1d(self.time, self.velocity)
             delta_interp = interp1d(self.time, self.angle)
-            return velocity_interp(current_time), delta_interp(current_time) * 180 / np.pi  # Outputs: desVel, desAngle
+            return velocity_interp(current_time), -delta_interp(current_time) * 180 / np.pi  # Outputs: desVel, desAngle

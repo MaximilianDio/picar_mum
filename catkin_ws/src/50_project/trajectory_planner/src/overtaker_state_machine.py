@@ -40,10 +40,10 @@ class OvertakeStateMachine:
         # --------------------------------------------------------------
         # -- steering controller for state 1, 2 and 3*
         # --------------------------------------------------------------
-        Kp_steering = params_dict["Kp_steering"]
-        Kp_c_steering = params_dict["Kp_c_steering"]
-        xLA_steering = params_dict["xLA_steering"]
-        self.steering_control_123star = PathTrackingFF(Kp_steering, Kp_c_steering, xLA_steering)
+        self.Kp_steering = params_dict["Kp_steering"]
+        self.Kp_c_steering = params_dict["Kp_c_steering"]
+        self.xLA_steering = params_dict["xLA_steering"]
+        self.steering_control_123star = PathTrackingFF(self.Kp_steering, self.Kp_c_steering, self.xLA_steering)
 
         # -- velocity controller for state 1,2
         # ----------------------------------------------
@@ -94,6 +94,11 @@ class OvertakeStateMachine:
 
     def state_1(self):
         """ no obstacle detected - line controlled """
+        # update gains
+        self.steering_control_123star.Kp = self.Kp_steering
+        self.steering_control_123star.Kd = self.Kp_c_steering
+        self.steering_control_123star.xLA = self.xLA_steering
+
         # run controller
 
         if self.curve_point is not None:
@@ -148,7 +153,10 @@ class OvertakeStateMachine:
 
     def state_3_star(self):
         """ keep distance to obstacle (drive with same velocity at a given distance) - see leader control"""
-        # run controller
+        # change steering gains
+        self.steering_control_123star.Kp = 8
+        self.steering_control_123star.Kd = 0
+        self.steering_control_123star.xLA = 0
 
         # run controller
         if self.curve_point is not None:
@@ -209,7 +217,7 @@ class OvertakeStateMachine:
         self.des_angle = self.mappings.get_angle(open_loop_angle)
 
         # change state if needed
-        if state_time < self.t_trajectory:
+        if state_time < (self.t_trajectory):
             # stay in state
             return
         else:
