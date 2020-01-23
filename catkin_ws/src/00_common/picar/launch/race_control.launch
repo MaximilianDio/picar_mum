@@ -41,7 +41,7 @@
             <arg name="machine" value="$(arg machine)"/>
         </include>
 
-        <!-- start race_controller_node -->
+         <!-- start race_controller_node -->
         <remap from="race_control_node/curve_point" to="curved_line_detection_node/curve_point"/>
         <remap from="race_control_node/velocity_estimated" to="velocity_estimation_node/velocity_estimated"/>
         <include file="$(find race_control)/launch/race_control_node.launch">
@@ -59,11 +59,21 @@
             <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
         </include>
 
+          <!-- curve detection -->
+        <remap from="curved_line_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
+        <include file="$(find curved_line_detection)/launch/curved_line_detection_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
+            <arg name="distorted_input" value="true"/>
+        </include>
+
     </group>
 
 
     <!-- if running on simulated vehicle -->
     <group if="$(arg sim)">
+
         <!-- start race_loop-->
         <include file="$(find simulation)/launch/race_loop.launch">
             <arg name="ns" value="$(arg ns)"/>
@@ -80,6 +90,7 @@
             <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
         </include>
 
+
         <!-- start race_controller_node -->
         <remap from="race_control_node/curve_point" to="curved_line_detection_node/curve_point"/>
         <remap from="race_control_node/velocity_estimated" to="velocity_estimation_node/velocity_estimated"/>
@@ -88,21 +99,22 @@
             <arg name="machine" value="$(arg machine)"/>
             <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
         </include>
-    </group>
 
+                <!-- curve detection -->
+        <remap from="curved_line_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
+        <include file="$(find curved_line_detection)/launch/curved_line_detection_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
+            <arg name="distorted_input" value="false"/>
+        </include>
+
+  </group>
 
     <!-- start always -->
     <!--start color_normalization_node -->
     <remap from="color_normalization_node/input_image/compressed" to="camera_node/image/compressed"/>
     <include file="$(find color_normalization)/launch/color_normalization_node.launch">
-        <arg name="ns" value="$(arg ns)"/>
-        <arg name="machine" value="$(arg machine)"/>
-        <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
-    </include>
-
-    <!-- start curve_detection_node -->
-    <remap from="curved_line_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
-    <include file="$(find curved_line_detection)/launch/curved_line_detection_node.launch">
         <arg name="ns" value="$(arg ns)"/>
         <arg name="machine" value="$(arg machine)"/>
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
