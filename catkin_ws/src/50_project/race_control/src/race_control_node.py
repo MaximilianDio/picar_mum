@@ -42,7 +42,7 @@ class RaceControlNode:
         # read the config parameters form .yaml file
         self.setup_params(config_file_path)
 
-        self.DEBUG = False
+        self.DEBUG = True
 
         # register all publishers
         self.init_subscribers()
