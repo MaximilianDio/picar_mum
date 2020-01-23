@@ -3,7 +3,7 @@ num_points: 3
 # True: show results in frame with track bars
 visualization: False
 # hsv interval for selecting mask
-HSV_low: [115, 60, 80]
+HSV_low: [115, 55, 116]
 HSV_high: [160, 255, 255]
 # cropping factors: width, bottom, top
-cropping_factors: [1, 0.15, 0.5] #####[0.7, 0.37, 0.4]
+cropping_factors: [0.7, 0.37, 0.53] #####[0.7, 0.37, 0.4]
