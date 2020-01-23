@@ -5,11 +5,19 @@
 
     <arg name="config_file_name" default="$(arg ns)"/>
 
+    <arg name="distorted_input"/>
+
+    <arg name="intrinsics_file_name" default="$(arg ns)"/>
+    <arg name="extrinsics_file_name" default="$(arg ns)"/>
+
     <!-- launch line_detection_node -->
     <group if="$(arg local)">
         <group ns="$(arg ns)">
             <node pkg="curved_line_detection" type="curved_line_detection_node.py" name="curved_line_detection_node" output="screen">
                 <param name="config_file_name" value="$(arg config_file_name)"/>
+                <param name="intrinsics_file_name" value="$(arg intrinsics_file_name)"/>
+                <param name="extrinsics_file_name" value="$(arg extrinsics_file_name)"/>
+                <param name="distorted_input" value="$(arg distorted_input)"/>
             </node>
 
         </group>
@@ -19,6 +27,9 @@
         <group ns="$(arg ns)">
             <node machine="$(arg machine)" pkg="curved_line_detection" type="curved_line_detection_node.py" name="curved_line_detection_node" output="screen"/>
             <param name="config_file_name" value="$(arg config_file_name)"/>
+            <param name="intrinsics_file_name" value="$(arg intrinsics_file_name)"/>
+            <param name="extrinsics_file_name" value="$(arg extrinsics_file_name)"/>
+            <param name="distorted_input" value="$(arg distorted_input)"/>
         </group>
     </group>
 

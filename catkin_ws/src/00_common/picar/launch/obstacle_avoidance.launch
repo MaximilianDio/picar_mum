@@ -81,11 +81,22 @@
     </group>
     <!-- curve detection -->
     <remap from="curved_line_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
-    <include file="$(find curved_line_detection)/launch/curved_line_detection_node.launch">
-        <arg name="ns" value="$(arg ns)"/>
-        <arg name="machine" value="$(arg machine)"/>
-        <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
-    </include>
+    <group if="$(arg sim)">
+        <include file="$(find curved_line_detection)/launch/curved_line_detection_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
+            <arg name="distorted_input" value="false"/>
+        </include>
+    </group>
+    <group unless="$(arg sim)">
+        <include file="$(find curved_line_detection)/launch/curved_line_detection_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
+            <arg name="distorted_input" value="true"/>
+        </include>
+    </group>
 
 
     <!-- velocity estimator -->

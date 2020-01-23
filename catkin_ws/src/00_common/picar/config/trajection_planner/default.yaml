@@ -6,7 +6,8 @@ Kp_c_steering: 0.5
 xLA_steering: 0.28
 ########################################
 # velocity control for state 1,2
-vel_reference: 0.7
+vel_reference_line: 2.5
+vel_reference_curve: 0.7
 switch_bound: 1.4
 
 ########################################

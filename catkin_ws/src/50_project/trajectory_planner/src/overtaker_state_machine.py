@@ -48,10 +48,11 @@ class OvertakeStateMachine:
         # ----------------------------------------------
         self.velocity_control_12 = VelocityPicker()
         # desired velocity for state 1,2 in tight curves
-        self.velocity_control_12.minimal_velocity = params_dict["vel_reference"]
+        self.velocity_control_12.minimal_velocity = params_dict["vel_reference_curve"]
         # desired velocity for state 1,2 on straight line
-        self.velocity_control_12.maximal_velocity = params_dict["vel_reference"]
-        self.velocity_control_12.switch_bound = params_dict["switch_bound"]  # switching radius
+        self.velocity_control_12.maximal_velocity = params_dict["vel_reference_line"]
+        # threshold for switching radius
+        self.velocity_control_12.switch_bound = params_dict["switch_bound"]
 
         # -- PID DISTANCE controller for state 3*
         # ----------------------------------------------
