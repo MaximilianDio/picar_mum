@@ -25,7 +25,10 @@ class OvertakeStateMachine:
         self.rel_obstacle_point = None  # Point2D
         self.rel_obstacle_velocity = None  # Point2D
 
+        # distance when to switch from state 2 to 3 or 3*
         self.min_dist_obstacle = params_dict["min_dist_obstacle"]  # defined in yaml file
+
+
         self.overtake_time = None  # calculated during transition to state 3
 
         # calculated in transition to state 3
@@ -44,7 +47,10 @@ class OvertakeStateMachine:
         # -- velocity controller for state 1,2
         # ----------------------------------------------
         self.velocity_control_12 = VelocityPicker()
-        self.velocity_control_12.minimal_velocity = params_dict["vel_reference"]  # desired velocity for state 1,2
+        # desired velocity for state 1,2 in tight curves
+        self.velocity_control_12.minimal_velocity = params_dict["vel_reference"]
+        # desired velocity for state 1,2 on straight line
+        self.velocity_control_12.maximal_velocity = params_dict["vel_reference"]
         self.velocity_control_12.switch_bound = params_dict["switch_bound"]  # switching radius
 
         # -- PID DISTANCE controller for state 3*

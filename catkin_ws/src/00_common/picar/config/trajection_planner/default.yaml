@@ -10,6 +10,7 @@ vel_reference: 0.7
 switch_bound: 1.4
 
 ########################################
+# ALL DISTANCES ARE RELATED TO THE COORDINATE SYSTEM DEFINED AS THE ORIGIN (e.g. center, rear end of picar)
 min_dist_obstacle: 1.5 # distance when state machine switches to state 3*
 # (should be larger than des_distance to obstacle)
 des_distance_to_obstacle: 0.5 # reference input for distance controller
@@ -18,5 +19,5 @@ apriltag_quatschwert: 0.45 # ONLY CHNAGE IF YOU KNOW WHAT YOU ARE DOING
 ########################################
 # velocity control gains for state 3* -> keep distance to obstacle
 Kp_distance: 0.9
-Kd_distance: 1.0
+Kd_distance: 0.5
 Ki_distance: 0.01

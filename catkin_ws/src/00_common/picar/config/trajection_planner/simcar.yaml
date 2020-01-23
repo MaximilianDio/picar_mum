@@ -6,15 +6,16 @@ Kp_c_steering: 0.5
 xLA_steering: 0.25
 ########################################
 # velocity control for state 1,2
-vel_reference: 0.8
+vel_reference: 0.5
 switch_bound: 0.9
 
 ########################################
-min_dist_obstacle: 1.0 # distance when state machine switches to state 3*
+# ALL DISTANCES ARE RELATED TO THE COORDINATE SYSTEM DEFINED AS THE ORIGIN (e.g. center, rear end of picar)
+min_dist_obstacle: 0.7 # distance when state machine switches to state 3* or 3
                        # (should be larger than des_distance to obstacle)
-des_distance_to_obstacle: 0.6 # reference input for distance controller
+des_distance_to_obstacle: 0.5 # reference input for distance controller
 # WARNING !!!!!should be larger than possible values e.g. apriltag_quatschwert !!!!!!
-apriltag_quatschwert: 0.45 # ONLY CHNAGE IF YOU KNOW WHAT YOU ARE DOING
+apriltag_quatschwert: 0.4 # ONLY CHNAGE IF YOU KNOW WHAT YOU ARE DOING
 ########################################
 # velocity control gains for state 3* -> keep distance to obstacle
 Kp_distance: 1

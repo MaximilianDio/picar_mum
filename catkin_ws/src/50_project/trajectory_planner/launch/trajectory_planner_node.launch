@@ -2,14 +2,20 @@
     <arg name="ns"/>
     <arg name="local"/>
     <arg name="machine"/>
+
+    <arg name="config_file_name" default="$(arg ns)"/>
     
     <group ns="$(arg ns)">
         <group if="$(arg local)">
-            <node pkg="trajectory_planner" type="trajectory_planner_node.py" name="trajectory_planner_node" output="screen"/>
+            <node pkg="trajectory_planner" type="trajectory_planner_node.py" name="trajectory_planner_node" output="screen">
+                <param name="config_file_name" value="$(arg config_file_name)"/>
+            </node>
         </group>
 
         <group unless="$(arg local)">
-            <node machine="$(arg machine)" pkg="trajectory_planner" type="trajectory_planner_node.py" name="trajectory_planner_node" output="screen"/>
+            <node machine="$(arg machine)" pkg="trajectory_planner" type="trajectory_planner_node.py" name="trajectory_planner_node" output="screen">
+                <param name="config_file_name" value="$(arg config_file_name)"/>
+            </node>
         </group>
     </group>
 
