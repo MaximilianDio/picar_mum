@@ -2,6 +2,7 @@
 direction: 0
 #number of curve points (use between 3 and 30)
 num_points: 3
+num_subpoints: 10
 # True: show results in frame with track bars
 visualization: True
 # hsv interval for selecting mask
