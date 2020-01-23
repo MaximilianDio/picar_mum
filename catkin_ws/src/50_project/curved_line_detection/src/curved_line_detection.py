@@ -193,7 +193,7 @@ class CurvePointExtractor:
 
         curve_points = []
 
-        N = 10  # TODO make it changable
+        N = 5  # TODO make it changable
         if N > height_roi / self.__num_stripes:
             N = height_roi / self.__num_stripes
         num_stripes = self.__num_stripes * N

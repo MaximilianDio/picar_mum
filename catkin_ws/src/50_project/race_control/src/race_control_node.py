@@ -72,9 +72,9 @@ class RaceControlNode:
     def init_subscribers(self):
         """ initialize ROS subscribers and stores them in a dictionary"""
         # point on curve with position and circle
-        rospy.Subscriber("~curve_point", MsgCurvePoint2D, self.update_curved_point)
+        rospy.Subscriber("~curve_point", MsgCurvePoint2D, self.update_curved_point, queue_size=1)
         # Kalmanfilter output - get velocity est.
-        rospy.Subscriber("~velocity_estimated", Float32, self.update_own_velocity)
+        rospy.Subscriber("~velocity_estimated", Float32, self.update_own_velocity, queue_size=1)
 
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""

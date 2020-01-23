@@ -216,10 +216,10 @@ def main():
         cam_config = CameraParams(camera)
         srv = Server(cam_paramsConfig, cam_config.reconfigure_cb)
         # removed fisheye if
-        w = 0.75  # 0.7 relativ width to resolution
-        h = 0.3  # 0.7 relativ high to resolution
-        x = 0.125  # 0.15 shift of lower left edge to resolution
-        y = 0.35  # 0.15 shift of lower left edge to resolution
+        w = 0.7 #0.75  # 0.7 relativ width to resolution
+        h = 0.7 #0.3  # 0.7 relativ high to resolution
+        x = 0.125 #0.125  # 0.15 shift of lower left edge to resolution
+        y = 0.15 #0.35  # 0.15 shift of lower left edge to resolution
         camera.zoom = (x, y, w, h)
 
         camera.start_recording(output, format='mjpeg', quality=100)
