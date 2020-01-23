@@ -3,6 +3,7 @@ from steering_controller import PathTrackingFF
 from velocity_picker import VelocityPicker
 from trajectoryplanner import OvertakingTrajectory
 from picar.parameters import Picar
+import numpy as np
 
 
 class OvertakeStateMachine:
@@ -18,7 +19,6 @@ class OvertakeStateMachine:
 
         # updated by velocity estimator node
         self.own_velocity_est = 0.0
-        self.vel_reference = params_dict["vel_reference"]  # desired velocity for state 1,2
 
         self.time = 0.0  # initial time (starts when state machine gets first pacemaker message)
         self.overtake_start_time = 0.0

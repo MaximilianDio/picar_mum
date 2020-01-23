@@ -41,7 +41,7 @@
         </include>
 
         <model name="Tag0">
-            <pose>1.5 2 0.1 0 0 0</pose>
+            <pose>0 2 0.1 0 0 0</pose>
             <link name="Tag-0">
             <collision name="collision">
                 <geometry>
