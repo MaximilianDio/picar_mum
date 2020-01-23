@@ -174,9 +174,9 @@ class RaceControlNode:
 
             des_velocity = self.velocity_picker.get_velocity(self.curve_point)
 
-            velocity = des_velocity
 
-            # velocity = self.velocity_control.get_velocity_output(des_velocity , self.own_velocity_est)
+            velocity = self.velocity_control.get_velocity_output(des_velocity , self.own_velocity_est)
+
         try:
             if self.DEBUG == True:
                 print "-----------------------------------------------------------------------------------"

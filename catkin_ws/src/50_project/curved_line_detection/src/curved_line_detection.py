@@ -11,6 +11,9 @@ MAX_SATURATION = MAX_VALUE = 255
 MIN_NUM_STRIPES = 3
 MAX_NUM_STRIPES = 30
 
+LEFT_CURVE = 0
+RIGHT_CURVE = -1
+
 
 def nothing(x):
     """ dummy function does nothing, used as dummy callback for trackbar"""
@@ -80,7 +83,8 @@ def average_points(points, N):
 
 class CurvePointExtractor:
 
-    def __init__(self, hsv_mask_interval, num_stripes, roi_interval, use_trackbar=True):
+    def __init__(self, hsv_mask_interval, num_stripes, num_substripes, roi_interval, direction=LEFT_CURVE,
+                 use_trackbar=True):
         """
         :param hsv_mask_interval: 2 by 3 numpy array which contains low HSV values and high HSV values for masking the
         region of interest
@@ -92,6 +96,9 @@ class CurvePointExtractor:
         """
 
         self.EDGE_THRESHOLD = 200
+        self.num_substripes = num_substripes
+
+        self.direction = direction
 
         if not isinstance(num_stripes, int) or num_stripes < MIN_NUM_STRIPES:
             raise ValueError("num_stripes must be integer > 0")
@@ -165,35 +172,36 @@ class CurvePointExtractor:
 
         # segment roi in stripes
         height_roi, width_roi, _ = roi.shape
-        # convert color to hsv, so it is easier to mask certain colors
-        roi_hsv = cv2.cvtColor(roi, cv2.COLOR_RGB2HSV)
-
-        # blur image
-        try:
-            roi_hsv = cv2.GaussianBlur(roi_hsv, (5, 3), cv2.BORDER_DEFAULT)
-        except:
-            # do nothing
-            pass
-
-        # mask image
-        mask_roi = self.__mask(roi_hsv)
-
-        # median filter to get rid of small imperfections
-        mask_roi = cv2.medianBlur(mask_roi, 3)
-
-        # erode mask
-        kernel = np.ones((5, 1), np.uint8)
-        mask_roi = cv2.erode(mask_roi, kernel, iterations=1)
-        mask_roi = cv2.dilate(mask_roi, kernel, iterations=1)
 
         # show mask result in trackbar window -> will resize window to width of mask!!!
         if self.use_trackbars:
+            # convert color to hsv, so it is easier to mask certain colors
+            roi_hsv = cv2.cvtColor(roi, cv2.COLOR_RGB2HSV)
+
+            # blur image
+            # try:
+            #     roi_hsv = cv2.GaussianBlur(roi_hsv, (5, 3), cv2.BORDER_DEFAULT)
+            # except:
+            #     # do nothing
+            #     pass
+
+            # mask image
+            mask_roi = self.__mask(roi_hsv)
+
+            # median filter to get rid of small imperfections
+            # mask_roi = cv2.medianBlur(mask_roi, 3)
+
+            # erode mask
+            kernel = np.ones((5, 1), np.uint8)
+            mask_roi = cv2.erode(mask_roi, kernel, iterations=1)
+            mask_roi = cv2.dilate(mask_roi, kernel, iterations=1)
+
             cv2.imshow(self.trackbar.window_name, mask_roi)
             cv2.waitKey(1)
 
         curve_points = []
 
-        N = 5  # TODO make it changable
+        N = self.num_substripes
         if N > height_roi / self.__num_stripes:
             N = height_roi / self.__num_stripes
         num_stripes = self.__num_stripes * N
@@ -210,8 +218,19 @@ class CurvePointExtractor:
             # offset to original image for later recalculation to original image coordinates
             line_offset = [self.__roi_offset[0], y + self.__roi_offset[1]]
 
-            # crop image to line
-            line = mask_roi[y, :]
+            if self.use_trackbars:
+                # crop image to line
+                line = mask_roi[y, :]
+
+            else:
+                roi_hsv = cv2.cvtColor(roi, cv2.COLOR_RGB2HSV)
+                line_mask = self.__mask(np.array([roi_hsv[y, :]]))
+
+                kernel = np.ones((5, 1), np.uint8)
+                line_mask = cv2.erode(line_mask, kernel, iterations=1)
+                line_mask = cv2.dilate(line_mask, kernel, iterations=1)
+
+                line = np.array(line_mask).flatten()
 
             # get edges - return -255 to 255
             edge = cv2.Sobel(line, cv2.CV_64F, 0, 1, ksize=3)
@@ -220,21 +239,21 @@ class CurvePointExtractor:
             end_points = np.argwhere(edge < -self.EDGE_THRESHOLD)
 
             # start and end points will always have two high values exactly next to each other
-            # -> only use the even values
+            # -> only use the even values (0)
             try:
-                points = zip(start_points, end_points)[1::2]
                 curve_points.append([])
 
-                for start_point, end_point in points:
-                    curve_point = [(start_point[0] + end_point[0]) / 2 + line_offset[0], line_offset[1]]
-                    curve_points[i].append(curve_point)
-                    break
+                curve_point = [(start_points[self.direction][0] + end_points[self.direction][0]) / 2 + line_offset[0],
+                               line_offset[1]]
+                curve_points[i].append(curve_point)
+
             except IndexError:
                 print "error with point extraction"
 
         curve_points = [x for x in curve_points if x != []]
 
         curve_points = average_points(curve_points, N)
+
         return curve_points
 
     def __mask(self, img_hsv):
@@ -324,6 +343,7 @@ class CurveEstimator:
             # only proceed if at least 3 points in curve
             if len(curve) < 3:
                 continue
+
             for i in range(0, num_points, 1):
 
                 # define points for derivative
