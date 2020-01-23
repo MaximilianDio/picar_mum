@@ -230,7 +230,7 @@ if vel_gamma==1
     curve2=animatedline('Color','m');
     grid on
     title('Stearing Angle')
-    set(gca,'XLIM',[0 t(end)],'YLIM',[1.1*min(gamma) 1.1*max(gamma)])
+    set(gca,'XLIM',[0 t(end)],'YLIM',[1.1*min(rad2deg(gamma)) 1.1*max(rad2deg(gamma))])
     xlabel('time in [s]')
     ylabel('\gamma in [rad]')
 end
@@ -295,7 +295,7 @@ for i = 2:length(t)
         drawnow nocallbacks
     
         subplot('position',[0.675,0.2,0.3,0.25])
-        addpoints(curve2,t(i),gamma(i));
+        addpoints(curve2,t(i),rad2deg(gamma(i)));
         drawnow nocallbacks
     end
 end
