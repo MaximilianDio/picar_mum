@@ -129,7 +129,7 @@ class RaceControlNode:
         if self.cur_time < 8:
             des_velocity = 0
         else:
-            des_velocity = 0.1 * np.sin(0.05 * np.pi * 2 * self.cur_time) + 0.7
+            des_velocity = 0.3 * np.sin(1 * np.pi * 2 * self.cur_time) + 0.9
 
         angle = 0
         print "velocity picked: " + str(des_velocity)

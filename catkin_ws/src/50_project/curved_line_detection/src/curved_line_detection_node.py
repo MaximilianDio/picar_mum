@@ -10,9 +10,11 @@ from picar_common.picar_common import get_config_file_path, get_param, set_param
 from curved_line_detection import CurvePointExtractor, CurveEstimator
 import time
 import cv2
+
 # import matplotlib.pyplot as plt
 
 DEFAULT_FALSE_VALUE = float("inf")
+
 
 class CurveDetector:
 
@@ -67,8 +69,9 @@ class CurveDetector:
 
         # create curve point detector
         hsv_mask_interval = np.matrix([self._params["HSV_low"], self._params["HSV_high"]])
-        self.__curve_point_detector = CurvePointExtractor(hsv_mask_interval, int(self._params["num_points"]),
-                                                          self._params["cropping_factors"], self.visualize)
+        self.__curve_point_detector = CurvePointExtractor(hsv_mask_interval, int(self._params["num_points"]),int(self._params["num_subpoints"]),
+                                                          self._params["cropping_factors"], self._params["direction"],
+                                                          self.visualize)
 
         if camera_info.D[0] == 0.0:
             self.curve_estimator = CurveEstimator(camera_info, H, False)
@@ -96,7 +99,7 @@ class CurveDetector:
 
     def init_subscribers(self):
         """ initialize ROS subscribers and stores them in a dictionary"""
-        self.subscribers["image_input"] = rospy.Subscriber("~input_image/raw", Image, self.rcv_img_cb)
+        self.subscribers["image_input"] = rospy.Subscriber("~input_image/raw", Image, self.rcv_img_cb,queue_size=1)
 
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
@@ -177,8 +180,6 @@ class CurveDetector:
         #     plt.pause(0.00000000001)
 
     def publish_world_curve_points(self, curve_points):
-
-
 
         self.msg_counter += 1
         curve_point_msg = MsgCurvePoint2D()
