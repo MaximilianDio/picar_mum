@@ -11,5 +11,5 @@ switch_bound: 0.3
 
 ########################################
 # velocity control gains
-Kp_velocity: 0.0
-Kd_velocity: 0.0
+Kp_velocity: 0.04
+Kd_velocity: 0.0132

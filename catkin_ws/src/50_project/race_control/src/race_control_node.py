@@ -174,15 +174,15 @@ class RaceControlNode:
 
             des_velocity = self.velocity_picker.get_velocity(self.curve_point)
 
-            velocity = des_velocity
+            #velocity = des_velocity
 
-            # velocity = self.velocity_control.get_velocity_output(des_velocity , self.own_velocity_est)
+            velocity = self.velocity_control.get_velocity_output(des_velocity, self.own_velocity_est)
         try:
             if self.DEBUG == True:
                 print "-----------------------------------------------------------------------------------"
                 print "-----------------------------------------------------------------------------------"
                 print "-----------------------" + str(
-                    rospy.get_rostime()) + "----------------------------"  # TODO change time
+                       rospy.get_rostime()) + "----------------------------"  # TODO change time
                 print "curve point: x: " + str(self.curve_point.x) + " y: " + str(self.curve_point.y)
                 print "own velocity: " + str(self.own_velocity_est)
                 print "angle cmd: " + str(angle)
