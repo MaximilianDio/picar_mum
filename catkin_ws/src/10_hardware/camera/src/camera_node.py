@@ -11,6 +11,7 @@ from picar_common.picar_common import get_param, get_config_file_path
 from dynamic_reconfigure.server import Server
 from camera.cfg import cam_paramsConfig
 
+
 class FrameSplitter(object):
     def __init__(self, publish_intrinsic_info,
                  camera_info, camera_info_intrinsics):
@@ -64,6 +65,7 @@ class FrameSplitter(object):
                 self.stream.truncate()
         self.stream.write(buf)
 
+
 class CameraParams:
     def __init__(self, camera):
         self.camera = camera
@@ -78,7 +80,6 @@ class CameraParams:
         self.awb_mode = 'off'
 
         self.exposure_compensation = 0
-
 
     def reconfigure_cb(self, config, level):
         self.get_params_from_config(config)
@@ -120,6 +121,7 @@ class CameraParams:
         config["awb_mode"] = self.awb_mode
         config["exposure_compensation"] = self.exposure_compensation
 
+
 def read_config_from_file(file_path):
     with open(file_path, "r") as f:
         data = yaml.safe_load(f)
@@ -152,7 +154,7 @@ def camera_info_scaled(camera_info_intrinsics, image_size):
         scale = float(image_size[0]) / camera_info_intrinsics.width
 
         # camera matrix
-        camera_info.K = np.array(camera_info_intrinsics.K)*scale
+        camera_info.K = np.array(camera_info_intrinsics.K) * scale
         camera_info.K[-1] = 1.0
 
         # distortion does not need to be scaled
@@ -163,10 +165,11 @@ def camera_info_scaled(camera_info_intrinsics, image_size):
         camera_info.R = camera_info_intrinsics.R
 
         # projection matrix
-        camera_info.P = np.array(camera_info_intrinsics.P)*scale
+        camera_info.P = np.array(camera_info_intrinsics.P) * scale
         camera_info.P[-2] = 1.0
 
     return camera_info
+
 
 def main():
     rospy.init_node('camera_node', anonymous=False)
@@ -209,16 +212,15 @@ def main():
     rospy.set_param("~fps", fps)
     rospy.set_param("~fisheye", fisheye)
 
-    with PiCamera(resolution=resolution, framerate=fps, sensor_mode=4) as camera:
+    with PiCamera(resolution=resolution, framerate=fps, sensor_mode=7) as camera:
         cam_config = CameraParams(camera)
         srv = Server(cam_paramsConfig, cam_config.reconfigure_cb)
-        if fisheye:  # TODO if fisheye löscen
-            w = 0.8  # 0.7 relativ width to resolution # todo double check cropping
-            h = 0.7 # relativ high to resolution
-            x = 0.125 # shift of lower left edge to resolution
-            y = 0.15  # shift of lower left edge to resolution
-            camera.zoom = (x, y, w, h)
-
+        # removed fisheye if
+        w = 0.75  # 0.7 relativ width to resolution
+        h = 0.3  # 0.7 relativ high to resolution
+        x = 0.125  # 0.15 shift of lower left edge to resolution
+        y = 0.35  # 0.15 shift of lower left edge to resolution
+        camera.zoom = (x, y, w, h)
 
         camera.start_recording(output, format='mjpeg', quality=100)
         rospy.loginfo("drc_strengt {}".format(camera.drc_strength))

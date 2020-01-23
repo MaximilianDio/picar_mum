@@ -1,4 +1,4 @@
 width: 640
 height: 480
-fps: 42
-fisheye: true
+fps: 72
+fisheye: false

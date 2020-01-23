@@ -6,7 +6,7 @@ class VelocityPicker(object):
         """
         self.number_avg = 2  # number of stored values for radii estimation
         self.ave_list = [0.0] * self.number_avg  # array storing the last several values of the radii
-        self.maximal_velocity = 2.5  # maximal velocity
+        self.maximal_velocity = 2.0  # maximal velocity
         self.minimal_velocity = vel_reference  # minimal/basic velocity
         self.switch_bound = switch_bound  # radius at which size the car should switch to fast velocity
 

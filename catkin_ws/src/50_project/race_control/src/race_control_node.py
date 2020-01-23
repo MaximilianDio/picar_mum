@@ -177,18 +177,19 @@ class RaceControlNode:
             velocity = des_velocity
 
             # velocity = self.velocity_control.get_velocity_output(des_velocity , self.own_velocity_est)
-
-        if self.DEBUG == True:
-            print "-----------------------------------------------------------------------------------"
-            print "-----------------------------------------------------------------------------------"
-            print "-----------------------" + str(
-                rospy.get_rostime()) + "----------------------------"  # TODO change time
-            print "curve point: x: " + str(self.curve_point.x) + " y: " + str(self.curve_point.y)
-            print "own velocity: " + str(self.own_velocity_est)
-            print "angle cmd: " + str(angle)
-            print "velocity picked: " + str(des_velocity)
-            print "velocity cmd: " + str(velocity)
-
+        try:
+            if self.DEBUG == True:
+                print "-----------------------------------------------------------------------------------"
+                print "-----------------------------------------------------------------------------------"
+                print "-----------------------" + str(
+                    rospy.get_rostime()) + "----------------------------"  # TODO change time
+                print "curve point: x: " + str(self.curve_point.x) + " y: " + str(self.curve_point.y)
+                print "own velocity: " + str(self.own_velocity_est)
+                print "angle cmd: " + str(angle)
+                print "velocity picked: " + str(des_velocity)
+                print "velocity cmd: " + str(velocity)
+        except AttributeError:
+            pass
         # ---------------- publish CarCmd -------------------------
         des_car_command = CarCmd()
 
