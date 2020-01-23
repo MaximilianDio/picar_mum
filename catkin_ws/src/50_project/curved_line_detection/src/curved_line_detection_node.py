@@ -10,7 +10,6 @@ from picar_common.picar_common import get_config_file_path, get_param, set_param
 from curved_line_detection import CurvePointExtractor, CurveEstimator
 import time
 import cv2
-import matplotlib.pyplot as plt
 
 
 class CurveDetector:
@@ -140,41 +139,6 @@ class CurveDetector:
         cv2.imshow("line", img_bgr)
         cv2.waitKey(1)
 
-        # create world plot for every 10th message publish
-        if self.msg_counter % 10 == 0:
-            plt.cla()
-            for curve in curve_points:
-                xs = []
-                ys = []
-                for i, curve_point in enumerate(curve):
-                    xs.append(curve_point.x)
-                    ys.append(curve_point.y)
-
-                    if i == 1:
-                        try:
-                            r = curve_point.circle.radius
-                            cx = curve_point.circle.center.x
-                            cy = curve_point.circle.center.y
-
-                            theta = np.linspace(0, 2 * np.pi, 100)
-
-                            x1 = cx + r * np.cos(theta)
-                            x2 = cy + r * np.sin(theta)
-
-                            plt.plot(x1, x2)
-                        except AttributeError:
-                            # point has no circle - do nothing
-                            pass
-
-                plt.plot(xs, ys, ':')
-
-            plt.draw()
-            plt.axis("equal")
-            plt.grid(color='gray', linestyle='-', linewidth=1)
-            plt.ylim((-1, 1))
-            plt.xlim(0, 3)
-            plt.pause(0.00000000001)
-
     def publish_world_curve_points(self, curve_points):
 
         DEFAULT_FALSE_VALUE = float("inf")
@@ -224,6 +188,4 @@ class CurveDetector:
 if __name__ == "__main__":
     rospy.init_node("world_projection_node")
     CurveDetector()
-    plt.ion()
-    plt.show()
     rospy.spin()
