@@ -174,28 +174,30 @@ class CurvePointExtractor:
         height_roi, width_roi, _ = roi.shape
 
         # show mask result in trackbar window -> will resize window to width of mask!!!
+
+        # convert color to hsv, so it is easier to mask certain colors
+        roi_hsv = cv2.cvtColor(roi, cv2.COLOR_RGB2HSV)
+
+        # blur image
+        try:
+            roi_hsv = cv2.GaussianBlur(roi_hsv, (5, 3), cv2.BORDER_DEFAULT)
+        except:
+             # do nothing
+             pass
+
+        # mask image
+        mask_roi = self.__mask(roi_hsv)
+
+        # median filter to get rid of small imperfections
+        mask_roi = cv2.medianBlur(mask_roi, 3)
+
+        # erode mask
+        kernel = np.ones((5, 1), np.uint8)
+        mask_roi = cv2.erode(mask_roi, kernel, iterations=1)
+        mask_roi = cv2.dilate(mask_roi, kernel, iterations=1)
+
+
         if self.use_trackbars:
-            # convert color to hsv, so it is easier to mask certain colors
-            roi_hsv = cv2.cvtColor(roi, cv2.COLOR_RGB2HSV)
-
-            # blur image
-            # try:
-            #     roi_hsv = cv2.GaussianBlur(roi_hsv, (5, 3), cv2.BORDER_DEFAULT)
-            # except:
-            #     # do nothing
-            #     pass
-
-            # mask image
-            mask_roi = self.__mask(roi_hsv)
-
-            # median filter to get rid of small imperfections
-            # mask_roi = cv2.medianBlur(mask_roi, 3)
-
-            # erode mask
-            kernel = np.ones((5, 1), np.uint8)
-            mask_roi = cv2.erode(mask_roi, kernel, iterations=1)
-            mask_roi = cv2.dilate(mask_roi, kernel, iterations=1)
-
             cv2.imshow(self.trackbar.window_name, mask_roi)
             cv2.waitKey(1)
 
@@ -218,19 +220,19 @@ class CurvePointExtractor:
             # offset to original image for later recalculation to original image coordinates
             line_offset = [self.__roi_offset[0], y + self.__roi_offset[1]]
 
-            if self.use_trackbars:
+            # if self.use_trackbars:
                 # crop image to line
-                line = mask_roi[y, :]
+            line = mask_roi[y, :]
 
-            else:
-                roi_hsv = cv2.cvtColor(roi, cv2.COLOR_RGB2HSV)
-                line_mask = self.__mask(np.array([roi_hsv[y, :]]))
+            #else:
+             #   roi_hsv = cv2.cvtColor(roi, cv2.COLOR_RGB2HSV)
+              #  line_mask = self.__mask(np.array([roi_hsv[y, :]]))
 
-                kernel = np.ones((5, 1), np.uint8)
-                line_mask = cv2.erode(line_mask, kernel, iterations=1)
-                line_mask = cv2.dilate(line_mask, kernel, iterations=1)
+             #   kernel = np.ones((5, 1), np.uint8)
+             #   line_mask = cv2.erode(line_mask, kernel, iterations=1)
+            #    line_mask = cv2.dilate(line_mask, kernel, iterations=1)
 
-                line = np.array(line_mask).flatten()
+            #    line = np.array(line_mask).flatten()
 
             # get edges - return -255 to 255
             edge = cv2.Sobel(line, cv2.CV_64F, 0, 1, ksize=3)
@@ -248,7 +250,7 @@ class CurvePointExtractor:
                 curve_points[i].append(curve_point)
 
             except IndexError:
-                print "error with point extraction"
+                pass
 
         curve_points = [x for x in curve_points if x != []]
 
