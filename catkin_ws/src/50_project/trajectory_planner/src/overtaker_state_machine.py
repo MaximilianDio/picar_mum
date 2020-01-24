@@ -28,7 +28,8 @@ class OvertakeStateMachine:
         self.rel_obstacle_velocity = None  # Point2D
 
         # distance when to switch from state 2 to 3 or 3*
-        self.min_dist_obstacle = params_dict["min_dist_obstacle"]  # defined in yaml file
+        # self.min_dist_obstacle = params_dict["min_dist_obstacle"]  # defined in yaml file
+        self.min_dist_obstacle = params_dict["des_distance_to_obstacle"]*2  # defined in yaml file
 
         self.overtake_time = None  # calculated during transition to state 3
 
@@ -57,6 +58,8 @@ class OvertakeStateMachine:
 
         # -- PID DISTANCE controller for state 3*
         # ----------------------------------------------
+        self.Kp_steering_apriltag = params_dict["Kp_steering_apriltag"]
+
         self.des_distance_to_obstacle = params_dict["des_distance_to_obstacle"]
         Kp_distance = params_dict["Kp_distance"]
         Kd_distance = params_dict["Kd_distance"]
@@ -159,8 +162,11 @@ class OvertakeStateMachine:
         self.steering_control_123star.xLA = 0
 
         # run controller
-        if self.curve_point is not None:
-            des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
+        # if self.curve_point is not None:
+        #     des_angle = self.steering_control_123star.get_steering_output(self.curve_point, self.own_velocity_est)
+        # else:
+        if self.rel_obstacle_point is not None:
+            des_angle = np.arctan(self.rel_obstacle_point.y / self.rel_obstacle_point.x) * self.Kp_steering_apriltag
         else:
             des_angle = 0.0
 
@@ -191,6 +197,9 @@ class OvertakeStateMachine:
         """ initialize necessary information before going to state 3 - e.g. calculate necessary overtake time,
         trajectory time ... """
 
+        # define desired trajectory based on own velocity and obstacle velocity
+
+        self.trajectory.define_trajectory(self.own_velocity_est, self.rel_obstacle_velocity)
         # desired initial values
         self.des_velocity = self.trajectory.velocity[0]
         self.des_angle = self.trajectory.angle[0]

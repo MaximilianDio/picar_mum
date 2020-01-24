@@ -7,10 +7,29 @@ import os
 class OvertakingTrajectory(object):
 
     def __init__(self):
-        file_path = os.path.join(rospkg.RosPack().get_path("trajectory_planner"),
-                                 "src",
-                                 "MovingObject03to08.csv")
+
+        self.time = 0.0
+        self.velocity = 0.0
+        self.angle = 0.0
+
+    def define_trajectory(self, own_vel, rel_obs_vel):
+
+        abs_obs_vel = own_vel - rel_obs_vel.x
+
+        if abs(abs_obs_vel) < 0.2:
+
+            file_path = os.path.join(rospkg.RosPack().get_path("trajectory_planner"),
+                                     "src",
+                                     "StaticObject0to08_new.csv")
+        else:
+
+            file_path = os.path.join(rospkg.RosPack().get_path("trajectory_planner"),
+                                     "src",
+                                     "MovingObject03to08.csv")
+
         traj = np.genfromtxt(file_path, delimiter=',')
+
+        # TODO define trajectory with obstacle velocity and own velocity
         self.time = traj[0, :]
         self.velocity = traj[1, :]
         self.angle = traj[2, :]

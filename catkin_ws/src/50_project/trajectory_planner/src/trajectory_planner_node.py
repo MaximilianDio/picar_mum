@@ -83,6 +83,11 @@ class TrajectoryPlanner:
             SetValue,
             self.service_switching_radius_clb)
 
+        self.services["set_Kp_steering_apriltag"] = rospy.Service(
+            "~set_Kp_steering_apriltag",
+            SetValue,
+            self.service_steering_Kp_apriltag_clb)
+
         # ---------------- controller params -------------------------
 
         self.services["update_steering_parameters"] = rospy.Service(
@@ -103,13 +108,13 @@ class TrajectoryPlanner:
     def init_subscribers(self):
         """ initialize ROS subscribers and stores them in a dictionary"""
         # pacemaker
-        rospy.Subscriber("~pacemaker", Float32, self.run_node,queue_size=1)
+        rospy.Subscriber("~pacemaker", Float32, self.run_node, queue_size=1)
         # position of detected obstacle
-        rospy.Subscriber("~obstacle_position", Point32, self.update_obstacle_pos_clb,queue_size=1)
+        rospy.Subscriber("~obstacle_position", Point32, self.update_obstacle_pos_clb, queue_size=1)
         # point on curve with position and circle
-        rospy.Subscriber("~curve_point", MsgCurvePoint2D, self.update_curved_point_clb,queue_size=1)
+        rospy.Subscriber("~curve_point", MsgCurvePoint2D, self.update_curved_point_clb, queue_size=1)
         # point on curve with position and circle
-        rospy.Subscriber("~own_velocity", Float32, self.update_own_velocity_clb,queue_size=1)
+        rospy.Subscriber("~own_velocity", Float32, self.update_own_velocity_clb, queue_size=1)
 
     # --------------------- Service Callbacks ----------------------------
 
@@ -122,6 +127,7 @@ class TrajectoryPlanner:
     def service_des_obstacle_distance_clb(self, request):
         """Sets values via service"""
         self.state_machine.des_distance_to_obstacle = request.value
+        self.state_machine.min_dist_obstacle = request.value*2
 
         return 1
 
@@ -148,6 +154,9 @@ class TrajectoryPlanner:
         self.state_machine.velocity_control_3star.set_Ki(request.Ki)
 
         return 1
+
+    def service_steering_Kp_apriltag_clb(self, request):
+        self.state_machine.Kp_steering_apriltag = request.value
 
     # ---------------------- Topic Callbacks -----------------------------
 
@@ -187,7 +196,7 @@ class TrajectoryPlanner:
         it state machine calls corresponding trajectory planner which updates desired velocity and angle!"""
 
         time = rospy.get_rostime()
-        self.time = time.secs + time.nsecs*1e-9
+        self.time = time.secs + time.nsecs * 1e-9
 
         # update time in state machine
         self.state_machine.time = self.time
@@ -207,8 +216,12 @@ class TrajectoryPlanner:
                 print "obstacle at position: x: " + str(self.state_machine.rel_obstacle_point.x) + " y: " + str(
                     self.state_machine.rel_obstacle_point.y)
                 print "min distance to obstacle: " + str(self.state_machine.min_dist_obstacle)
-                print "too close: " + str(self.state_machine.rel_obstacle_point.x < self.state_machine.min_dist_obstacle)
+                print "desired distance to obstacle: " + str(self.state_machine.des_distance_to_obstacle)
+                print "too close: " + str(
+                    self.state_machine.rel_obstacle_point.x < self.state_machine.min_dist_obstacle)
                 if self.state_machine.rel_obstacle_velocity is not None:
+                    print "absolute obstacle velocity: " + str(
+                        self.state_machine.own_velocity_est - self.state_machine.rel_obstacle_velocity.x)
                     print "relative obstacle velocity: x: " + str(
                         self.state_machine.rel_obstacle_velocity.x) + " y: " + str(
                         self.state_machine.rel_obstacle_velocity.y)
