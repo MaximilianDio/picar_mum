@@ -13,7 +13,7 @@ switch_bound: 0.9
 ########################################
 # ALL DISTANCES ARE RELATED TO THE COORDINATE SYSTEM DEFINED AS THE ORIGIN (e.g. center, rear end of picar)
  # distance when state machine switches to state 3* is 2 times larger than desired obstacle distance
-des_distance_to_obstacle: 0.6  # reference input for distance controller -- MOVING OBSTACLE
+des_distance_to_obstacle: 0.5  # reference input for distance controller -- MOVING OBSTACLE
 #des_distance_to_obstacle: 0.8  # reference input for distance controller -- STATIC OBSTACLE
 # WARNING !!!!!should be larger than possible values e.g. apriltag_quatschwert !!!!!!
 apriltag_quatschwert: 0.35 # ONLY CHNAGE IF YOU KNOW WHAT YOU ARE DOING
