@@ -26,6 +26,7 @@ add_service_files(
   SetSteeringParametersList.srv
   SetDistanceParametersList.srv
   SetVelocityParametersList.srv
+  SetVelocityPickerParameterList.srv
 )
 
 generate_messages(

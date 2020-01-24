@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import rospy
 import yaml
-from picar_msgs.srv import SetValue, SetBool, SetSteeringParametersList, SetVelocityParametersList
+from picar_msgs.srv import SetValue, SetSteeringParametersList, SetVelocityParametersList, \
+    SetVelocityPickerParameterList
 from std_msgs.msg import Float32
 from picar_msgs.msg import CarCmd, MsgCurvePoint2D
 from picar_common.picar_common import get_param, get_config_file_path, set_param
@@ -35,7 +36,6 @@ class RaceControlNode:
 
         self.cur_time = self.cur_time - self.init_time
 
-
         # import parameters from config yaml files
         config_file_name = get_param("~config_file_name", "default")
 
@@ -50,7 +50,7 @@ class RaceControlNode:
         # read the config parameters form .yaml file
         self.setup_params(config_file_path)
 
-        self.DEBUG = True
+        self.DEBUG = False
 
         # register all publishers
         self.init_subscribers()
@@ -91,15 +91,20 @@ class RaceControlNode:
 
     def init_services(self):
 
-        self.services["set_vel_reference"] = rospy.Service(
-            "~set_vel_reference",
+        self.services["set_vel_min"] = rospy.Service(
+            "~set_vel_min",
             SetValue,
-            self.service_vel_reference)
+            self.service_vel_min)
 
-        self.services["set_switching_radius"] = rospy.Service(
-            "~set_switching_radius",
+        self.services["set_vel_max"] = rospy.Service(
+            "~set_vel_max",
             SetValue,
-            self.service_switching_radius)
+            self.service_vel_max)
+
+        self.services["set_switching_bounds"] = rospy.Service(
+            "~set_switching_bounds",
+            SetVelocityPickerParameterList,
+            self.service_switching_bounds)
 
         # ---------------- controller params -------------------------
 
@@ -121,8 +126,8 @@ class RaceControlNode:
                                                                    self._params["Kp_c_steering"],
                                                                    self._params["xLA_steering"])
         # velocity picker
-        self.velocity_picker = velocity_picker.VelocityPicker(self._params["vel_reference"],
-                                                              self._params["switch_bound"])
+        self.velocity_picker = velocity_picker.VelocityPicker(self._params["vel_min"], self._params["vel_max"],
+                                                              self._params["switch_bound_slope"],self._params["switch_bound_radius"])
 
         # velocity control
         self.velocity_control = velocity_controller.VelocityController(self._params["Kp_velocity"],
@@ -130,15 +135,24 @@ class RaceControlNode:
 
     # ---------------- controller params -------------------------
 
-    def service_vel_reference(self, request):
+    def service_vel_min(self, request):
         """Sets values via service"""
         self.velocity_picker.minimal_velocity = request.value
+        print ("<<<<< Mehr zoegerlich>>>>>")
+        return 1
+
+    def service_vel_max(self, request):
+        """Sets values via service"""
+        self.velocity_picker.maximal_velocity = request.value
         print ("<<<<< Hebel auf den Tisch >>>>>")
         return 1
 
-    def service_switching_radius(self, request):
+    def service_switching_bounds(self, request):
         """ set switching radius of velocity picker"""
-        self.velocity_picker.switch_bound = request.value
+        self.velocity_picker.switch_bound_radius = request.Switch_bound_radius
+
+        self.velocity_picker.switch_bound_slope = request.Switch_bound_slope
+
         print("%%%%% Schnipp Schnapp %%%%%")
         return 1
 
@@ -160,18 +174,17 @@ class RaceControlNode:
     def update_curved_point(self, message):
         # message of type MsgCurvePoint2D
         curve_point = message
+
         # update curvepoint
         if curve_point.x == DEFAULT_FALSE_FLOAT_VALUE or curve_point.y == DEFAULT_FALSE_FLOAT_VALUE:
             self.curve_point = None
         else:
             self.curve_point = curve_point
 
-
-
     def update_own_velocity(self, message):
         self.own_velocity_est = message.data
 
-        self.control_picar() # Callback on est data  - higher frequency
+        self.control_picar()  # Callback on est data  - higher frequency
 
     def control_picar(self):
 
@@ -179,7 +192,6 @@ class RaceControlNode:
         self.cur_time = self.cur_time.secs + float(self.cur_time.nsecs * 1e-9)
 
         self.cur_time = self.cur_time - self.init_time
-
 
         if self.curve_point is None:
             angle = 0
@@ -197,7 +209,7 @@ class RaceControlNode:
             if self.DEBUG == True:
                 print "-----------------------------------------------------------------------------------"
                 print "-----------------------------------------------------------------------------------"
-                print "----------------------------"str(self.cur_time)"-----------------------------------"
+                print "---------------------------" + str(self.cur_time) + "------------------------------"
                 print "curve point: x: " + str(self.curve_point.x) + " y: " + str(self.curve_point.y)
                 print "own velocity: " + str(self.own_velocity_est)
                 print "angle cmd: " + str(angle)

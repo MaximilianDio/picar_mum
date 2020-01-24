@@ -34,7 +34,9 @@ ADDR_GYRO_ZOUT_L = 0x48
 
 ADDR_PWR_MGMT_1 = 0x6B
 
-# Address of DLPF port
+
+LOW_PASS  = True
+#Address of DLPF port
 MPU6050_DLPF_BW_5 = 0x1A
 
 class Node:
@@ -45,7 +47,9 @@ class Node:
         self.bus = smbus.SMBus(1)
         # address is either 0x68 or 0x69. see MPU-6050 data sheet for details
         self.address = 0x68
-        self.bus.write_byte_data(self.address, MPU6050_DLPF_BW_5, 6)
+
+        if LOW_PASS == True:
+            self.bus.write_byte_data(self.address, MPU6050_DLPF_BW_5, 6)
 
         # set full scale for gyroscope and accelerometer
         self.accel_fs = ACCEL_FS_0

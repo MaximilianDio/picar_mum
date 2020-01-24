@@ -35,8 +35,8 @@ class VelocityEstimation(object):
         """ initialize ROS subscribers and stores them in a dictionary"""
         # Subscription to encoder data - angular velocity
 
-        rospy.Subscriber("~input_encoder_data", WheelSpeedStamped, self.correction_step, queue_size=1)
-        rospy.Subscriber("~imu", Imu, self.prediction_step, queue_size=1)
+        rospy.Subscriber("~input_encoder_data", WheelSpeedStamped, self.correction_step)
+        rospy.Subscriber("~imu", Imu, self.prediction_step)
 
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""

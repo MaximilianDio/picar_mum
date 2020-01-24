@@ -6,10 +6,14 @@ Kp_c_steering: 0.4
 xLA_steering: 0.3
 ########################################
 # velocity picker
-vel_reference: 0.9
-switch_bound: 0.3
+vel_min: 0.9
+vel_max: 2.0
+switch_bound_radius: 0.9
+switch_bound_slope: 0.5
 
 ########################################
 # velocity control gains
-Kp_velocity: 0.0
-Kd_velocity: 0.0
+Kp_velocity: 0.015
+Kd_velocity: 0.001
+
+

@@ -225,7 +225,7 @@ class CurveDetector:
 
 
 if __name__ == "__main__":
-    rospy.init_node("world_projection_node")
+    rospy.init_node("curved_line_detection_node")
     CurveDetector()
     # plt.ion()
     # plt.show()

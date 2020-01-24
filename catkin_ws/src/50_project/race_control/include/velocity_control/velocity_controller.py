@@ -29,7 +29,6 @@ class VelocityController(object):
         self.sat = 2.5
         self.last_control = 0.0
 
-
     def get_velocity_output(self, des_vel, meas):
 
         # ---------------- update attributes -------------------------
@@ -48,8 +47,10 @@ class VelocityController(object):
         dt = self.cur_time - self.last_time
         dv = self.current_vel - self.last_vel
 
-        self.error = self.current_vel - self.desired_vel
+        if dt == 0.0:
+            dt = 1
 
+        self.error = self.current_vel - self.desired_vel
 
         # ---------------- compute vel_cmd -------------------------
         vel_output = self.last_control + (- self.kp * self.error - self.kd * (dv / dt))
