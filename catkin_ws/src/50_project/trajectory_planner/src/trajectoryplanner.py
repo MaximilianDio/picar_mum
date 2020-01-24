@@ -9,7 +9,7 @@ class OvertakingTrajectory(object):
     def __init__(self):
         file_path = os.path.join(rospkg.RosPack().get_path("trajectory_planner"),
                                  "src",
-                                 "Overtaker_moving_object.csv")
+                                 "MovingObject03to08.csv")
         traj = np.genfromtxt(file_path, delimiter=',')
         self.time = traj[0, :]
         self.velocity = traj[1, :]
@@ -21,4 +21,4 @@ class OvertakingTrajectory(object):
         else:
             velocity_interp = interp1d(self.time, self.velocity)
             delta_interp = interp1d(self.time, self.angle)
-            return velocity_interp(current_time), -delta_interp(current_time) * 180 / np.pi  # Outputs: desVel, desAngle
+            return velocity_interp(current_time), delta_interp(current_time) * 180 / np.pi  # Outputs: desVel, desAngle

@@ -6,8 +6,8 @@ Kp_c_steering: 0.54
 xLA_steering: 0.2
 ########################################
 # velocity control for state 1,2
-vel_reference_line: 0.8
-vel_reference_curve: 0.6
+vel_reference_line: 0.5
+vel_reference_curve: 0.5
 switch_bound: 0.9
 
 ########################################
@@ -20,5 +20,5 @@ apriltag_quatschwert: 0.4 # ONLY CHNAGE IF YOU KNOW WHAT YOU ARE DOING
 ########################################
 # velocity control gains for state 3* -> keep distance to obstacle
 Kp_distance: 1
-Kd_distance: 0.9
-Ki_distance: 0.01
+Kd_distance: 1
+Ki_distance: 0.02

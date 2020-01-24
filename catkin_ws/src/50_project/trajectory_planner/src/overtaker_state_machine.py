@@ -214,7 +214,7 @@ class OvertakeStateMachine:
 
         # update desired angle and velocity according to mappings
         self.des_velocity = self.mappings.get_velocity(open_loop_velocity)
-        self.des_angle = self.mappings.get_angle(open_loop_angle)
+        self.des_angle = open_loop_angle
 
         # change state if needed
         if state_time < (self.t_trajectory):
