@@ -12,8 +12,8 @@ xLA_steering: 0.25
 
 ########################################
 # velocity picker
-vel_min: 0
-vel_max: 0
+vel_min: 1.5
+vel_max: 2
 
 switch_bound_slope: 0.8
 switch_bound_radius: 0.9
