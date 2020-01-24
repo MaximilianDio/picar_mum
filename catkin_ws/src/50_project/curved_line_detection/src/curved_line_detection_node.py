@@ -69,7 +69,8 @@ class CurveDetector:
 
         # create curve point detector
         hsv_mask_interval = np.matrix([self._params["HSV_low"], self._params["HSV_high"]])
-        self.__curve_point_detector = CurvePointExtractor(hsv_mask_interval, int(self._params["num_points"]),int(self._params["num_subpoints"]),
+        self.__curve_point_detector = CurvePointExtractor(hsv_mask_interval, int(self._params["num_points"]),
+                                                          int(self._params["num_subpoints"]),
                                                           self._params["cropping_factors"], self._params["direction"],
                                                           self.visualize)
 
@@ -99,7 +100,7 @@ class CurveDetector:
 
     def init_subscribers(self):
         """ initialize ROS subscribers and stores them in a dictionary"""
-        self.subscribers["image_input"] = rospy.Subscriber("~input_image/raw", Image, self.rcv_img_cb,queue_size=1)
+        self.subscribers["image_input"] = rospy.Subscriber("~input_image/raw", Image, self.rcv_img_cb, queue_size=1)
 
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""

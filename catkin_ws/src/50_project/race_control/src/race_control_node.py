@@ -24,9 +24,17 @@ class RaceControlNode:
         self.services = {}
 
         # init attributes
-        self.time = 0.0
         self.own_velocity_est = 0.0
         self.curve_point = None  # CurvePointMessage
+
+        self.init_time = rospy.get_rostime()
+        self.init_time = self.init_time.secs + float(self.init_time.nsecs * 1e-9)
+
+        self.cur_time = rospy.get_rostime()
+        self.cur_time = self.cur_time.secs + float(self.cur_time.nsecs * 1e-9)
+
+        self.cur_time = self.cur_time - self.init_time
+
 
         # import parameters from config yaml files
         config_file_name = get_param("~config_file_name", "default")
@@ -72,9 +80,9 @@ class RaceControlNode:
     def init_subscribers(self):
         """ initialize ROS subscribers and stores them in a dictionary"""
         # point on curve with position and circle
-        rospy.Subscriber("~curve_point", MsgCurvePoint2D, self.update_curved_point)
+        rospy.Subscriber("~curve_point", MsgCurvePoint2D, self.update_curved_point, queue_size=1)
         # Kalmanfilter output - get velocity est.
-        rospy.Subscriber("~velocity_estimated", Float32, self.update_own_velocity)
+        rospy.Subscriber("~velocity_estimated", Float32, self.update_own_velocity, queue_size=1)
 
     def init_publishers(self):
         """ initialize ROS publishers and stores them in a dictionary"""
@@ -158,12 +166,20 @@ class RaceControlNode:
         else:
             self.curve_point = curve_point
 
-        self.control_picar()
+
 
     def update_own_velocity(self, message):
         self.own_velocity_est = message.data
 
+        self.control_picar() # Callback on est data  - higher frequency
+
     def control_picar(self):
+
+        self.cur_time = rospy.get_rostime()
+        self.cur_time = self.cur_time.secs + float(self.cur_time.nsecs * 1e-9)
+
+        self.cur_time = self.cur_time - self.init_time
+
 
         if self.curve_point is None:
             angle = 0
@@ -174,15 +190,14 @@ class RaceControlNode:
 
             des_velocity = self.velocity_picker.get_velocity(self.curve_point)
 
-            #velocity = des_velocity
+            # velocity = des_velocity
 
             velocity = self.velocity_control.get_velocity_output(des_velocity, self.own_velocity_est)
         try:
             if self.DEBUG == True:
                 print "-----------------------------------------------------------------------------------"
                 print "-----------------------------------------------------------------------------------"
-                print "-----------------------" + str(
-                       rospy.get_rostime()) + "----------------------------"  # TODO change time
+                print "----------------------------"str(self.cur_time)"-----------------------------------"
                 print "curve point: x: " + str(self.curve_point.x) + " y: " + str(self.curve_point.y)
                 print "own velocity: " + str(self.own_velocity_est)
                 print "angle cmd: " + str(angle)
