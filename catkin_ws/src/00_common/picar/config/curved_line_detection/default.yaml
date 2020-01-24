@@ -4,7 +4,7 @@ direction: 0
 num_points: 3
 num_subpoints: 10
 # True: show results in frame with track bars
-visualization: True
+visualization: False
 # hsv interval for selecting mask
 #HSV_low: [115, 55, 116]
 #HSV_high: [160, 255, 255]

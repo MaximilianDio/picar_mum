@@ -34,10 +34,11 @@ ADDR_GYRO_ZOUT_L = 0x48
 
 ADDR_PWR_MGMT_1 = 0x6B
 
+LOW_PASS = False
 
-LOW_PASS  = True
-#Address of DLPF port
+# Address of DLPF port
 MPU6050_DLPF_BW_5 = 0x1A
+
 
 class Node:
 
@@ -85,7 +86,7 @@ class Node:
 
     def read_word(self, register):
         low = self.bus.read_byte_data(self.address, register)
-        high = self.bus.read_byte_data(self.address, register+1)
+        high = self.bus.read_byte_data(self.address, register + 1)
         return (high << 8) + low
 
     def write_byte(self, register, data):
@@ -105,7 +106,6 @@ class Node:
         if not (val == self.gyro_fs):
             raise Exception("Could not set gyro_full_scale to '{}'. "
                             "Actual value: '{}'".format(self.gyro_fs, val))
-
 
     def set_accel_full_scale(self, full_scale):
         self.write_byte(ADDR_ACCEL_CONFIG, full_scale)
@@ -133,8 +133,8 @@ class Node:
 
         accel = np.array([accel_x, accel_y, accel_z], dtype=np.float64)
         gyro = np.array([gyro_x, gyro_y, gyro_z], dtype=np.float64)
-        accel = accel/self.get_accel_scale_factor()
-        gyro = gyro/self.get_gyro_scale_factor()
+        accel = accel / self.get_accel_scale_factor()
+        gyro = gyro / self.get_gyro_scale_factor()
         return accel, gyro
 
     def get_accel_scale_factor(self):
@@ -160,8 +160,6 @@ class Node:
             return 16.4
         else:
             raise Exception("No valid gyro_fs: {}".format(self.gyro_fs))
-
-
 
 
 if __name__ == "__main__":
