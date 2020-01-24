@@ -248,7 +248,7 @@ class CurvePointExtractor:
                 curve_points[i].append(curve_point)
 
             except IndexError:
-                print "error with point extraction"
+                pass
 
         curve_points = [x for x in curve_points if x != []]
 
