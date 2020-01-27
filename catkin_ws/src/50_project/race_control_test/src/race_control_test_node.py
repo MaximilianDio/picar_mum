@@ -87,11 +87,9 @@ class RaceControlNode:
         """ initialize ROS publishers and stores them in a dictionary"""
         # Commanded Values to Picar
         self.publishers["car_cmd"] = rospy.Publisher("motor_node/car_cmd", CarCmd, queue_size=1)
+        self.publishers["vel_des"] = rospy.Publisher("vel_des", CarCmd, queue_size=1)
 
     def init_services(self):
-
-
-
 
         self.services["update_velocity_parameters"] = rospy.Service(
             "~update_velocity_parameters",
@@ -126,10 +124,11 @@ class RaceControlNode:
 
         self.cur_time = self.cur_time - self.init_time
 
-        if self.cur_time < 8:
+        print (str(self.cur_time))
+        if self.cur_time < 10:
             des_velocity = 0
         else:
-            des_velocity = 0.3 * np.sin(1 * np.pi * 2 * self.cur_time) + 0.9
+            des_velocity = 0.2 * np.sin(0.25 * np.pi * 2 * self.cur_time) + 0.9
 
         angle = 0
         print "velocity picked: " + str(des_velocity)
@@ -156,6 +155,14 @@ class RaceControlNode:
         des_car_command.velocity = velocity
         des_car_command.angle = angle
         self.publishers["car_cmd"].publish(des_car_command)
+
+
+        des_command = CarCmd()
+
+        des_command.header.stamp = rospy.get_rostime()
+        des_command.velocity = des_velocity
+        des_command.angle = angle
+        self.publishers["vel_des"].publish(des_command)
 
 
 if __name__ == "__main__":

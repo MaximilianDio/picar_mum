@@ -55,15 +55,17 @@ class VelocityController(object):
         # ---------------- compute vel_cmd -------------------------
         vel_output = self.last_control + (- self.kp * self.error - self.kd * (dv / dt))
 
-        self.last_control = vel_output
-        self.last_time = self.cur_time
-        self.last_vel = self.current_vel
+
 
         # ----------------Limit Vel CMD-------------------------
 
         if vel_output < 0:
             print("Velocity negativ!!!")
             vel_output = 0
+
+        self.last_control = vel_output
+        self.last_time = self.cur_time
+        self.last_vel = self.current_vel
 
         return vel_output
 

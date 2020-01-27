@@ -8,7 +8,15 @@ visualization: False
 # hsv interval for selecting mask
 #HSV_low: [115, 55, 116]
 #HSV_high: [160, 255, 255]
-HSV_low: [115, 33, 146]
+#HSV_low: [115, 33, 146]
+#HSV_high: [160, 255, 255]
+
+#values 16:43
+#HSV_low: [115, 29, 96]
+#HSV_high: [160, 255, 255]
+
+#values nach 5
+HSV_low: [115, 49, 92]
 HSV_high: [160, 255, 255]
 # cropping factors: width, bottom, top
 cropping_factors: [0.7, 0.4, 0.5] #####[0.7, 0.37, 0.4]

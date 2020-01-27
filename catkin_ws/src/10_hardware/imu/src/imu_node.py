@@ -34,7 +34,7 @@ ADDR_GYRO_ZOUT_L = 0x48
 
 ADDR_PWR_MGMT_1 = 0x6B
 
-LOW_PASS = False
+LOW_PASS = True
 
 # Address of DLPF port
 MPU6050_DLPF_BW_5 = 0x1A
