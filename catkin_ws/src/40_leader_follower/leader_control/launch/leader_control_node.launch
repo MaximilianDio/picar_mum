@@ -1,0 +1,27 @@
+<launch>
+    <arg name="ns"/>
+    <arg name="local"/>
+    <arg name="machine"/>
+
+    <!-- launch leader_control_node -->
+    <group ns="$(arg ns)">
+        <group if="$(arg local)">
+            <node pkg="leader_control" type="leader_control_node.py" name="leader_control_node" output="screen"/>
+        </group>
+
+        <group unless="$(arg local)">
+            <node machine="$(arg machine)" pkg="leader_control" type="leader_control_node.py" name="leader_control_node" output="screen"/>
+        </group>
+    </group>
+
+    <!-- Subscriptions -->
+    <!-- "~leader_relative_pos_input": geometry_msgs/Point32 -->
+
+    <!-- Publications -->
+    <!-- "~error_distance": std_msgs/Float64 -->
+    <!-- "~error_velocity": std_msgs/Float64 -->
+    <!-- "~error_x": std_msgs/Float64 -->
+    <!-- "~error_dx": std_msgs/Float64 -->
+    <!-- "~car_cmd": picar_msgs/CarCmd -->
+
+</launch>

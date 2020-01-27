@@ -12,7 +12,7 @@ deltaL = 1; %
 filenames = ["tek0000ALL.csv";
              "tek0001ALL.csv";
              "tek0002ALL.csv";
-             "tek0003ALL.csv";
+             "tek0003ALL.csv";x
              "tek0004ALL.csv";
              "tek0005ALL.csv";
              "tek0006ALL.csv";

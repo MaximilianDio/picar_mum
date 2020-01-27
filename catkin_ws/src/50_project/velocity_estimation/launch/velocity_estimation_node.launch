@@ -1,0 +1,26 @@
+<launch>
+    <arg name="ns"/>
+    <arg name="local"/>
+    <arg name="machine"/>
+
+    <!-- launch velocity_estimation_node -->
+    <group if="$(arg local)">
+        <group ns="$(arg ns)">
+            <node pkg="velocity_estimation" type="velocity_estimation_node.py" name="velocity_estimation_node" output="screen"/>
+        </group>
+    </group>
+
+    <group unless="$(arg local)">
+        <group ns="$(arg ns)">
+            <node machine="$(arg machine)" pkg="velocity_estimation" type="velocity_estimation_node.py" name="velocity_estimation_node" output="screen"/>
+        </group>
+    </group>
+
+
+    <!-- Subscriptions -->
+    <!-- "~input_encoder_data": picar_msgs/WheelSpeedStamped -->
+
+    <!-- Publications -->
+    <!-- "~velocity_estimated": std_msgs/Float32 -->
+
+</launch>

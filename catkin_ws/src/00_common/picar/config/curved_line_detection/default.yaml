@@ -1,0 +1,11 @@
+# publishing rate in Hz
+rate: 100
+#number of curve points (use between 3 and 30)
+num_points: 10
+# True: show results in frame with track bars
+visualization: True
+# hsv interval for selecting mask
+HSV_low: [85, 0, 70]
+HSV_high: [120, 255, 255]
+# cropping factors: width, bottom, top
+cropping_factors: [0.7, 0.35, 0.35]

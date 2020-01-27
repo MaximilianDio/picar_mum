@@ -33,8 +33,8 @@ class LineGetter(object):
     def process_image(self, img_rgb):
         (height, width) = img_rgb.shape[:2]
 
-        slice_y1 = int(height*self.horizon_rel_height)
-        slice_y2 = int(height*self.bottom_cut_rel_height)
+        slice_y1 = int(height * self.horizon_rel_height)
+        slice_y2 = int(height * self.bottom_cut_rel_height)
 
         img_rgb = img_rgb[slice_y1:slice_y2]
 
@@ -54,15 +54,12 @@ class LineGetter(object):
 
         area_red = cv2.contourArea(contour_red_biggest)
 
-        if area_red >= width*height*self.contour_area_thresh_red:
+        if area_red >= width * height * self.contour_area_thresh_red:
             momenents_red = cv2.moments(contour_red_biggest)
-            center_x = momenents_red["m10"]/momenents_red["m00"]
+            center_x = momenents_red["m10"] / momenents_red["m00"]
             return (center_x, slice_y2)
 
         return None
-
-
-
 
     def _mask_red(self, img_hsv):
         mask_1 = cv2.inRange(img_hsv, self.hsv_lower_red_1, self.hsv_upper_red_1)
@@ -71,4 +68,3 @@ class LineGetter(object):
         mask = np.bitwise_or(mask_1, mask_2)
 
         return mask
-

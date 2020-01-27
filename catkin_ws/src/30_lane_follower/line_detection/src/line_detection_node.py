@@ -44,7 +44,6 @@ class LineDetectionNode(object):
         self.pub_position.publish(msg_out)
 
 
-
 if __name__ == "__main__":
     rospy.init_node("line_detection_node")
     node = LineDetectionNode()

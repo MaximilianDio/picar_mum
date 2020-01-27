@@ -17,7 +17,8 @@
     </include>
 
 
-    <!--<node name="picar_spawn" pkg="gazebo_ros" type="spawn_model"
+    <!--
+    <node name="picar_spawn" pkg="gazebo_ros" type="spawn_model"
           args="-sdf -database picar -model PiCar -x 0 -y -0.115"/>-->
 
     <group ns="$(arg ns)">

@@ -2,12 +2,14 @@
     <arg name="ns"/>
     <arg name="sim" default="false"/>
     <arg name="machine" default="$(arg ns)"/>
+    <arg name="local" default="true"/>
 
     <machine
             name="$(arg machine)"
             address="$(arg machine).local"
             user="pi"
             env-loader="/home/pi/picar_mum/catkin_ws/env.sh"
+            timeout="10"
     />
 
     <!-- if running on real vehicle -->
@@ -17,11 +19,38 @@
             <arg name="ns" value="$(arg ns)"/>
         </include>
 
+        <!-- start node controlling the imu -->
+        <include file="$(find imu)/launch/imu_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+        </include>
+
+        <!-- start camera node -->
+        <include file="$(find camera)/launch/camera_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+        </include>
+
         <!-- start node controlling the motors -->
         <include file="$(find motor)/launch/motor_node.launch">
             <arg name="ns" value="$(arg ns)"/>
             <arg name="machine" value="$(arg machine)"/>
         </include>
+
+         <!-- start encoder node -->
+        <include file="$(find encoder)/launch/encoder_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+        </include>
+
+        <!-- start velocity_estimation node -->
+        <remap from="velocity_estimation_node/input_encoder_data" to="encoder_node/wheel_speed"/>
+        <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(arg local)"/>
+        </include>
+
     </group>
 
     <!-- if running on simulated vehicle -->
@@ -29,6 +58,14 @@
         <!-- start keyboard control -->
         <include file="$(find keyboard_control)/launch/keyboard_control_node.launch">
             <arg name="ns" value="simcar"/>
+        </include>
+
+                <!-- start velocity_estimation node -->
+        <remap from="velocity_estimation_node/input_encoder_data" to="wheel_speed"/>
+        <include file="$(find velocity_estimation)/launch/velocity_estimation_node.launch">
+            <arg name="ns" value="$(arg ns)"/>
+            <arg name="machine" value="$(arg machine)"/>
+            <arg name="local" value="$(arg local)"/>
         </include>
 
 

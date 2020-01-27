@@ -44,6 +44,7 @@
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
     </include>
 
+    <!--  launch  DETECTION nodes (line and leader) -->
 
     <!-- launch line_detection_node -->
     <remap from="line_detection_node/input_image/raw" to="color_normalization_node/output_image/raw"/>
@@ -88,11 +89,5 @@
         <arg name="machine" value="$(arg machine)"/>
         <arg name="local" value="$(eval not arg('compute_on_pi'))"/>
     </include>
-
-
-
-
-
-
 
 </launch>

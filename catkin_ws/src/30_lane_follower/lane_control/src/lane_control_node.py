@@ -17,7 +17,7 @@ class LaneControlNode(object):
         self.services = {}
         config_file_name = get_param("~config_file_name", "default")
 
-        config_file_path = get_config_file_path("lane_control",
+        config_file_path = get_config_file_path("race_control",
                                                 config_file_name)
 
         if config_file_path is None:
@@ -56,7 +56,6 @@ class LaneControlNode(object):
             SetValue,
             self.set_velocity_desired)
 
-
     def init_publishers(self):
         """Initialize ROS publishers and stores them in a dictionary
 
@@ -90,7 +89,7 @@ class LaneControlNode(object):
             data = yaml.safe_load(file_handle)
         self._params = data
         for param_name in self._params:
-            set_param("~"+param_name, self._params[param_name])
+            set_param("~" + param_name, self._params[param_name])
 
     def set_p_gain(self, request):
         """Sets the p_gain parameter of the controller."""
@@ -112,7 +111,7 @@ class LaneControlNode(object):
         return 1
 
     def update_controller(self):
-        """Updates the controller object's parameters"""
+        """Updates the controller object's picar"""
         self.controller.update_parameters(
             self._params["p_gain"],
             self._params["weight_distance"],
@@ -125,6 +124,7 @@ class LaneControlNode(object):
         Args:
             message (LanePose):
         """
+
         desired_values = ControllerValues(self._params["distance_desired"],
                                           self._params["angle_desired"],
                                           self._params["velocity_desired"])

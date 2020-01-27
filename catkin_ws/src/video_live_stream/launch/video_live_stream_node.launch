@@ -1,7 +1,0 @@
-<launch>
-
-    <node pkg="video_live_stream" type="video_live_stream.py" name="video_live_stream" output="screen" >
-
-    </node>
-
-</launch>

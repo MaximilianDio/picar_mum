@@ -5,3 +5,15 @@ Verlauf helfen können
 
 Roslaunch und .launch files (von Max)
 https://docs.google.com/document/d/1ynQSdsfqMSZw7ayCtSIoY9FcSs_QWr0_jFnWEMUGw7o/edit?usp=sharing
+
+####################################################################################################
+
+create new node with (basic) launchfile
+
+go to desired parentfolder in terminal: type: 
+
+>> catkin_create_pkg <PACKAGE_NAME> rospy picar_msg sensor_msg std_msg
+
+after that workspace has to be created again. Therefore, go to catkin_ws in Terminal and type:
+
+>> 
