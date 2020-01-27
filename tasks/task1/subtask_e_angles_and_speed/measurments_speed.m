@@ -39,8 +39,8 @@ legend("Daten","Quatratische Interpolation",'Location','southeast','FontSize',12
 dim = [.15 .5 .3 .3];
 str = 'y = -0.76149x^2 + 2.6308x - 0.3301';
 annotation('textbox',dim,'String',str,'FitBoxToText','on','Color',[0.8500, 0.3250, 0.0980],'FontSize',12);
-xlabel("Eingangs Geschwindigkeit");
-ylabel("Ausgangs Geschwindigkeit [m/s]")
+xlabel("Eingangsgeschwindigkeit");
+ylabel("Ausgangsgeschwindigkeit [m/s]")
 
 
 %% quadratic interpolation

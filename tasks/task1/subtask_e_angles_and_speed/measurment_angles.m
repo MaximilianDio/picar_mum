@@ -11,8 +11,8 @@ hold on;
 plot(anglesIn,G_angles(anglesIn),'LineWidth', 1.5);
 legend("Daten","Lineare Interpolation",'Location','southeast','FontSize',12);
 grid on
-xlabel("Eingangs Winkel [?]");
-ylabel("Ausgangs Winkel [?]")
+xlabel("Eingangswinkel [?]");
+ylabel("Ausgangswinkel [?]")
 dim = [.15 .5 .3 .3];
 str = 'y = 0.87857x + 0.25';
 annotation('textbox',dim,'String',str,'FitBoxToText','on','Color',[0.8500, 0.3250, 0.0980],'FontSize',12);
