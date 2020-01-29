@@ -1,13 +1,13 @@
 
 ########################################
 # steering control gains corners
-Kp_steering_corner: 1.2
+Kp_steering_corner: 1.5
 Kp_c_steering_corner: 0.4
 xLA_steering_corner: 0.20
 
 # steering control gains corners
 Kp_steering: 0.6
-Kp_c_steering: 0.1
+Kp_c_steering: 0.4
 xLA_steering: 0.6
 
 #simu gains
@@ -17,8 +17,8 @@ xLA_steering: 0.6
 
 ########################################
 # velocity picker
-vel_min: 1.0 #1.3
-vel_max: 1.8 #2.0
+vel_min: 1.5 #1.3
+vel_max: 1.6 #2.0
 
 switch_bound_slope: 0.2
 switch_bound_radius: 0.9
