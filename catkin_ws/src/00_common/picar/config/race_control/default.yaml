@@ -8,7 +8,7 @@ xLA_steering_corner: 0.20
 # steering control gains corners
 Kp_steering: 0.6
 Kp_c_steering: 0.4
-xLA_steering: 0.6
+xLA_steering: 0.8
 
 #simu gains
 #Kp_steering: 3.5

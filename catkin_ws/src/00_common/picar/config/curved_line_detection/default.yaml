@@ -16,7 +16,11 @@ visualization: False
 #HSV_high: [160, 255, 255]
 
 #values nach 5
-HSV_low: [115, 49, 92]
+#HSV_low: [115, 49, 92]
+#HsV_high: [160, 255, 255]
+
+#values von max
+HSV_low: [115, 33, 146]
 HSV_high: [160, 255, 255]
 # cropping factors: width, bottom, top
 cropping_factors: [0.7, 0.4, 0.5] #####[0.7, 0.37, 0.4]
