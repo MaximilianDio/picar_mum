@@ -114,11 +114,6 @@ class RaceControlNode:
             SetSteeringParametersList,
             self.service_steering_params)
 
-        self.services["update_corner_parameters"] = rospy.Service(
-            "~update_corner_parameters",
-            SetSteeringParametersList,
-            self.service_corner_params)
-
         self.services["update_velocity_parameters"] = rospy.Service(
             "~update_velocity_parameters",
             SetVelocityParametersList,
@@ -131,10 +126,6 @@ class RaceControlNode:
         self.steering_control = steering_controller.PathTrackingFF(self._params["Kp_steering"],
                                                                    self._params["Kp_c_steering"],
                                                                    self._params["xLA_steering"])
-
-        self.corner_control = steering_controller.PathTrackingFF(self._params["Kp_steering_corner"],
-                                                                   self._params["Kp_c_steering_corner"],
-                                                                   self._params["xLA_steering_corner"])
 
         # velocity picker
         self.velocity_picker = velocity_picker.VelocityPicker(self._params["vel_min"], self._params["vel_max"],
@@ -175,14 +166,6 @@ class RaceControlNode:
         print ("<------ Heiz Heiz ------> ")
         return 1
 
-    def service_corner_params(self, request):
-        self.corner_control.Kp = request.Kp
-        self.corner_control.Kp_c = request.Kp_c
-        self.corner_control.xLA = request.xLA
-        print ("<------ Heiz Heiz ------> ")
-        return 1
-
-
     def service_velocity_params(self, request):
         self.velocity_control.kp = request.Kp
         self.velocity_control.kd = request.Kd
@@ -221,14 +204,9 @@ class RaceControlNode:
 
             [des_velocity, corner_bool] = self.velocity_picker.get_velocity(self.curve_point)
 
-            if corner_bool is True:
-                angle = self.corner_control.get_steering_output(self.curve_point, self.own_velocity_est)
-                print("1")
-            else:
-                angle = self.steering_control.get_steering_output(self.curve_point, self.own_velocity_est)
-                print("0")
+            angle = self.steering_control.get_steering_output(self.curve_point, self.own_velocity_est)
 
-            velocity = self.velocity_control.get_velocity_output(des_velocity, self.own_velocity_est)
+            velocity = des_velocity # self.velocity_control.get_velocity_output(des_velocity, self.own_velocity_est)
             # velocity = des_velocity
 
 
